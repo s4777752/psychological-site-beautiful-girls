@@ -28,6 +28,30 @@ const Index = () => {
       experience: "6 лет",
       image: "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
       description: "Помогаю в развитии личности и самопознании"
+    },
+    {
+      id: 4,
+      name: "Дарья Петрова",
+      specialization: "Когнитивно-поведенческая терапия",
+      experience: "10 лет",
+      image: "/img/0f143845-4055-4c56-8af4-079e93cb9606.jpg",
+      description: "Специалист по работе с депрессией и фобиями"
+    },
+    {
+      id: 5,
+      name: "София Романова",
+      specialization: "Арт-терапия",
+      experience: "7 лет", 
+      image: "/img/354c3d8b-9cd8-4547-95e4-1ec48f1256da.jpg",
+      description: "Творческий подход к решению внутренних конфликтов"
+    },
+    {
+      id: 6,
+      name: "Виктория Новикова",
+      specialization: "Парная терапия",
+      experience: "9 лет",
+      image: "/img/47632204-d621-4d5d-92a0-042a7b0e5416.jpg", 
+      description: "Восстанавливаю гармонию в отношениях между партнерами"
     }
   ];
 
