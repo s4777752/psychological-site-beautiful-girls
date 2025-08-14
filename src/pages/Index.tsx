@@ -168,10 +168,6 @@ const Index = () => {
               Как это работает
             </Button>
           </div>
-            
-            {/* Price Highlight */}
-
-          </div>
         </div>
       </section>
 
