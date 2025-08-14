@@ -11,7 +11,10 @@ const Index = () => {
       specialization: "Семейная терапия",
       experience: "8 лет",
       image: "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
-      description: "Специалист по семейным отношениям и детской психологии"
+      description: "Специалист по семейным отношениям и детской психологии",
+      rating: 4.9,
+      sessions: 450,
+      price: 2500
     },
     {
       id: 2, 
@@ -19,7 +22,10 @@ const Index = () => {
       specialization: "Тревожные расстройства",
       experience: "12 лет",
       image: "/img/e46f379d-2965-4b93-832b-a2aa073c0bb0.jpg",
-      description: "Эксперт в области работы со стрессом и тревожностью"
+      description: "Эксперт в области работы со стрессом и тревожностью",
+      rating: 4.8,
+      sessions: 720,
+      price: 2500
     },
     {
       id: 3,
@@ -27,7 +33,43 @@ const Index = () => {
       specialization: "Личностная терапия",
       experience: "6 лет",
       image: "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
-      description: "Помогаю в развитии личности и самопознании"
+      description: "Помогаю в развитии личности и самопознании",
+      rating: 4.9,
+      sessions: 320,
+      price: 2500
+    },
+    {
+      id: 4,
+      name: "Дарья Петрова",
+      specialization: "Когнитивно-поведенческая терапия",
+      experience: "10 лет",
+      image: "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
+      description: "Специалист по работе с депрессией и фобиями",
+      rating: 4.7,
+      sessions: 580,
+      price: 2500
+    },
+    {
+      id: 5,
+      name: "София Романова",
+      specialization: "Арт-терапия",
+      experience: "7 лет", 
+      image: "/img/4b2e6ff1-6a65-483d-9d56-631b510a50d3.jpg",
+      description: "Творческий подход к решению внутренних конфликтов",
+      rating: 4.8,
+      sessions: 380,
+      price: 2500
+    },
+    {
+      id: 6,
+      name: "Виктория Новикова",
+      specialization: "Парная терапия",
+      experience: "9 лет",
+      image: "/img/b50310a6-0322-4453-a080-ed2a130fc8a9.jpg", 
+      description: "Восстанавливаю гармонию в отношениях между партнерами",
+      rating: 4.9,
+      sessions: 490,
+      price: 2500
     }
   ];
 
