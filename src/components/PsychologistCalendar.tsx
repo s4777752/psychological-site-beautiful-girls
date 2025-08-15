@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Icon from "@/components/ui/icon";
 import { useToast } from "@/hooks/use-toast";
+import VideoCall from "@/components/VideoCall";
 
 interface Appointment {
   id: string;
@@ -31,6 +32,12 @@ interface TimeSlot {
 const PsychologistCalendar = () => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isInVideoCall, setIsInVideoCall] = useState(false);
+  const [currentCallData, setCurrentCallData] = useState<{
+    roomId: string;
+    clientName: string;
+    appointmentId: string;
+  } | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: '1',
@@ -177,7 +184,48 @@ const PsychologistCalendar = () => {
     return colors[type];
   };
 
+  const handleStartVideoCall = (appointment: Appointment) => {
+    const roomId = `session_${appointment.id}_${Date.now()}`;
+    
+    // Уведомляем клиента о входящем звонке
+    toast({
+      title: "Звонок клиенту",
+      description: `Начинаем видеозвонок с ${appointment.clientName}`
+    });
+
+    // Имитируем отправку уведомления клиенту
+    // В реальном приложении здесь будет WebSocket или push-уведомление
+    
+    setCurrentCallData({
+      roomId,
+      clientName: appointment.clientName,
+      appointmentId: appointment.id
+    });
+    setIsInVideoCall(true);
+  };
+
+  const handleEndCall = () => {
+    setIsInVideoCall(false);
+    setCurrentCallData(null);
+    
+    toast({
+      title: "Звонок завершен",
+      description: "Видеосвязь отключена"
+    });
+  };
+
   const timeSlots = generateTimeSlots();
+
+  if (isInVideoCall && currentCallData) {
+    return (
+      <VideoCall
+        roomId={currentCallData.roomId}
+        userType="psychologist"
+        userName="Психолог"
+        onEndCall={handleEndCall}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -365,6 +413,24 @@ const PsychologistCalendar = () => {
                         {slot.appointment.notes}
                       </div>
                     )}
+                    <div className="flex space-x-2 mt-3">
+                      <Button
+                        size="sm"
+                        onClick={() => handleStartVideoCall(slot.appointment!)}
+                        className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                      >
+                        <Icon name="Video" className="mr-1" size={14} />
+                        Позвонить
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-warm-600 border-warm-300"
+                      >
+                        <Icon name="MessageCircle" className="mr-1" size={14} />
+                        Чат
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

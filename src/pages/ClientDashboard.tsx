@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import IncomingCallNotification from "@/components/IncomingCallNotification";
+import VideoCall from "@/components/VideoCall";
 
 interface ClientAuth {
   id: string;
@@ -28,6 +30,13 @@ const ClientDashboard = () => {
   const { toast } = useToast();
   const [client, setClient] = useState<ClientAuth | null>(null);
   const [activeTab, setActiveTab] = useState("sessions");
+  const [incomingCall, setIncomingCall] = useState<{
+    show: boolean;
+    callerName: string;
+    roomId: string;
+  }>({ show: false, callerName: "", roomId: "" });
+  const [isInVideoCall, setIsInVideoCall] = useState(false);
+  const [currentRoomId, setCurrentRoomId] = useState("");
 
   useEffect(() => {
     // Проверяем авторизацию клиента
@@ -37,6 +46,19 @@ const ClientDashboard = () => {
     } else {
       setClient(JSON.parse(auth));
     }
+    
+    // Симулируем входящий звонок через 5 секунд после загрузки (для демо)
+    const demoCallTimer = setTimeout(() => {
+      if (auth) {
+        setIncomingCall({
+          show: true,
+          callerName: "Психолог Елена Козлова",
+          roomId: `demo_call_${Date.now()}`
+        });
+      }
+    }, 5000);
+    
+    return () => clearTimeout(demoCallTimer);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -44,8 +66,38 @@ const ClientDashboard = () => {
     navigate("/");
   };
 
+  const handleAcceptCall = () => {
+    setCurrentRoomId(incomingCall.roomId);
+    setIsInVideoCall(true);
+    setIncomingCall({ show: false, callerName: "", roomId: "" });
+  };
+
+  const handleDeclineCall = () => {
+    setIncomingCall({ show: false, callerName: "", roomId: "" });
+    toast({
+      title: "Звонок отклонен",
+      description: "Вы отклонили входящий видеозвонок"
+    });
+  };
+
+  const handleEndCall = () => {
+    setIsInVideoCall(false);
+    setCurrentRoomId("");
+  };
+
   if (!client) {
     return null;
+  }
+
+  if (isInVideoCall) {
+    return (
+      <VideoCall
+        roomId={currentRoomId}
+        userType="client"
+        userName={client.name}
+        onEndCall={handleEndCall}
+      />
+    );
   }
 
   const sessions: Session[] = [
@@ -202,6 +254,15 @@ const ClientDashboard = () => {
         {activeTab === "documents" && <DocumentsTab />}
         {activeTab === "profile" && <ProfileTab client={client} />}
       </div>
+
+      {/* Incoming Call Notification */}
+      <IncomingCallNotification
+        show={incomingCall.show}
+        callerName={incomingCall.callerName}
+        roomId={incomingCall.roomId}
+        onAccept={handleAcceptCall}
+        onDecline={handleDeclineCall}
+      />
     </div>
   );
 };
