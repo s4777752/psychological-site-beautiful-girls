@@ -106,9 +106,21 @@ const Index = () => {
               <a href="#reviews" className="text-secondary hover:text-primary transition-colors">Отзывы</a>
               <a href="#contacts" className="text-secondary hover:text-primary transition-colors">Контакты</a>
             </nav>
-            <Button className="bg-primary hover:bg-primary/90 text-white">
-              Записаться
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={() => navigate('/client/login')}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
+                <Icon name="User" className="mr-2" size={16} />
+                Войти как клиент
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary hover:text-white"
+              >
+                Записаться
+              </Button>
+            </div>
           </div>
         </div>
       </header>
