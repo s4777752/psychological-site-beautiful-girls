@@ -56,7 +56,7 @@ const PsychologistCalendar = () => {
       clientPhone: '+7 (999) 987-65-43',
       date: '2024-08-15',
       time: '14:00',
-      duration: 50,
+      duration: 60,
       type: 'consultation',
       status: 'scheduled'
     }
@@ -79,7 +79,7 @@ const PsychologistCalendar = () => {
     const dateStr = selectedDate.toISOString().split('T')[0];
     
     for (let hour = 9; hour <= 19; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
+      for (let minute = 0; minute < 60; minute += 60) {
         const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         const appointment = appointments.find(app => 
           app.date === dateStr && app.time === timeStr
@@ -314,10 +314,9 @@ const PsychologistCalendar = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="30">30 минут</SelectItem>
-                        <SelectItem value="45">45 минут</SelectItem>
                         <SelectItem value="60">60 минут</SelectItem>
                         <SelectItem value="90">90 минут</SelectItem>
+                        <SelectItem value="120">120 минут</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
