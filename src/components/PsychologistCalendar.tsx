@@ -78,7 +78,7 @@ const PsychologistCalendar = () => {
     const slots: TimeSlot[] = [];
     const dateStr = selectedDate.toISOString().split('T')[0];
     
-    for (let hour = 9; hour <= 19; hour++) {
+    for (let hour = 9; hour <= 23; hour++) {
       for (let minute = 0; minute < 60; minute += 60) {
         const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         const appointment = appointments.find(app => 
