@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import ManagerLogin from "./pages/ManagerLogin";
 import ManagerDashboard from "./pages/ManagerDashboard";
+import PsychologistLogin from "./pages/PsychologistLogin";
+import PsychologistDashboard from "./pages/PsychologistDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/manager" element={<ManagerLogin />} />
           <Route path="/admin/manager/dashboard" element={<ManagerDashboard />} />
+          <Route path="/admin/psychologist" element={<PsychologistLogin />} />
+          <Route path="/psychologist/dashboard" element={<PsychologistDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

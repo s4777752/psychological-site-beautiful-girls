@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
+import PsychologistsManager from "@/components/PsychologistsManager";
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
@@ -171,22 +172,7 @@ const ContentTab = () => {
   );
 };
 
-const PsychologistsTab = () => (
-  <div className="space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-2xl font-bold text-warm-800">Управление психологами</h2>
-      <Button className="bg-warm-600 hover:bg-warm-700">
-        <Icon name="UserPlus" className="mr-2" size={16} />
-        Добавить психолога
-      </Button>
-    </div>
-    <Card className="border-warm-200">
-      <CardContent className="p-6">
-        <p className="text-warm-600">Здесь будет список всех психологов с возможностью редактирования их профилей, расписания и статуса.</p>
-      </CardContent>
-    </Card>
-  </div>
-);
+const PsychologistsTab = () => <PsychologistsManager />;
 
 const SettingsTab = () => (
   <div className="space-y-6">
