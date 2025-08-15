@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import IncomingCallNotification from "@/components/IncomingCallNotification";
 import VideoCall from "@/components/VideoCall";
+import ChatInterface from "@/components/ChatInterface";
 
 interface ClientAuth {
   id: string;
@@ -131,6 +132,7 @@ const ClientDashboard = () => {
 
   const tabs = [
     { id: "sessions", name: "Сеансы", icon: "Calendar" },
+    { id: "messages", name: "Сообщения", icon: "MessageSquare" },
     { id: "video", name: "Видеозвонок", icon: "Video" },
     { id: "documents", name: "Документы", icon: "FileText" },
     { id: "profile", name: "Профиль", icon: "User" }
@@ -250,6 +252,12 @@ const ClientDashboard = () => {
 
         {/* Tab Content */}
         {activeTab === "sessions" && <SessionsTab sessions={sessions} />}
+        {activeTab === "messages" && (
+          <ChatInterface 
+            userType="client" 
+            recipientName={client.psychologist}
+          />
+        )}
         {activeTab === "video" && <VideoTab nextSession={nextSession} />}
         {activeTab === "documents" && <DocumentsTab />}
         {activeTab === "profile" && <ProfileTab client={client} />}
