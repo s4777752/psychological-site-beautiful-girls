@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import PsychologistCalendar from "@/components/PsychologistCalendar";
 
 interface PsychologistAuth {
   id: string;
@@ -272,19 +273,7 @@ const ClientsTab = () => {
 
 const ScheduleTab = () => (
   <div className="space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-2xl font-bold text-warm-800">Расписание</h2>
-      <Button className="bg-warm-600 hover:bg-warm-700">
-        <Icon name="Plus" className="mr-2" size={16} />
-        Добавить слот
-      </Button>
-    </div>
-    
-    <Card className="border-warm-200">
-      <CardContent className="p-6">
-        <p className="text-warm-600">Календарь и управление расписанием будут доступны в следующих версиях системы.</p>
-      </CardContent>
-    </Card>
+    <PsychologistCalendar />
   </div>
 );
 
