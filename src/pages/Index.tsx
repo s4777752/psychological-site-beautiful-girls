@@ -117,6 +117,7 @@ const Index = () => {
               <Button 
                 variant="outline"
                 className="border-primary text-primary hover:bg-primary hover:text-white"
+                onClick={() => navigate('/client/login')}
               >
                 Записаться
               </Button>
@@ -136,7 +137,11 @@ const Index = () => {
             Квалифицированные психологи готовы помочь вам в решении любых жизненных вопросов.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
+              onClick={() => navigate('/client/login')}
+            >
               <Icon name="Calendar" className="mr-2" size={20} />
               Записаться на сеанс
             </Button>
@@ -181,7 +186,10 @@ const Index = () => {
                   </div>
                   <p className="text-primary font-medium mb-3">{psychologist.specialization}</p>
                   <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
+                    onClick={() => navigate('/client/login')}
+                  >
                     <Icon name="Calendar" className="mr-2" size={16} />
                     Записаться
                   </Button>
@@ -215,7 +223,11 @@ const Index = () => {
                     {service.name}
                   </h3>
                   <p className="text-2xl font-bold text-primary mb-4">{service.price}</p>
-                  <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
+                  <Button 
+                    variant="outline" 
+                    className="border-primary text-primary hover:bg-primary hover:text-white"
+                    onClick={() => navigate('/client/login')}
+                  >
                     Выбрать
                   </Button>
                 </CardContent>
@@ -255,7 +267,11 @@ const Index = () => {
                 <p className="text-warm-700 text-sm">Встреча через защищенную видеосвязь</p>
               </div>
             </div>
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-12 py-3">
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-white px-12 py-3"
+              onClick={() => navigate('/client/login')}
+            >
               <Icon name="Calendar" className="mr-2" size={20} />
               Начать запись
             </Button>
