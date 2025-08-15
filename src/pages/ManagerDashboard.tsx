@@ -186,7 +186,7 @@ const SettingsTab = () => (
           <Label htmlFor="site-name">Название сайта</Label>
           <Input
             id="site-name"
-            defaultValue="MindCare"
+            defaultValue="Психологическая помощь"
             className="border-warm-300 focus:border-warm-500"
           />
         </div>
@@ -202,7 +202,7 @@ const SettingsTab = () => (
           <Label htmlFor="contact-email">Email для связи</Label>
           <Input
             id="contact-email"
-            defaultValue="info@mindcare.ru"
+            defaultValue="info@psyhelp.ru"
             className="border-warm-300 focus:border-warm-500"
           />
         </div>
