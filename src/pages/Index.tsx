@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
   const psychologists = [
     {
       id: 1,
@@ -350,7 +352,18 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-warm-600 mt-8 pt-8 text-center text-warm-300">
-            <p>&copy; 2024 MindCare. Все права защищены.</p>
+            <div className="flex justify-between items-center">
+              <p>&copy; 2024 MindCare. Все права защищены.</p>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/admin')}
+                className="text-warm-400 hover:text-white hover:bg-warm-700 text-xs"
+              >
+                <Icon name="Settings" size={14} className="mr-1" />
+                Администрация
+              </Button>
+            </div>
           </div>
         </div>
       </footer>
