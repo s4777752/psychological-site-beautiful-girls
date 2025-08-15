@@ -48,18 +48,7 @@ const ClientDashboard = () => {
       setClient(JSON.parse(auth));
     }
     
-    // Симулируем входящий звонок через 5 секунд после загрузки (для демо)
-    const demoCallTimer = setTimeout(() => {
-      if (auth) {
-        setIncomingCall({
-          show: true,
-          callerName: "Психолог Елена Козлова",
-          roomId: `demo_call_${Date.now()}`
-        });
-      }
-    }, 5000);
-    
-    return () => clearTimeout(demoCallTimer);
+
   }, [navigate]);
 
   const handleLogout = () => {
