@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
   const psychologists = [
     {
       id: 1,
@@ -145,7 +148,12 @@ const Index = () => {
               <Icon name="Calendar" className="mr-2" size={20} />
               Записаться на сеанс
             </Button>
-            <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-3">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-3"
+              onClick={() => setIsVideoDialogOpen(true)}
+            >
               <Icon name="Play" className="mr-2" size={20} />
               Как это работает
             </Button>
@@ -395,6 +403,55 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Video Dialog */}
+      <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] p-0">
+          <DialogHeader className="px-6 py-4">
+            <DialogTitle>Как работает психологическая помощь онлайн</DialogTitle>
+          </DialogHeader>
+          <div className="px-6 pb-6">
+            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Как работает психологическая помощь онлайн"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="rounded-lg"
+              ></iframe>
+            </div>
+            <div className="mt-4 space-y-3">
+              <h3 className="font-semibold text-lg">Простые шаги к психологической поддержке:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="flex items-start space-x-2">
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">1</div>
+                  <div>
+                    <p className="font-medium">Регистрация</p>
+                    <p className="text-gray-600">Создайте аккаунт и заполните профиль</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">2</div>
+                  <div>
+                    <p className="font-medium">Выбор специалиста</p>
+                    <p className="text-gray-600">Найдите психолога по специализации</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">3</div>
+                  <div>
+                    <p className="font-medium">Онлайн сеанс</p>
+                    <p className="text-gray-600">Проведите сеанс через видеосвязь</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
