@@ -18,44 +18,15 @@ interface ChatInterfaceProps {
   recipientAvatar?: string;
 }
 
-// Демо сообщения
-const demoMessages: Message[] = [
-  {
-    id: '1',
-    text: 'Добро пожаловать! Как дела? Готовы к нашей сессии завтра?',
-    sender: 'psychologist',
-    timestamp: new Date(2024, 11, 15, 10, 30),
-    read: true
-  },
-  {
-    id: '2',
-    text: 'Здравствуйте! Да, готов. У меня есть несколько вопросов, которые хотел бы обсудить.',
-    sender: 'client',
-    timestamp: new Date(2024, 11, 15, 11, 15),
-    read: true
-  },
-  {
-    id: '3',
-    text: 'Отлично! Можете записать их заранее, чтобы ничего не забыть. Также рекомендую прочитать статью о техниках релаксации.',
-    sender: 'psychologist',
-    timestamp: new Date(2024, 11, 15, 11, 45),
-    read: true
-  },
-  {
-    id: '4',
-    text: 'Спасибо за рекомендацию! А можно ли перенести встречу на час позже?',
-    sender: 'client',
-    timestamp: new Date(2024, 11, 15, 14, 20),
-    read: false
-  }
-];
+// Пустой список сообщений
+const initialMessages: Message[] = [];
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   userType, 
   recipientName,
   recipientAvatar 
 }) => {
-  const [messages, setMessages] = useState<Message[]>(demoMessages);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -81,28 +52,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       setMessages(prev => [...prev, message]);
       setNewMessage('');
-
-      // Симуляция ответа (только для демо)
-      if (Math.random() > 0.7) {
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          const responses = [
-            'Понял вас, давайте обсудим это подробнее на сессии.',
-            'Спасибо за сообщение! Отвечу чуть позже.',
-            'Хорошо, учту ваши пожелания.',
-            'Согласен, это важная тема для обсуждения.'
-          ];
-          const response: Message = {
-            id: (Date.now() + 1).toString(),
-            text: responses[Math.floor(Math.random() * responses.length)],
-            sender: userType === 'client' ? 'psychologist' : 'client',
-            timestamp: new Date(),
-            read: false
-          };
-          setMessages(prev => [...prev, response]);
-        }, 1500);
-      }
     }
   };
 
