@@ -168,8 +168,12 @@ const ClientDashboard = () => {
             <Card className="border-warm-200">
               <CardContent className="p-6">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-warm-100 rounded-full flex items-center justify-center">
-                    <Icon name="UserCheck" className="text-warm-600" size={20} />
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <img 
+                      src="/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg" 
+                      alt={client.psychologist}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <p className="text-sm text-warm-600">Ваш психолог</p>
