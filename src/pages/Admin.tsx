@@ -67,31 +67,7 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Quick Access */}
-        <Card className="mt-8 border-warm-200">
-          <CardHeader>
-            <CardTitle className="text-lg text-warm-800 flex items-center">
-              <Icon name="Zap" className="mr-2" size={20} />
-              Быстрый доступ
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 md:grid-cols-3">
-              <Button variant="outline" className="text-warm-600 border-warm-300 hover:bg-warm-100">
-                <Icon name="Calendar" className="mr-2" size={16} />
-                Расписание
-              </Button>
-              <Button variant="outline" className="text-warm-600 border-warm-300 hover:bg-warm-100">
-                <Icon name="FileText" className="mr-2" size={16} />
-                Отчеты
-              </Button>
-              <Button variant="outline" className="text-warm-600 border-warm-300 hover:bg-warm-100">
-                <Icon name="BarChart3" className="mr-2" size={16} />
-                Статистика
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
     </div>
   );
