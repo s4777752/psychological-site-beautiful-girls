@@ -123,7 +123,6 @@ const ClientDashboard = () => {
     { id: "sessions", name: "Сеансы", icon: "Calendar" },
     { id: "messages", name: "Сообщения", icon: "MessageSquare" },
     { id: "video", name: "Видеозвонок", icon: "Video" },
-    { id: "documents", name: "Документы", icon: "FileText" },
     { id: "profile", name: "Профиль", icon: "User" }
   ];
 
@@ -248,7 +247,6 @@ const ClientDashboard = () => {
           />
         )}
         {activeTab === "video" && <VideoTab nextSession={nextSession} />}
-        {activeTab === "documents" && <DocumentsTab />}
         {activeTab === "profile" && <ProfileTab client={client} />}
       </div>
 
@@ -398,23 +396,6 @@ const VideoTab = ({ nextSession }: { nextSession?: Session }) => {
   );
 };
 
-const DocumentsTab = () => (
-  <div className="space-y-6">
-    <h2 className="text-2xl font-bold text-warm-800">Документы и материалы</h2>
-    
-    <Card className="border-warm-200">
-      <CardContent className="p-8 text-center">
-        <Icon name="FileText" size={48} className="text-warm-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-warm-600 mb-2">
-          Документы появятся здесь
-        </h3>
-        <p className="text-warm-500">
-          Ваш психолог может делиться с вами полезными материалами и документами
-        </p>
-      </CardContent>
-    </Card>
-  </div>
-);
 
 const ProfileTab = ({ client }: { client: ClientAuth }) => (
   <div className="space-y-6">
