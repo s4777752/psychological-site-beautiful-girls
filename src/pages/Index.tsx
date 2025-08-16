@@ -329,7 +329,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-12">
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Phone" className="text-primary" size={24} />
@@ -351,6 +351,60 @@ const Index = () => {
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Время работы</h3>
               <p className="text-warm-700">Ежедневно 9:00 - 21:00</p>
             </div>
+          </div>
+
+          {/* Message Box */}
+          <div className="max-w-2xl mx-auto">
+            <Card className="border-2 border-primary/20 shadow-lg">
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon name="MessageCircle" className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-2xl font-montserrat font-bold text-secondary mb-2">
+                    Напишите сообщение
+                  </h3>
+                  <p className="text-warm-700">
+                    Оставьте ваш вопрос или комментарий, и мы обязательно ответим
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-1">Имя</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Ваше имя"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-secondary mb-1">Email</label>
+                      <input 
+                        type="email" 
+                        className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-1">Сообщение</label>
+                    <textarea 
+                      rows={4}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                      placeholder="Напишите ваше сообщение..."
+                    ></textarea>
+                  </div>
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-white py-3"
+                  >
+                    <Icon name="Send" className="mr-2" size={16} />
+                    Отправить сообщение
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
