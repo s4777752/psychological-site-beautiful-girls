@@ -166,8 +166,18 @@ const PsychologistsManager = () => {
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-warm-100 rounded-full flex items-center justify-center">
-                    <Icon name="User" className="text-warm-600" size={24} />
+                  <div className="w-16 h-16 bg-warm-100 rounded-full overflow-hidden">
+                    {psychologist.photo && psychologist.photo !== "/api/placeholder/150/150" ? (
+                      <img 
+                        src={psychologist.photo} 
+                        alt={psychologist.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Icon name="User" className="text-warm-600" size={24} />
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -406,6 +416,76 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
           onChange={(e) => setFormData(prev => ({ ...prev, price: parseInt(e.target.value) || 3000 }))}
           className="border-warm-300 focus:border-warm-500"
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="photo">Фото профиля</Label>
+        <div className="flex items-center space-x-4">
+          <div className="w-20 h-20 bg-warm-100 rounded-full overflow-hidden">
+            {formData.photo && formData.photo !== "/api/placeholder/150/150" ? (
+              <img 
+                src={formData.photo} 
+                alt="Фото психолога"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <Icon name="User" className="text-warm-600" size={24} />
+              </div>
+            )}
+          </div>
+          <div className="flex-1 space-y-2">
+            <Input
+              id="photo"
+              type="url"
+              value={formData.photo}
+              onChange={(e) => setFormData(prev => ({ ...prev, photo: e.target.value }))}
+              placeholder="https://example.com/photo.jpg или оставьте пустым"
+              className="border-warm-300 focus:border-warm-500"
+            />
+            <div className="flex space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        const result = e.target?.result as string;
+                        setFormData(prev => ({ ...prev, photo: result }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  };
+                  input.click();
+                }}
+                className="border-warm-300 text-warm-600 hover:bg-warm-100"
+              >
+                <Icon name="Upload" className="mr-2" size={14} />
+                Загрузить файл
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setFormData(prev => ({ ...prev, photo: "/api/placeholder/150/150" }))}
+                className="border-warm-300 text-warm-600 hover:bg-warm-100"
+              >
+                <Icon name="X" className="mr-2" size={14} />
+                Удалить фото
+              </Button>
+            </div>
+            <p className="text-xs text-warm-600">
+              Вы можете вставить ссылку на изображение или загрузить файл с компьютера
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2">
