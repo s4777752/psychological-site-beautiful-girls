@@ -18,6 +18,10 @@ const Index = () => {
   const [userReviews, setUserReviews] = useState<Array<{name: string, text: string, rating: number, replies?: Array<{name: string, text: string, timestamp: Date}>}>>([]);
   const [showReplyForm, setShowReplyForm] = useState<{show: boolean, reviewIndex: number}>({show: false, reviewIndex: -1});
   const [replyFormData, setReplyFormData] = useState({name: '', text: ''});
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [loginData, setLoginData] = useState({username: '', password: ''});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<'psychologist' | 'manager' | null>(null);
   const psychologists = [
     {
       id: 1,
@@ -119,9 +123,53 @@ const Index = () => {
     }
   };
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Проверяем учетные данные психологов и управляющих
+    const psychologistCredentials = [
+      { username: 'anna.smirnova', password: 'psych123', name: 'Анна Смирнова', role: 'psychologist' as const },
+      { username: 'maria.kozlova', password: 'psych123', name: 'Мария Козлова', role: 'psychologist' as const },
+      { username: 'elena.volkova', password: 'psych123', name: 'Елена Волкова', role: 'psychologist' as const },
+      { username: 'daria.petrova', password: 'psych123', name: 'Дарья Петрова', role: 'psychologist' as const },
+      { username: 'sofia.romanova', password: 'psych123', name: 'София Романова', role: 'psychologist' as const },
+      { username: 'victoria.novikova', password: 'psych123', name: 'Виктория Новикова', role: 'psychologist' as const },
+      { username: 'manager', password: 'admin123', name: 'Управляющий', role: 'manager' as const }
+    ];
+
+    const user = psychologistCredentials.find(
+      cred => cred.username === loginData.username && cred.password === loginData.password
+    );
+
+    if (user) {
+      setIsAuthenticated(true);
+      setUserRole(user.role);
+      setReplyFormData({ name: user.name, text: '' });
+      setShowLoginForm(false);
+      setLoginData({ username: '', password: '' });
+    } else {
+      alert('Неверные данные для входа');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserRole(null);
+    setReplyFormData({ name: '', text: '' });
+  };
+
+  const handleReplyClick = (reviewIndex: number) => {
+    if (isAuthenticated) {
+      setShowReplyForm({ show: true, reviewIndex });
+    } else {
+      setShowLoginForm(true);
+      setShowReplyForm({ show: false, reviewIndex }); // Запоминаем индекс для позже
+    }
+  };
+
   const handleSubmitReply = (e: React.FormEvent) => {
     e.preventDefault();
-    if (replyFormData.name && replyFormData.text) {
+    if (replyFormData.name && replyFormData.text && isAuthenticated) {
       const reviewIndex = showReplyForm.reviewIndex;
       
       if (reviewIndex < defaultReviews.length) {
@@ -144,7 +192,7 @@ const Index = () => {
         ));
       }
       
-      setReplyFormData({ name: '', text: '' });
+      setReplyFormData({ name: replyFormData.name, text: '' }); // Оставляем имя
       setShowReplyForm({ show: false, reviewIndex: -1 });
     }
   };
@@ -387,16 +435,31 @@ const Index = () => {
                   )}
                   
                   {/* Reply Button */}
-                  <div className="mt-4 pt-3 border-t border-warm-200">
+                  <div className="mt-4 pt-3 border-t border-warm-200 flex justify-between items-center">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setShowReplyForm({ show: true, reviewIndex: index })}
+                      onClick={() => handleReplyClick(index)}
                       className="text-primary border-primary hover:bg-primary hover:text-white text-xs"
                     >
                       <Icon name="MessageCircle" className="mr-1" size={14} />
-                      Ответить
+                      {isAuthenticated ? 'Ответить' : 'Войти и ответить'}
                     </Button>
+                    
+                    {isAuthenticated && (
+                      <div className="flex items-center text-xs text-primary">
+                        <Icon name="User" className="mr-1" size={12} />
+                        <span>{replyFormData.name}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleLogout}
+                          className="ml-2 text-xs h-6 px-2"
+                        >
+                          Выйти
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -521,16 +584,17 @@ const Index = () => {
                 <form onSubmit={handleSubmitReply} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-secondary mb-2">
-                      Ваше имя
+                      Имя специалиста
                     </label>
                     <input
                       type="text"
                       value={replyFormData.name}
-                      onChange={(e) => setReplyFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="Введите ваше имя"
-                      required
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg bg-warm-50 text-warm-700"
+                      readOnly
                     />
+                    <p className="text-xs text-warm-600 mt-1">
+                      Вы вошли как {userRole === 'psychologist' ? 'психолог' : 'управляющий'}
+                    </p>
                   </div>
 
                   <div>
@@ -561,6 +625,78 @@ const Index = () => {
                       className="flex-1 bg-primary hover:bg-primary/90 text-white"
                     >
                       Отправить ответ
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Login Form Modal */}
+          {showLoginForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-secondary">Вход для специалистов</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowLoginForm(false)}
+                    className="p-1"
+                  >
+                    <Icon name="X" size={20} />
+                  </Button>
+                </div>
+
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Логин
+                    </label>
+                    <input
+                      type="text"
+                      value={loginData.username}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, username: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Введите логин"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Пароль
+                    </label>
+                    <input
+                      type="password"
+                      value={loginData.password}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Введите пароль"
+                      required
+                    />
+                  </div>
+
+                  <div className="bg-warm-50 p-3 rounded-lg text-sm text-warm-700">
+                    <p className="font-medium mb-2">Тестовые учетные данные:</p>
+                    <p><strong>Психологи:</strong> anna.smirnova / psych123</p>
+                    <p><strong>Управляющий:</strong> manager / admin123</p>
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowLoginForm(false)}
+                      className="flex-1"
+                    >
+                      Отменить
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                    >
+                      Войти
                     </Button>
                   </div>
                 </form>
