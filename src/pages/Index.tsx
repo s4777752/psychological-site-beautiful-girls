@@ -227,7 +227,7 @@ const Index = () => {
                   <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon name={service.icon} className="text-primary" size={24} />
                   </div>
-                  <h3 className="font-montserrat font-bold text-warm-50 text-lg mb-2">
+                  <h3 className="font-montserrat font-bold text-lg mb-2 text-[#000000]">
                     {service.name}
                   </h3>
                   <p className="text-2xl font-bold text-primary mb-4">{service.price}</p>
