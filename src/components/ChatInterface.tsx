@@ -10,6 +10,12 @@ interface Message {
   sender: 'client' | 'psychologist';
   timestamp: Date;
   read: boolean;
+  file?: {
+    name: string;
+    size: number;
+    type: string;
+    url: string;
+  };
 }
 
 interface ChatInterfaceProps {
@@ -31,6 +37,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -60,6 +67,53 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Проверка размера файла (максимум 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Файл слишком большой. Максимальный размер: 10MB');
+        return;
+      }
+
+      // Создаем URL для файла
+      const fileUrl = URL.createObjectURL(file);
+      
+      const newFileMessage: Message = {
+        id: Date.now().toString(),
+        text: `Отправлен файл: ${file.name}`,
+        sender: userType,
+        timestamp: new Date(),
+        read: false,
+        file: {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: fileUrl
+        }
+      };
+
+      setMessages(prev => [...prev, newFileMessage]);
+      
+      // Очищаем input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const formatTime = (date: Date) => {
@@ -153,7 +207,61 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         : 'bg-white border border-warm-200 text-warm-800'
                       }
                     `}>
-                      <p className="text-sm leading-relaxed">{message.text}</p>
+                      {message.file ? (
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-3 p-3 bg-warm-100 rounded-lg">
+                            <div className="flex-shrink-0">
+                              {message.file.type.startsWith('image/') ? (
+                                <Icon name="FileImage" size={20} className="text-warm-600" />
+                              ) : message.file.type.startsWith('audio/') ? (
+                                <Icon name="FileAudio" size={20} className="text-warm-600" />
+                              ) : message.file.type.startsWith('video/') ? (
+                                <Icon name="FileVideo" size={20} className="text-warm-600" />
+                              ) : message.file.type === 'application/pdf' ? (
+                                <Icon name="FileText" size={20} className="text-warm-600" />
+                              ) : (
+                                <Icon name="File" size={20} className="text-warm-600" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-warm-800 truncate">
+                                {message.file.name}
+                              </p>
+                              <p className="text-xs text-warm-600">
+                                {formatFileSize(message.file.size)}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = message.file!.url;
+                                link.download = message.file!.name;
+                                link.click();
+                              }}
+                              className="flex-shrink-0"
+                            >
+                              <Icon name="Download" size={14} />
+                            </Button>
+                          </div>
+                          {message.file.type.startsWith('image/') && (
+                            <div className="mt-2">
+                              <img 
+                                src={message.file.url} 
+                                alt={message.file.name}
+                                className="max-w-full h-auto rounded-lg"
+                                style={{ maxHeight: '200px' }}
+                              />
+                            </div>
+                          )}
+                          {message.text && message.text !== `Отправлен файл: ${message.file.name}` && (
+                            <p className="text-sm leading-relaxed mt-2">{message.text}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm leading-relaxed">{message.text}</p>
+                      )}
                     </div>
                     <div className={`
                       flex items-center space-x-1 mt-1 text-xs text-warm-500
@@ -197,10 +305,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <Button 
               size="sm" 
               variant="outline" 
+              onClick={handleFileSelect}
               className="border-warm-300 text-warm-600 hover:bg-warm-100"
             >
               <Icon name="Paperclip" size={16} />
             </Button>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleFileUpload}
+              className="hidden"
+              accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.txt"
+            />
             
             <div className="flex-1 relative">
               <input
