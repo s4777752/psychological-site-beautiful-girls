@@ -126,15 +126,20 @@ const Index = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Проверяем учетные данные психологов и управляющих
+    // Получаем учетные данные из системы личных кабинетов
+    const getPsychologists = () => {
+      const psychologists = JSON.parse(localStorage.getItem("psychologists") || "[]");
+      return psychologists.filter((p: any) => p.isActive).map((p: any) => ({
+        username: p.login,
+        password: p.password,
+        name: p.name,
+        role: 'psychologist' as const
+      }));
+    };
+
     const psychologistCredentials = [
-      { username: 'anna.smirnova', password: 'psych123', name: 'Анна Смирнова', role: 'psychologist' as const },
-      { username: 'maria.kozlova', password: 'psych123', name: 'Мария Козлова', role: 'psychologist' as const },
-      { username: 'elena.volkova', password: 'psych123', name: 'Елена Волкова', role: 'psychologist' as const },
-      { username: 'daria.petrova', password: 'psych123', name: 'Дарья Петрова', role: 'psychologist' as const },
-      { username: 'sofia.romanova', password: 'psych123', name: 'София Романова', role: 'psychologist' as const },
-      { username: 'victoria.novikova', password: 'psych123', name: 'Виктория Новикова', role: 'psychologist' as const },
-      { username: 'manager', password: 'admin123', name: 'Управляющий', role: 'manager' as const }
+      ...getPsychologists(),
+      { username: 's4777752@ya.ru', password: '89024777752s', name: 'Управляющий центра', role: 'manager' as const }
     ];
 
     const user = psychologistCredentials.find(
@@ -678,9 +683,10 @@ const Index = () => {
                   </div>
 
                   <div className="bg-warm-50 p-3 rounded-lg text-sm text-warm-700">
-                    <p className="font-medium mb-2">Тестовые учетные данные:</p>
-                    <p><strong>Психологи:</strong> anna.smirnova / psych123</p>
-                    <p><strong>Управляющий:</strong> manager / admin123</p>
+                    <p className="font-medium mb-2">Учетные данные из личных кабинетов:</p>
+                    <p><strong>Психологи:</strong> anna_petrov / secure123</p>
+                    <p><strong></strong> mikhail_sid / pass456</p>
+                    <p><strong>Управляющий:</strong> s4777752@ya.ru / 89024777752s</p>
                   </div>
 
                   <div className="flex space-x-3 pt-4">
