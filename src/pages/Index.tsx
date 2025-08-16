@@ -130,7 +130,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="py-20 bg-gradient-to-br from-warm-50 to-warm-100">
+      <section id="home" className="py-20 bg-gradient-to-br from-warm-200 to-warm-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-montserrat font-bold text-secondary mb-6 animate-fade-in">
             Онлайн психологическая помощь
@@ -209,7 +209,7 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-warm-50">
+      <section id="services" className="py-20 bg-warm-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
@@ -288,7 +288,7 @@ const Index = () => {
       </section>
 
       {/* Reviews Section */}
-      <section id="reviews" className="py-20 bg-warm-50">
+      <section id="reviews" className="py-20 bg-warm-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
@@ -318,7 +318,7 @@ const Index = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contacts" className="py-20 bg-white">
+      <section id="contacts" className="py-20 bg-warm-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
