@@ -211,10 +211,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 onKeyPress={handleKeyPress}
                 placeholder="Напишите сообщение..."
                 className="
-                  w-full px-4 py-3 border border-warm-200 rounded-lg
-                  focus:outline-none focus:ring-2 focus:ring-warm-500 focus:border-transparent
-                  bg-white text-warm-800 placeholder-warm-400
-                  resize-none
+                  w-full px-4 py-3 border-2 border-warm-400 rounded-lg
+                  focus:outline-none focus:ring-2 focus:ring-warm-500 focus:border-warm-600
+                  bg-white text-warm-800 placeholder-warm-500
+                  resize-none shadow-sm
                 "
               />
             </div>
