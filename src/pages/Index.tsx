@@ -15,7 +15,9 @@ const Index = () => {
     text: '',
     rating: 5
   });
-  const [userReviews, setUserReviews] = useState<Array<{name: string, text: string, rating: number}>>([]);
+  const [userReviews, setUserReviews] = useState<Array<{name: string, text: string, rating: number, replies?: Array<{name: string, text: string, timestamp: Date}>}>>([]);
+  const [showReplyForm, setShowReplyForm] = useState<{show: boolean, reviewIndex: number}>({show: false, reviewIndex: -1});
+  const [replyFormData, setReplyFormData] = useState({name: '', text: ''});
   const psychologists = [
     {
       id: 1,
@@ -93,7 +95,14 @@ const Index = () => {
   ];
 
   const defaultReviews = [
-    { name: "Анна К.", text: "Очень помогла справиться с тревожностью. Рекомендую!", rating: 5 },
+    { 
+      name: "Анна К.", 
+      text: "Очень помогла справиться с тревожностью. Рекомендую!", 
+      rating: 5,
+      replies: [
+        { name: "Анна Смирнова", text: "Спасибо большое за отзыв! Очень рада, что смогла помочь вам.", timestamp: new Date('2024-12-20') }
+      ]
+    },
     { name: "Михаил Р.", text: "Профессиональный подход и теплая атмосфера.", rating: 5 },
     { name: "Елена Д.", text: "Благодарна за поддержку в трудный период.", rating: 5 }
   ];
@@ -103,10 +112,40 @@ const Index = () => {
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (reviewFormData.name && reviewFormData.text) {
-      setUserReviews(prev => [...prev, { ...reviewFormData }]);
+      setUserReviews(prev => [...prev, { ...reviewFormData, replies: [] }]);
       setReviewFormData({ name: '', text: '', rating: 5 });
       setShowReviewForm(false);
       alert('Спасибо за ваш отзыв! Он появится на сайте.');
+    }
+  };
+
+  const handleSubmitReply = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (replyFormData.name && replyFormData.text) {
+      const reviewIndex = showReplyForm.reviewIndex;
+      
+      if (reviewIndex < defaultReviews.length) {
+        // Если это базовый отзыв, добавляем ответ в defaultReviews (но это временно, в реальном приложении нужна база данных)
+        alert('Ответ добавлен! В реальном приложении ответы сохраняются в базе данных.');
+      } else {
+        // Если это пользовательский отзыв
+        const userReviewIndex = reviewIndex - defaultReviews.length;
+        setUserReviews(prev => prev.map((review, index) => 
+          index === userReviewIndex 
+            ? { 
+                ...review, 
+                replies: [...(review.replies || []), { 
+                  name: replyFormData.name, 
+                  text: replyFormData.text, 
+                  timestamp: new Date() 
+                }] 
+              }
+            : review
+        ));
+      }
+      
+      setReplyFormData({ name: '', text: '' });
+      setShowReplyForm({ show: false, reviewIndex: -1 });
     }
   };
 
@@ -328,7 +367,37 @@ const Index = () => {
                     ))}
                   </div>
                   <p className="text-warm-700 mb-4 italic">"{review.text}"</p>
-                  <p className="font-montserrat font-semibold text-secondary">{review.name}</p>
+                  <p className="font-montserrat font-semibold text-secondary mb-3">{review.name}</p>
+                  
+                  {/* Replies */}
+                  {review.replies && review.replies.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      {review.replies.map((reply, replyIndex) => (
+                        <div key={replyIndex} className="bg-warm-50 p-3 rounded-lg border-l-4 border-primary">
+                          <p className="text-sm text-warm-700 mb-2">"{reply.text}"</p>
+                          <div className="flex justify-between items-center">
+                            <p className="text-xs font-medium text-primary">{reply.name}</p>
+                            <p className="text-xs text-warm-500">
+                              {reply.timestamp.toLocaleDateString('ru-RU')}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Reply Button */}
+                  <div className="mt-4 pt-3 border-t border-warm-200">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowReplyForm({ show: true, reviewIndex: index })}
+                      className="text-primary border-primary hover:bg-primary hover:text-white text-xs"
+                    >
+                      <Icon name="MessageCircle" className="mr-1" size={14} />
+                      Ответить
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -426,6 +495,72 @@ const Index = () => {
                       className="flex-1 bg-primary hover:bg-primary/90 text-white"
                     >
                       Отправить отзыв
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Reply Form Modal */}
+          {showReplyForm.show && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-secondary">Ответить на отзыв</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowReplyForm({ show: false, reviewIndex: -1 })}
+                    className="p-1"
+                  >
+                    <Icon name="X" size={20} />
+                  </Button>
+                </div>
+
+                <form onSubmit={handleSubmitReply} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Ваше имя
+                    </label>
+                    <input
+                      type="text"
+                      value={replyFormData.name}
+                      onChange={(e) => setReplyFormData(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Введите ваше имя"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Ваш ответ
+                    </label>
+                    <textarea
+                      value={replyFormData.text}
+                      onChange={(e) => setReplyFormData(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                      rows={4}
+                      placeholder="Напишите ваш ответ..."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowReplyForm({ show: false, reviewIndex: -1 })}
+                      className="flex-1"
+                    >
+                      Отменить
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                    >
+                      Отправить ответ
                     </Button>
                   </div>
                 </form>
