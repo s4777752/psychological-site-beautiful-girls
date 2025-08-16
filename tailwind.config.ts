@@ -25,44 +25,44 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: '#B8956A',
+					DEFAULT: '#D4A574',
 					foreground: '#FFFFFF'
 				},
 				secondary: {
-					DEFAULT: '#2B1B12',
-					foreground: '#F5F1EB'
+					DEFAULT: '#8B5A3C',
+					foreground: '#FFFFFF'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: '#4A2F20',
-					foreground: '#E8DDD2'
+					DEFAULT: '#F8F6F3',
+					foreground: '#8B5A3C'
 				},
 				accent: {
-					DEFAULT: '#6B4530',
-					foreground: '#F5F1EB'
+					DEFAULT: '#F5F1EB',
+					foreground: '#8B5A3C'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'
 				},
 				card: {
-					DEFAULT: '#4A2F20',
-					foreground: '#F5F1EB'
+					DEFAULT: '#FFFFFF',
+					foreground: '#8B5A3C'
 				},
 				warm: {
-					50: '#2B1B12',
-					100: '#4A2F20',
-					200: '#6B4530',
-					300: '#8B5A3C',
-					400: '#B8956A',
-					500: '#D4A574',
-					600: '#E8DDD2',
-					700: '#F5F1EB',
-					800: '#F8F6F3',
-					900: '#FDF9F5'
+					50: '#FDF9F5',
+					100: '#F8F6F3',
+					200: '#F5F1EB',
+					300: '#E8DDD2',
+					400: '#D4A574',
+					500: '#B8956A',
+					600: '#8B5A3C',
+					700: '#6B4530',
+					800: '#4A2F20',
+					900: '#2B1B12'
 				},
 				sage: {
 					50: '#F5F7F5',

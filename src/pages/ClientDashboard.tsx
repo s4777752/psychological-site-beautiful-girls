@@ -306,7 +306,7 @@ const SessionsTab = ({ sessions }: { sessions: Session[] }) => {
                   {getStatusBadge(session.status)}
                   {session.status === 'upcoming' && (
                     <div className="mt-2">
-                      <Button size="sm" className="bg-warm-600 hover:bg-warm-700 text-warm-50">
+                      <Button size="sm" className="bg-warm-600 hover:bg-warm-700">
                         <Icon name="Video" className="mr-1" size={14} />
                         Подключиться
                       </Button>
