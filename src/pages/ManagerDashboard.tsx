@@ -443,7 +443,7 @@ const FinancialTab = () => {
       email: "maria@example.com",
       totalSessions: 45,
       totalEarned: 112500,
-      commission: 67500, // 60% от общей суммы
+      commission: 50625, // 45% от общей суммы
       lastSession: "2024-08-16",
       rating: 4.8,
       clientsCount: 18
@@ -454,7 +454,7 @@ const FinancialTab = () => {
       email: "anna.smirnova@example.com",
       totalSessions: 38,
       totalEarned: 95000,
-      commission: 57000,
+      commission: 42750,
       lastSession: "2024-08-16",
       rating: 4.9,
       clientsCount: 15
@@ -465,7 +465,7 @@ const FinancialTab = () => {
       email: "elena.volkova@example.com",
       totalSessions: 32,
       totalEarned: 80000,
-      commission: 48000,
+      commission: 36000,
       lastSession: "2024-08-15",
       rating: 4.7,
       clientsCount: 12
@@ -476,7 +476,7 @@ const FinancialTab = () => {
       email: "darya@example.com",
       totalSessions: 28,
       totalEarned: 70000,
-      commission: 42000,
+      commission: 31500,
       lastSession: "2024-08-16",
       rating: 4.6,
       clientsCount: 11
@@ -660,7 +660,7 @@ const FinancialTab = () => {
                         <span className="font-medium text-green-600">₽{psychologist.totalEarned.toLocaleString()}</span>
                       </div>
                       <div>
-                        <span className="text-warm-600">Комиссия (60%): </span>
+                        <span className="text-warm-600">Комиссия (45%): </span>
                         <span className="font-medium text-blue-600">₽{psychologist.commission.toLocaleString()}</span>
                       </div>
                       <div>
