@@ -9,6 +9,13 @@ import { useNavigate } from "react-router-dom";
 const Index = () => {
   const navigate = useNavigate();
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewFormData, setReviewFormData] = useState({
+    name: '',
+    text: '',
+    rating: 5
+  });
+  const [userReviews, setUserReviews] = useState<Array<{name: string, text: string, rating: number}>>([]);
   const psychologists = [
     {
       id: 1,
@@ -85,11 +92,23 @@ const Index = () => {
     { name: "Экстренная помощь", price: "3500 ₽/час", icon: "Phone" }
   ];
 
-  const reviews = [
+  const defaultReviews = [
     { name: "Анна К.", text: "Очень помогла справиться с тревожностью. Рекомендую!", rating: 5 },
     { name: "Михаил Р.", text: "Профессиональный подход и теплая атмосфера.", rating: 5 },
     { name: "Елена Д.", text: "Благодарна за поддержку в трудный период.", rating: 5 }
   ];
+
+  const allReviews = [...defaultReviews, ...userReviews];
+
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (reviewFormData.name && reviewFormData.text) {
+      setUserReviews(prev => [...prev, { ...reviewFormData }]);
+      setReviewFormData({ name: '', text: '', rating: 5 });
+      setShowReviewForm(false);
+      alert('Спасибо за ваш отзыв! Он появится на сайте.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-warm-50">
@@ -299,8 +318,8 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {reviews.map((review, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {allReviews.map((review, index) => (
               <Card key={index} className="p-6 animate-fade-in">
                 <CardContent className="p-0">
                   <div className="flex items-center mb-4">
@@ -314,6 +333,105 @@ const Index = () => {
               </Card>
             ))}
           </div>
+
+          {/* Add Review Button */}
+          <div className="text-center">
+            <Button 
+              onClick={() => setShowReviewForm(true)}
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
+            >
+              <Icon name="Plus" className="mr-2" size={20} />
+              Оставить отзыв
+            </Button>
+          </div>
+
+          {/* Review Form Modal */}
+          {showReviewForm && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-secondary">Оставить отзыв</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowReviewForm(false)}
+                    className="p-1"
+                  >
+                    <Icon name="X" size={20} />
+                  </Button>
+                </div>
+
+                <form onSubmit={handleSubmitReview} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Ваше имя
+                    </label>
+                    <input
+                      type="text"
+                      value={reviewFormData.name}
+                      onChange={(e) => setReviewFormData(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Введите ваше имя"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Оценка
+                    </label>
+                    <div className="flex space-x-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewFormData(prev => ({ ...prev, rating: star }))}
+                          className="focus:outline-none"
+                        >
+                          <Icon 
+                            name="Star" 
+                            className={`${star <= reviewFormData.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'} transition-colors`}
+                            size={24} 
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Ваш отзыв
+                    </label>
+                    <textarea
+                      value={reviewFormData.text}
+                      onChange={(e) => setReviewFormData(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                      rows={4}
+                      placeholder="Поделитесь вашим опытом..."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowReviewForm(false)}
+                      className="flex-1"
+                    >
+                      Отменить
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                    >
+                      Отправить отзыв
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
