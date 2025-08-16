@@ -185,7 +185,7 @@ const Index = () => {
                 </div>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-montserrat font-semibold text-secondary">
+                    <h3 className="text-xl font-montserrat font-semibold text-[#000000]">
                       {psychologist.name}
                     </h3>
                     <Badge variant="secondary" className="bg-accent text-secondary">
