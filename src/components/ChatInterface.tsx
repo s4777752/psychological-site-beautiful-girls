@@ -35,6 +35,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -114,6 +115,32 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const emojis = [
+    '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇',
+    '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚',
+    '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩',
+    '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣',
+    '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬',
+    '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗',
+    '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯',
+    '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐',
+    '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '😈',
+    '👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉',
+    '👆', '🖕', '👇', '☝️', '👋', '🤚', '🖐', '✋', '🖖', '👏',
+    '🙌', '🤲', '🤝', '🙏', '✍️', '💪', '🦵', '🦶', '👂', '🦻',
+    '👃', '🧠', '🦷', '🦴', '👀', '👁', '👅', '👄', '💋', '🩸'
+  ];
+
+  const handleEmojiSelect = (emoji: string) => {
+    setNewMessage(prev => prev + emoji);
+    setShowEmojiPicker(false);
+    inputRef.current?.focus();
+  };
+
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
   };
 
   const formatTime = (date: Date) => {
@@ -334,6 +361,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   resize-none shadow-sm
                 "
               />
+              
+              {/* Emoji Picker */}
+              {showEmojiPicker && (
+                <div className="absolute bottom-full right-0 mb-2 bg-white border border-warm-200 rounded-lg shadow-lg p-4 w-80 z-10">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm font-medium text-warm-800">Выберите эмодзи</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowEmojiPicker(false)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <Icon name="X" size={14} />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-10 gap-1 max-h-32 overflow-y-auto">
+                    {emojis.map((emoji, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleEmojiSelect(emoji)}
+                        className="w-6 h-6 flex items-center justify-center hover:bg-warm-100 rounded text-lg transition-colors"
+                        title={emoji}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             
             <Button 
@@ -349,7 +405,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <div className="flex items-center justify-between mt-2 text-xs text-warm-500">
             <span>Enter для отправки, Shift+Enter для новой строки</span>
             <div className="flex items-center space-x-2">
-              <Icon name="Smile" size={14} className="cursor-pointer hover:text-warm-600" />
+              <Icon 
+                name="Smile" 
+                size={14} 
+                className="cursor-pointer hover:text-warm-600 transition-colors" 
+                onClick={toggleEmojiPicker}
+              />
               <Icon name="Mic" size={14} className="cursor-pointer hover:text-warm-600" />
             </div>
           </div>
