@@ -112,14 +112,14 @@ const Index = () => {
             <div className="flex space-x-2">
               <Button 
                 onClick={() => navigate('/client/login')}
-                className="bg-primary hover:bg-primary/90 text-white"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold"
               >
                 <Icon name="User" className="mr-2" size={16} />
                 Войти как клиент
               </Button>
               <Button 
                 variant="outline"
-                className="border-primary text-primary hover:bg-primary hover:text-white"
+                className="border-primary text-secondary bg-white hover:bg-primary hover:text-white font-semibold"
                 onClick={() => navigate('/client/login')}
               >
                 Записаться
@@ -142,7 +142,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
             <Button 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3 font-semibold"
               onClick={() => navigate('/client/login')}
             >
               <Icon name="Calendar" className="mr-2" size={20} />
@@ -151,7 +151,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-3"
+              className="border-primary text-secondary bg-white hover:bg-primary hover:text-white px-8 py-3 font-semibold"
               onClick={() => setIsVideoDialogOpen(true)}
             >
               <Icon name="Play" className="mr-2" size={20} />
@@ -233,7 +233,7 @@ const Index = () => {
                   <p className="text-2xl font-bold text-primary mb-4">{service.price}</p>
                   <Button 
                     variant="outline" 
-                    className="border-primary text-primary hover:bg-primary hover:text-white"
+                    className="border-primary text-secondary bg-white hover:bg-primary hover:text-white font-semibold"
                     onClick={() => navigate('/client/login')}
                   >
                     Выбрать
@@ -277,7 +277,7 @@ const Index = () => {
             </div>
             <Button 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 text-white px-12 py-3"
+              className="bg-primary hover:bg-primary/90 text-white px-12 py-3 font-semibold"
               onClick={() => navigate('/client/login')}
             >
               <Icon name="Calendar" className="mr-2" size={20} />
