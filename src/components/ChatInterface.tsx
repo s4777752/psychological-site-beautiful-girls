@@ -16,6 +16,10 @@ interface Message {
     type: string;
     url: string;
   };
+  voice?: {
+    url: string;
+    duration: number;
+  };
 }
 
 interface ChatInterfaceProps {
@@ -36,9 +40,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -143,6 +151,89 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setShowEmojiPicker(!showEmojiPicker);
   };
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+
+      const audioChunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        const voiceMessage: Message = {
+          id: Date.now().toString(),
+          text: 'Голосовое сообщение',
+          sender: userType,
+          timestamp: new Date(),
+          read: false,
+          voice: {
+            url: audioUrl,
+            duration: recordingTime
+          }
+        };
+
+        setMessages(prev => [...prev, voiceMessage]);
+        
+        // Останавливаем все треки
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      
+      // Запускаем таймер
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+
+    } catch (error) {
+      console.error('Ошибка доступа к микрофону:', error);
+      alert('Не удалось получить доступ к микрофону');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+    }
+  };
+
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setRecordingTime(0);
+      
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+    }
+  };
+
+  const formatRecordingTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const deleteMessage = (messageId: string) => {
+    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('ru-RU', { 
       hour: '2-digit', 
@@ -234,7 +325,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                         : 'bg-white border border-warm-200 text-warm-800'
                       }
                     `}>
-                      {message.file ? (
+                      <div className="relative group">
+                        {message.sender === userType && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => deleteMessage(message.id)}
+                            className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white w-6 h-6 p-0 rounded-full z-10"
+                          >
+                            <Icon name="Trash2" size={12} />
+                          </Button>
+                        )}
+                        
+                      {message.voice ? (
+                        <div className="flex items-center space-x-3 p-3 bg-warm-100 rounded-lg min-w-[200px]">
+                          <div className="flex-shrink-0">
+                            <Icon name="Mic" size={20} className="text-warm-600" />
+                          </div>
+                          <div className="flex-1">
+                            <audio 
+                              controls 
+                              src={message.voice.url}
+                              className="w-full h-8"
+                            />
+                            <p className="text-xs text-warm-600 mt-1">
+                              Длительность: {formatRecordingTime(message.voice.duration)}
+                            </p>
+                          </div>
+                        </div>
+                      ) : message.file ? (
                         <div className="space-y-2">
                           <div className="flex items-center space-x-3 p-3 bg-warm-100 rounded-lg">
                             <div className="flex-shrink-0">
@@ -289,6 +408,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       ) : (
                         <p className="text-sm leading-relaxed">{message.text}</p>
                       )}
+                      </div>
                     </div>
                     <div className={`
                       flex items-center space-x-1 mt-1 text-xs text-warm-500
@@ -402,6 +522,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </Button>
           </div>
           
+          {/* Recording Interface */}
+          {isRecording && (
+            <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-red-700">
+                    Запись голосового сообщения...
+                  </span>
+                  <span className="text-sm text-red-600 font-mono">
+                    {formatRecordingTime(recordingTime)}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={cancelRecording}
+                    className="border-red-300 text-red-600 hover:bg-red-100"
+                  >
+                    <Icon name="X" className="mr-1" size={14} />
+                    Отменить
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={stopRecording}
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                  >
+                    <Icon name="Square" className="mr-1" size={14} />
+                    Остановить
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mt-2 text-xs text-warm-500">
             <span>Enter для отправки, Shift+Enter для новой строки</span>
             <div className="flex items-center space-x-2">
@@ -411,7 +567,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 className="cursor-pointer hover:text-warm-600 transition-colors" 
                 onClick={toggleEmojiPicker}
               />
-              <Icon name="Mic" size={14} className="cursor-pointer hover:text-warm-600" />
+              <Icon 
+                name={isRecording ? "Square" : "Mic"} 
+                size={14} 
+                className={`cursor-pointer transition-colors ${
+                  isRecording 
+                    ? "text-red-500 hover:text-red-600 animate-pulse" 
+                    : "hover:text-warm-600"
+                }`}
+                onClick={isRecording ? stopRecording : startRecording}
+              />
             </div>
           </div>
         </CardContent>
