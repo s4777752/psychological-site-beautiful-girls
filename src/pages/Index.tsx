@@ -92,7 +92,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-warm-900">
+    <div className="min-h-screen bg-warm-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-warm-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,14 +112,14 @@ const Index = () => {
             <div className="flex space-x-2">
               <Button 
                 onClick={() => navigate('/client/login')}
-                className="bg-warm-400 hover:bg-warm-9000 text-white font-semibold"
+                className="bg-primary hover:bg-primary/90 text-white"
               >
                 <Icon name="User" className="mr-2" size={16} />
                 Войти как клиент
               </Button>
               <Button 
                 variant="outline"
-                className="border-warm-400 text-secondary bg-white hover:bg-warm-400 hover:text-white font-semibold"
+                className="border-primary text-primary hover:bg-primary hover:text-white"
                 onClick={() => navigate('/client/login')}
               >
                 Записаться
@@ -130,7 +130,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="py-20 bg-gradient-to-br from-warm-900 to-warm-800">
+      <section id="home" className="py-20 bg-gradient-to-br from-warm-50 to-warm-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-montserrat font-bold text-secondary mb-6 animate-fade-in">
             Онлайн психологическая помощь
@@ -142,7 +142,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
             <Button 
               size="lg" 
-              className="bg-warm-400 hover:bg-warm-400/90 text-white px-8 py-3"
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
               onClick={() => navigate('/client/login')}
             >
               <Icon name="Calendar" className="mr-2" size={20} />
@@ -151,7 +151,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="border-primary text-primary hover:bg-warm-400 hover:text-white px-8 py-3"
+              className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-3"
               onClick={() => setIsVideoDialogOpen(true)}
             >
               <Icon name="Play" className="mr-2" size={20} />
@@ -195,7 +195,7 @@ const Index = () => {
                   <p className="text-primary font-medium mb-3">{psychologist.specialization}</p>
                   <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
                   <Button 
-                    className="w-full bg-warm-400 hover:bg-warm-400/90 text-white"
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
                     onClick={() => navigate('/client/login')}
                   >
                     <Icon name="Calendar" className="mr-2" size={16} />
@@ -209,7 +209,7 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-warm-900">
+      <section id="services" className="py-20 bg-warm-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
@@ -224,7 +224,7 @@ const Index = () => {
             {services.map((service, index) => (
               <Card key={index} className="text-center p-6 hover:shadow-lg transition-shadow duration-300 animate-fade-in">
                 <CardContent className="p-0">
-                  <div className="bg-warm-400/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon name={service.icon} className="text-primary" size={24} />
                   </div>
                   <h3 className="font-montserrat font-semibold text-secondary mb-2">
@@ -233,7 +233,7 @@ const Index = () => {
                   <p className="text-2xl font-bold text-primary mb-4">{service.price}</p>
                   <Button 
                     variant="outline" 
-                    className="border-warm-400 text-secondary bg-white hover:bg-warm-400 hover:text-white font-semibold"
+                    className="border-primary text-primary hover:bg-primary hover:text-white"
                     onClick={() => navigate('/client/login')}
                   >
                     Выбрать
@@ -251,24 +251,24 @@ const Index = () => {
           <h2 className="text-4xl font-montserrat font-bold text-secondary mb-8">
             Записаться на сеанс
           </h2>
-          <div className="bg-warm-900 rounded-2xl p-8 mb-8">
+          <div className="bg-warm-50 rounded-2xl p-8 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="flex flex-col items-center">
-                <div className="bg-warm-400 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                <div className="bg-primary w-12 h-12 rounded-full flex items-center justify-center mb-3">
                   <span className="text-white font-bold">1</span>
                 </div>
                 <h3 className="font-montserrat font-semibold text-secondary mb-2">Выберите психолога</h3>
                 <p className="text-warm-700 text-sm">Найдите специалиста по вашему запросу</p>
               </div>
               <div className="flex flex-col items-center">
-                <div className="bg-warm-400 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                <div className="bg-primary w-12 h-12 rounded-full flex items-center justify-center mb-3">
                   <span className="text-white font-bold">2</span>
                 </div>
                 <h3 className="font-montserrat font-semibold text-secondary mb-2">Выберите время</h3>
                 <p className="text-warm-700 text-sm">Удобное время в календаре специалиста</p>
               </div>
               <div className="flex flex-col items-center">
-                <div className="bg-warm-400 w-12 h-12 rounded-full flex items-center justify-center mb-3">
+                <div className="bg-primary w-12 h-12 rounded-full flex items-center justify-center mb-3">
                   <span className="text-white font-bold">3</span>
                 </div>
                 <h3 className="font-montserrat font-semibold text-secondary mb-2">Проведите сеанс</h3>
@@ -277,7 +277,7 @@ const Index = () => {
             </div>
             <Button 
               size="lg" 
-              className="bg-warm-400 hover:bg-warm-400/90 text-white px-12 py-3"
+              className="bg-primary hover:bg-primary/90 text-white px-12 py-3"
               onClick={() => navigate('/client/login')}
             >
               <Icon name="Calendar" className="mr-2" size={20} />
@@ -288,7 +288,7 @@ const Index = () => {
       </section>
 
       {/* Reviews Section */}
-      <section id="reviews" className="py-20 bg-warm-900">
+      <section id="reviews" className="py-20 bg-warm-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
@@ -331,21 +331,21 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <div className="bg-warm-400/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Phone" className="text-primary" size={24} />
               </div>
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Телефон</h3>
               <p className="text-warm-700">+7 (495) 123-45-67</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="bg-warm-400/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Mail" className="text-primary" size={24} />
               </div>
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Email</h3>
               <p className="text-warm-700">info@mindcare.ru</p>
             </div>
             <div className="flex flex-col items-center">
-              <div className="bg-warm-400/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Clock" className="text-primary" size={24} />
               </div>
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Время работы</h3>
@@ -427,21 +427,21 @@ const Index = () => {
               <h3 className="font-semibold text-lg">Простые шаги к психологической поддержке:</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div className="flex items-start space-x-2">
-                  <div className="bg-warm-400 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">1</div>
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">1</div>
                   <div>
                     <p className="font-medium">Регистрация</p>
                     <p className="text-gray-600">Создайте аккаунт и заполните профиль</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <div className="bg-warm-400 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">2</div>
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">2</div>
                   <div>
                     <p className="font-medium">Выбор специалиста</p>
                     <p className="text-gray-600">Найдите психолога по специализации</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
-                  <div className="bg-warm-400 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">3</div>
+                  <div className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5">3</div>
                   <div>
                     <p className="font-medium">Онлайн сеанс</p>
                     <p className="text-gray-600">Проведите сеанс через видеосвязь</p>
