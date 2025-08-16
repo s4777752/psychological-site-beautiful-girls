@@ -92,7 +92,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-warm-50">
+    <div className="min-h-screen bg-warm-900">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-warm-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,7 +112,7 @@ const Index = () => {
             <div className="flex space-x-2">
               <Button 
                 onClick={() => navigate('/client/login')}
-                className="bg-warm-400 hover:bg-warm-500 text-white font-semibold"
+                className="bg-warm-400 hover:bg-warm-9000 text-white font-semibold"
               >
                 <Icon name="User" className="mr-2" size={16} />
                 Войти как клиент
@@ -130,7 +130,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="py-20 bg-gradient-to-br from-warm-50 to-warm-100">
+      <section id="home" className="py-20 bg-gradient-to-br from-warm-900 to-warm-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-montserrat font-bold text-secondary mb-6 animate-fade-in">
             Онлайн психологическая помощь
@@ -209,7 +209,7 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-warm-50">
+      <section id="services" className="py-20 bg-warm-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
@@ -251,7 +251,7 @@ const Index = () => {
           <h2 className="text-4xl font-montserrat font-bold text-secondary mb-8">
             Записаться на сеанс
           </h2>
-          <div className="bg-warm-50 rounded-2xl p-8 mb-8">
+          <div className="bg-warm-900 rounded-2xl p-8 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="flex flex-col items-center">
                 <div className="bg-warm-400 w-12 h-12 rounded-full flex items-center justify-center mb-3">
@@ -288,7 +288,7 @@ const Index = () => {
       </section>
 
       {/* Reviews Section */}
-      <section id="reviews" className="py-20 bg-warm-50">
+      <section id="reviews" className="py-20 bg-warm-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
