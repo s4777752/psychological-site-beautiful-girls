@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import PsychologistsManager from "@/components/PsychologistsManager";
+import PaymentNotifications from "@/components/PaymentNotifications";
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const ManagerDashboard = () => {
   const tabs = [
     { id: "overview", name: "Обзор", icon: "BarChart3" },
     { id: "sessions", name: "Записи", icon: "Calendar" },
+    { id: "payments", name: "Уведомления", icon: "Bell" },
     { id: "financial", name: "Финансы", icon: "DollarSign" },
     { id: "content", name: "Контент", icon: "FileText" },
     { id: "psychologists", name: "Психологи", icon: "Users" },
@@ -93,6 +95,7 @@ const ManagerDashboard = () => {
         {/* Tab Content */}
         {activeTab === "overview" && <OverviewTab />}
         {activeTab === "sessions" && <SessionsTab />}
+        {activeTab === "payments" && <PaymentsTab />}
         {activeTab === "financial" && <FinancialTab />}
         {activeTab === "content" && <ContentTab />}
         {activeTab === "psychologists" && <PsychologistsTab />}
@@ -750,6 +753,15 @@ const FinancialTab = () => {
           </Card>
         </div>
       )}
+    </div>
+  );
+};
+
+const PaymentsTab = () => {
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-warm-800">Уведомления о записях</h2>
+      <PaymentNotifications userRole="manager" />
     </div>
   );
 };

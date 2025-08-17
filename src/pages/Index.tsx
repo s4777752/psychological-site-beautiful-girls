@@ -429,22 +429,13 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="flex gap-2">
-                    <Button 
-                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
-                      onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
-                    >
-                      <Icon name="Calendar" className="mr-2" size={16} />
-                      Записаться
-                    </Button>
-                    <Button 
-                      className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
-                      onClick={() => handlePaymentClick(psychologist.name, psychologist.price)}
-                    >
-                      <Icon name="CreditCard" className="mr-2" size={16} />
-                      Оплатить
-                    </Button>
-                  </div>
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
+                    onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
+                  >
+                    <Icon name="Calendar" className="mr-2" size={16} />
+                    Записаться
+                  </Button>
                 </CardContent>
               </Card>
             ))}

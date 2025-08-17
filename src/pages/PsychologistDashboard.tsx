@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import PsychologistCalendar from "@/components/PsychologistCalendar";
 import ChatInterface from "@/components/ChatInterface";
 import ScheduleManager from "@/components/ScheduleManager";
+import PaymentNotifications from "@/components/PaymentNotifications";
 
 interface PsychologistAuth {
   id: string;
@@ -56,6 +57,7 @@ const PsychologistDashboard = () => {
     { id: "clients", name: "Клиенты", icon: "Users" },
     { id: "messages", name: "Сообщения", icon: "MessageSquare" },
     { id: "schedule", name: "Расписание", icon: "Calendar" },
+    { id: "records", name: "Записи", icon: "FileText" },
     { id: "profile", name: "Профиль", icon: "User" }
   ];
 
@@ -122,6 +124,7 @@ const PsychologistDashboard = () => {
         {activeTab === "clients" && <ClientsTab />}
         {activeTab === "messages" && <MessagesTab />}
         {activeTab === "schedule" && <ScheduleTab />}
+        {activeTab === "records" && <RecordsTab />}
         {activeTab === "profile" && <ProfileTab psychologist={psychologist} />}
       </div>
     </div>
@@ -421,6 +424,15 @@ const ProfileTab = ({ psychologist }: { psychologist: PsychologistAuth }) => {
           </Button>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+const RecordsTab = () => {
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-warm-800">Записи на сессии</h2>
+      <PaymentNotifications userRole="psychologist" psychologistName={psychologist?.name} />
     </div>
   );
 };

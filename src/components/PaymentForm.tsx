@@ -7,12 +7,14 @@ interface PaymentFormProps {
   psychologistName?: string;
   sessionPrice?: number;
   onClose?: () => void;
+  onPaymentSuccess?: (clientData: {name: string, email: string, phone: string}) => void;
 }
 
 const PaymentForm: React.FC<PaymentFormProps> = ({ 
   psychologistName = "", 
   sessionPrice = 2500,
-  onClose 
+  onClose,
+  onPaymentSuccess 
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -64,6 +66,16 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           // Вызываем функцию оплаты T-Bank
           if (typeof (window as any).pay === 'function') {
             (window as any).pay(form);
+            
+            // После успешной оплаты вызываем callback
+            if (onPaymentSuccess) {
+              const clientData = {
+                name: formData.get('name') as string,
+                email: email,
+                phone: phone
+              };
+              onPaymentSuccess(clientData);
+            }
           }
         });
       }

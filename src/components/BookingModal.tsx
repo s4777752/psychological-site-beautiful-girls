@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@/components/ui/icon';
+import PaymentForm from '@/components/PaymentForm';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [step, setStep] = useState<'date' | 'payment' | 'confirmation'>('date');
 
   // Генерация доступных временных слотов на основе расписания психолога
   const getTimeSlots = (date: string): TimeSlot[] => {
@@ -88,13 +90,42 @@ const BookingModal: React.FC<BookingModalProps> = ({
     setSelectedTime('');
   };
 
-  const handleBooking = () => {
+  const handleDateTimeConfirm = () => {
     if (selectedDate && selectedTime) {
-      alert(`Запись успешно создана!\n\nПсихолог: ${psychologistName}\nДата: ${new Date(selectedDate).toLocaleDateString('ru-RU')}\nВремя: ${selectedTime}`);
-      onClose();
-      setSelectedDate('');
-      setSelectedTime('');
+      setStep('payment');
     }
+  };
+
+  const handlePaymentSuccess = (clientData: {name: string, email: string, phone: string}) => {
+    // Создаем запись о бронировании
+    const booking = {
+      id: Date.now().toString(),
+      psychologistName,
+      psychologistSpecialty,
+      date: selectedDate,
+      time: selectedTime,
+      clientName: clientData.name,
+      clientEmail: clientData.email,
+      clientPhone: clientData.phone,
+      status: 'paid',
+      paymentStatus: 'completed',
+      amount: 2500,
+      createdAt: new Date().toISOString()
+    };
+
+    // Сохраняем в localStorage для отображения в кабинетах
+    const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    existingBookings.push(booking);
+    localStorage.setItem('bookings', JSON.stringify(existingBookings));
+
+    setStep('confirmation');
+  };
+
+  const handleClose = () => {
+    setStep('date');
+    setSelectedDate('');
+    setSelectedTime('');
+    onClose();
   };
 
   const monthNames = [
@@ -114,42 +145,76 @@ const BookingModal: React.FC<BookingModalProps> = ({
           <div className="flex justify-between items-center mb-6">
             <div>
               <h3 className="text-2xl font-montserrat font-bold text-secondary">
-                Запись к специалисту
+                {step === 'date' && 'Запись к специалисту'}
+                {step === 'payment' && 'Оплата сеанса'}
+                {step === 'confirmation' && 'Запись подтверждена'}
               </h3>
               <p className="text-warm-600 mt-1">
                 {psychologistName} • {psychologistSpecialty}
               </p>
+              {step === 'payment' && selectedDate && selectedTime && (
+                <p className="text-primary mt-1 font-medium">
+                  {new Date(selectedDate).toLocaleDateString('ru-RU')} в {selectedTime}
+                </p>
+              )}
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-warm-500 hover:text-warm-700 transition-colors"
             >
               <Icon name="X" size={24} />
             </button>
           </div>
 
-          {/* Calendar */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-lg font-semibold text-secondary">Выберите дату</h4>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-                  className="p-1 text-warm-600 hover:text-warm-800 transition-colors"
-                >
-                  <Icon name="ChevronLeft" size={20} />
-                </button>
-                <span className="text-lg font-semibold text-secondary min-w-[140px] text-center">
-                  {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                </span>
-                <button
-                  onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
-                  className="p-1 text-warm-600 hover:text-warm-800 transition-colors"
-                >
-                  <Icon name="ChevronRight" size={20} />
-                </button>
+          {/* Progress Steps */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center space-x-4">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                step === 'date' ? 'bg-primary text-white' : 'bg-green-500 text-white'
+              }`}>
+                {step === 'date' ? '1' : <Icon name="Check" size={16} />}
+              </div>
+              <div className={`h-0.5 w-16 ${step === 'date' ? 'bg-gray-300' : 'bg-green-500'}`} />
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                step === 'payment' ? 'bg-primary text-white' : 
+                step === 'confirmation' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
+              }`}>
+                {step === 'confirmation' ? <Icon name="Check" size={16} /> : '2'}
+              </div>
+              <div className={`h-0.5 w-16 ${step === 'confirmation' ? 'bg-green-500' : 'bg-gray-300'}`} />
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                step === 'confirmation' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'
+              }`}>
+                {step === 'confirmation' ? <Icon name="Check" size={16} /> : '3'}
               </div>
             </div>
+          </div>
+
+          {/* Step 1: Date and Time Selection */}
+          {step === 'date' && (
+            <>
+              {/* Calendar */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-lg font-semibold text-secondary">Выберите дату</h4>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
+                      className="p-1 text-warm-600 hover:text-warm-800 transition-colors"
+                    >
+                      <Icon name="ChevronLeft" size={20} />
+                    </button>
+                    <span className="text-lg font-semibold text-secondary min-w-[140px] text-center">
+                      {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                    </span>
+                    <button
+                      onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
+                      className="p-1 text-warm-600 hover:text-warm-800 transition-colors"
+                    >
+                      <Icon name="ChevronRight" size={20} />
+                    </button>
+                  </div>
+                </div>
             
             <p className="text-sm text-warm-600 mb-4">
               <Icon name="Info" size={14} className="inline mr-1" />
@@ -232,28 +297,83 @@ const BookingModal: React.FC<BookingModalProps> = ({
             </div>
           )}
 
-          {/* Booking Button */}
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={onClose}
-              className="px-6 py-3 border-2 border-warm-200 text-warm-700 rounded-lg hover:bg-warm-50 transition-colors"
-            >
-              Отмена
-            </button>
-            <button
-              onClick={handleBooking}
-              disabled={!selectedDate || !selectedTime}
-              className={`
-                px-6 py-3 rounded-lg font-medium transition-colors
-                ${selectedDate && selectedTime
-                  ? 'bg-primary text-white hover:bg-primary-dark'
-                  : 'bg-warm-200 text-warm-500 cursor-not-allowed'
-                }
-              `}
-            >
-              Записаться
-            </button>
-          </div>
+              {/* Date Selection Buttons */}
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={handleClose}
+                  className="px-6 py-3 border-2 border-warm-200 text-warm-700 rounded-lg hover:bg-warm-50 transition-colors"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={handleDateTimeConfirm}
+                  disabled={!selectedDate || !selectedTime}
+                  className={`
+                    px-6 py-3 rounded-lg font-medium transition-colors
+                    ${selectedDate && selectedTime
+                      ? 'bg-primary text-white hover:bg-primary-dark'
+                      : 'bg-warm-200 text-warm-500 cursor-not-allowed'
+                    }
+                  `}
+                >
+                  Перейти к оплате
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Step 2: Payment */}
+          {step === 'payment' && (
+            <div>
+              <PaymentForm
+                psychologistName={psychologistName}
+                sessionPrice={2500}
+                onClose={() => setStep('date')}
+                onPaymentSuccess={handlePaymentSuccess}
+              />
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setStep('date')}
+                  className="px-6 py-3 border-2 border-warm-200 text-warm-700 rounded-lg hover:bg-warm-50 transition-colors"
+                >
+                  Назад
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Confirmation */}
+          {step === 'confirmation' && (
+            <div className="text-center py-8">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Icon name="Check" size={32} className="text-green-600" />
+                </div>
+                <h4 className="text-xl font-semibold text-secondary mb-2">
+                  Запись успешно создана!
+                </h4>
+                <p className="text-warm-600">
+                  Оплата прошла успешно. Вы получите подтверждение на указанный email.
+                </p>
+              </div>
+              <div className="bg-warm-50 rounded-lg p-4 mb-6">
+                <div className="text-left">
+                  <p><strong>Психолог:</strong> {psychologistName}</p>
+                  <p><strong>Специализация:</strong> {psychologistSpecialty}</p>
+                  <p><strong>Дата:</strong> {new Date(selectedDate).toLocaleDateString('ru-RU')}</p>
+                  <p><strong>Время:</strong> {selectedTime}</p>
+                  <p><strong>Длительность:</strong> 50 минут</p>
+                  <p><strong>Стоимость:</strong> 2 500 ₽</p>
+                </div>
+              </div>
+              <button
+                onClick={handleClose}
+                className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+              >
+                Закрыть
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
