@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import PsychologistCalendar from "@/components/PsychologistCalendar";
 import ChatInterface from "@/components/ChatInterface";
+import ScheduleManager from "@/components/ScheduleManager";
 
 interface PsychologistAuth {
   id: string;
@@ -274,11 +275,18 @@ const ClientsTab = () => {
   );
 };
 
-const ScheduleTab = () => (
-  <div className="space-y-6">
-    <PsychologistCalendar />
-  </div>
-);
+const ScheduleTab = () => {
+  const [psychologist] = useState<PsychologistAuth | null>(() => {
+    const auth = localStorage.getItem("psychologistAuth");
+    return auth ? JSON.parse(auth) : null;
+  });
+
+  return (
+    <div className="space-y-6">
+      <ScheduleManager psychologistName={psychologist?.name || "Психолог"} />
+    </div>
+  );
+};
 
 const ProfileTab = ({ psychologist }: { psychologist: PsychologistAuth }) => {
   const [profileData, setProfileData] = useState({

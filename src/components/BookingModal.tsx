@@ -23,44 +23,24 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Генерация доступных временных слотов
+  // Генерация доступных временных слотов на основе расписания психолога
   const getTimeSlots = (date: string): TimeSlot[] => {
     if (!date) return [];
     
-    const selectedDateObj = new Date(date);
-    const isWeekend = selectedDateObj.getDay() === 0 || selectedDateObj.getDay() === 6;
+    // Получаем расписание психолога из localStorage
+    const scheduleData = JSON.parse(localStorage.getItem('psychologistSchedule') || '{}');
+    const psychologistSlots = scheduleData[date];
     
-    if (isWeekend) {
-      // Расширенное время работы в выходные
-      return [
-        { time: '10:00', available: true },
-        { time: '11:00', available: true },
-        { time: '12:00', available: false },
-        { time: '13:00', available: true },
-        { time: '14:00', available: true },
-        { time: '15:00', available: true },
-        { time: '16:00', available: false },
-        { time: '17:00', available: true },
-        { time: '18:00', available: true },
-        { time: '19:00', available: true },
-        { time: '20:00', available: false },
-        { time: '21:00', available: true }
-      ];
-    } else {
-      // Обычные рабочие дни
-      return [
-        { time: '09:00', available: true },
-        { time: '10:00', available: false },
-        { time: '11:00', available: true },
-        { time: '12:00', available: true },
-        { time: '14:00', available: false },
-        { time: '15:00', available: true },
-        { time: '16:00', available: true },
-        { time: '17:00', available: true },
-        { time: '18:00', available: false },
-        { time: '19:00', available: true }
-      ];
+    if (psychologistSlots) {
+      // Используем расписание психолога
+      return psychologistSlots.map((slot: any) => ({
+        time: slot.time,
+        available: slot.available && !slot.booked
+      }));
     }
+    
+    // Если расписание не настроено, возвращаем пустой массив
+    return [];
   };
 
   const timeSlots = getTimeSlots(selectedDate);
