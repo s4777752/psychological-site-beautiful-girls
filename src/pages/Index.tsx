@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +55,7 @@ const Index = () => {
   const [loginData, setLoginData] = useState({username: '', password: ''});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<'psychologist' | 'manager' | null>(null);
-  const psychologists = [
+  const [psychologists, setPsychologists] = useState([
     {
       id: 1,
       name: "Анна Смирнова",
@@ -122,7 +122,43 @@ const Index = () => {
       sessions: 490,
       price: 2500
     }
-  ];
+  ]);
+
+  // Загружаем психологов из localStorage
+  useEffect(() => {
+    const loadPsychologists = () => {
+      const savedPsychologists = localStorage.getItem("psychologists");
+      if (savedPsychologists) {
+        const psychologistData = JSON.parse(savedPsychologists);
+        // Преобразуем данные из формата управляющего в формат главной страницы
+        const transformedPsychologists = psychologistData.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          specialization: p.specialization,
+          experience: `${p.experience} лет`,
+          image: p.photo || "/img/default-avatar.jpg",
+          description: p.description,
+          rating: 4.8,
+          sessions: Math.floor(Math.random() * 500) + 100,
+          price: p.price,
+          isActive: p.isActive
+        }));
+        setPsychologists(transformedPsychologists);
+      }
+    };
+
+    loadPsychologists();
+
+    // Слушаем изменения в localStorage для синхронизации
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'psychologists') {
+        loadPsychologists();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const services = [
     { name: "Индивидуальная консультация", price: "2500 ₽/час", icon: "User" },
@@ -378,32 +414,58 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {psychologists.map((psychologist) => (
-              <Card key={psychologist.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 animate-fade-in border-4 border-warm-300">
-                <div className="aspect-[4/3] overflow-hidden cursor-pointer">
+              <Card key={psychologist.id} className={`overflow-hidden transition-all duration-300 animate-fade-in border-4 ${
+                psychologist.isActive === false 
+                  ? 'border-gray-300 opacity-60 pointer-events-none' 
+                  : 'border-warm-300 hover:shadow-xl'
+              }`}>
+                <div className="aspect-[4/3] overflow-hidden cursor-pointer relative">
                   <img 
                     src={psychologist.image} 
                     alt={psychologist.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    onClick={() => handleAvatarClick(psychologist.image, psychologist.name)}
+                    className={`w-full h-full object-cover transition-transform duration-300 ${
+                      psychologist.isActive === false ? 'grayscale' : 'hover:scale-105'
+                    }`}
+                    onClick={() => psychologist.isActive !== false && handleAvatarClick(psychologist.image, psychologist.name)}
                   />
+                  {psychologist.isActive === false && (
+                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                      <div className="text-white text-center">
+                        <Icon name="Clock" size={32} className="mx-auto mb-2" />
+                        <p className="font-semibold">Временно недоступен</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-montserrat font-semibold text-secondary">
+                    <h3 className={`text-xl font-montserrat font-semibold ${
+                      psychologist.isActive === false ? 'text-gray-500' : 'text-secondary'
+                    }`}>
                       {psychologist.name}
                     </h3>
-                    <Badge variant="secondary" className="bg-accent text-secondary">
+                    <Badge variant={psychologist.isActive === false ? "outline" : "secondary"} 
+                           className={psychologist.isActive === false ? "text-gray-500" : "bg-accent text-secondary"}>
                       {psychologist.experience}
                     </Badge>
                   </div>
-                  <p className="text-primary font-medium mb-3">{psychologist.specialization}</p>
-                  <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
+                  <p className={`font-medium mb-3 ${
+                    psychologist.isActive === false ? 'text-gray-500' : 'text-primary'
+                  }`}>{psychologist.specialization}</p>
+                  <p className={`text-sm mb-4 ${
+                    psychologist.isActive === false ? 'text-gray-400' : 'text-warm-700'
+                  }`}>{psychologist.description}</p>
                   <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-white"
-                    onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
+                    className={`w-full ${
+                      psychologist.isActive === false 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-primary hover:bg-primary/90'
+                    } text-white`}
+                    onClick={() => psychologist.isActive !== false && handleBookingClick(psychologist.name, psychologist.specialization)}
+                    disabled={psychologist.isActive === false}
                   >
-                    <Icon name="Calendar" className="mr-2" size={16} />
-                    Записаться
+                    <Icon name={psychologist.isActive === false ? "Clock" : "Calendar"} className="mr-2" size={16} />
+                    {psychologist.isActive === false ? "Недоступен" : "Записаться"}
                   </Button>
                 </CardContent>
               </Card>
