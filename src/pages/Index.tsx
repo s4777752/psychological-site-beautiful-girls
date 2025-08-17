@@ -18,6 +18,8 @@ const Index = () => {
   const [userReviews, setUserReviews] = useState<Array<{name: string, text: string, rating: number, replies?: Array<{name: string, text: string, timestamp: Date}>}>>([]);
   const [showReplyForm, setShowReplyForm] = useState<{show: boolean, reviewIndex: number}>({show: false, reviewIndex: -1});
   const [replyFormData, setReplyFormData] = useState({name: '', text: ''});
+  const [editingReply, setEditingReply] = useState<{show: boolean, reviewIndex: number, replyIndex: number}>({show: false, reviewIndex: -1, replyIndex: -1});
+  const [editReplyData, setEditReplyData] = useState({name: '', text: ''});
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [loginData, setLoginData] = useState({username: '', password: ''});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -199,6 +201,65 @@ const Index = () => {
       
       setReplyFormData({ name: replyFormData.name, text: '' }); // Оставляем имя
       setShowReplyForm({ show: false, reviewIndex: -1 });
+    }
+  };
+
+  // Функция для начала редактирования ответа
+  const handleEditReply = (reviewIndex: number, replyIndex: number, reply: {name: string, text: string}) => {
+    setEditReplyData({name: reply.name, text: reply.text});
+    setEditingReply({show: true, reviewIndex, replyIndex});
+  };
+
+  // Функция для сохранения отредактированного ответа
+  const handleSaveEditReply = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editReplyData.text && isAuthenticated) {
+      const reviewIndex = editingReply.reviewIndex;
+      const replyIndex = editingReply.replyIndex;
+      
+      if (reviewIndex < defaultReviews.length) {
+        // Если это базовый отзыв, показываем уведомление
+        alert('Ответ обновлен! В реальном приложении изменения сохраняются в базе данных.');
+      } else {
+        // Если это пользовательский отзыв, обновляем ответ
+        const userReviewIndex = reviewIndex - defaultReviews.length;
+        setUserReviews(prev => prev.map((review, index) => 
+          index === userReviewIndex 
+            ? { 
+                ...review, 
+                replies: review.replies?.map((reply, idx) => 
+                  idx === replyIndex 
+                    ? { ...reply, text: editReplyData.text } 
+                    : reply
+                ) || []
+              }
+            : review
+        ));
+      }
+      
+      setEditingReply({show: false, reviewIndex: -1, replyIndex: -1});
+      setEditReplyData({name: '', text: ''});
+    }
+  };
+
+  // Функция для удаления ответа
+  const handleDeleteReply = (reviewIndex: number, replyIndex: number) => {
+    if (confirm('Вы действительно хотите удалить этот ответ?')) {
+      if (reviewIndex < defaultReviews.length) {
+        // Если это базовый отзыв, показываем уведомление
+        alert('Ответ удален! В реальном приложении изменения сохраняются в базе данных.');
+      } else {
+        // Если это пользовательский отзыв, удаляем ответ
+        const userReviewIndex = reviewIndex - defaultReviews.length;
+        setUserReviews(prev => prev.map((review, index) => 
+          index === userReviewIndex 
+            ? { 
+                ...review, 
+                replies: review.replies?.filter((_, idx) => idx !== replyIndex) || []
+              }
+            : review
+        ));
+      }
     }
   };
 
@@ -429,10 +490,32 @@ const Index = () => {
                         <div key={replyIndex} className="bg-warm-50 p-3 rounded-lg border-l-4 border-primary">
                           <p className="text-sm text-warm-700 mb-2">"{reply.text}"</p>
                           <div className="flex justify-between items-center">
-                            <p className="text-xs font-medium text-primary">{reply.name}</p>
-                            <p className="text-xs text-warm-500">
-                              {reply.timestamp.toLocaleDateString('ru-RU')}
-                            </p>
+                            <div className="flex items-center space-x-2">
+                              <p className="text-xs font-medium text-primary">{reply.name}</p>
+                              <p className="text-xs text-warm-500">
+                                {reply.timestamp.toLocaleDateString('ru-RU')}
+                              </p>
+                            </div>
+                            {isAuthenticated && (
+                              <div className="flex items-center space-x-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditReply(index, replyIndex, reply)}
+                                  className="h-6 w-6 p-0 text-primary hover:bg-primary hover:text-white"
+                                >
+                                  <Icon name="Edit2" size={12} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteReply(index, replyIndex)}
+                                  className="h-6 w-6 p-0 text-red-500 hover:bg-red-500 hover:text-white"
+                                >
+                                  <Icon name="Trash2" size={12} />
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -703,6 +786,70 @@ const Index = () => {
                       className="flex-1 bg-primary hover:bg-primary/90 text-white"
                     >
                       Войти
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Reply Form Modal */}
+          {editingReply.show && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-secondary">Редактировать ответ</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingReply({show: false, reviewIndex: -1, replyIndex: -1})}
+                    className="text-warm-500 hover:text-warm-700"
+                  >
+                    <Icon name="X" size={20} />
+                  </Button>
+                </div>
+
+                <form onSubmit={handleSaveEditReply} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Имя специалиста
+                    </label>
+                    <input
+                      type="text"
+                      value={editReplyData.name}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg bg-warm-50 text-warm-700"
+                      readOnly
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-secondary mb-2">
+                      Редактировать ответ
+                    </label>
+                    <textarea
+                      value={editReplyData.text}
+                      onChange={(e) => setEditReplyData(prev => ({ ...prev, text: e.target.value }))}
+                      className="w-full px-3 py-2 border border-warm-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                      rows={4}
+                      placeholder="Отредактируйте ваш ответ..."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setEditingReply({show: false, reviewIndex: -1, replyIndex: -1})}
+                      className="flex-1"
+                    >
+                      Отменить
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                    >
+                      Сохранить
                     </Button>
                   </div>
                 </form>
