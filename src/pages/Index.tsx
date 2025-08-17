@@ -152,7 +152,7 @@ const Index = () => {
             name: "Анна Смирнова",
             specialization: "Семейная терапия",
             experience: "8 лет",
-            image: "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
+            image: "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
             description: "Специалист по семейным отношениям и детской психологии",
             rating: 4.9,
             sessions: 450,
@@ -164,7 +164,7 @@ const Index = () => {
             name: "Мария Козлова",
             specialization: "Тревожные расстройства",
             experience: "12 лет",
-            image: "/img/e46f379d-2965-4b93-832b-a2aa073c0bb0.jpg",
+            image: "/img/aa484c8b-db6a-418c-b2fa-6ecc552a72ac.jpg",
             description: "Эксперт в области работы со стрессом и тревожностью",
             rating: 4.8,
             sessions: 720,
@@ -176,7 +176,7 @@ const Index = () => {
             name: "Елена Волкова", 
             specialization: "Личностная терапия",
             experience: "6 лет",
-            image: "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
+            image: "/img/314793dd-0a21-41f5-a6ba-6abba58891e5.jpg",
             description: "Помогаю в развитии личности и самопознании",
             rating: 4.9,
             sessions: 320,
@@ -188,7 +188,7 @@ const Index = () => {
             name: "Дарья Петрова",
             specialization: "Когнитивно-поведенческая терапия",
             experience: "10 лет",
-            image: "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
+            image: "/img/5239e8de-b7dc-4b08-927e-1b7f9f6f7cdf.jpg",
             description: "Специалист по работе с депрессией и фобиями",
             rating: 4.7,
             sessions: 580,
@@ -200,7 +200,7 @@ const Index = () => {
             name: "София Романова",
             specialization: "Арт-терапия",
             experience: "7 лет", 
-            image: "/img/4b2e6ff1-6a65-483d-9d56-631b510a50d3.jpg",
+            image: "/img/f2effb86-7055-464e-9be7-7162f7d3eee3.jpg",
             description: "Творческий подход к решению внутренних конфликтов",
             rating: 4.8,
             sessions: 380,
@@ -212,7 +212,7 @@ const Index = () => {
             name: "Виктория Новикова",
             specialization: "Парная терапия",
             experience: "9 лет",
-            image: "/img/b50310a6-0322-4453-a080-ed2a130fc8a9.jpg", 
+            image: "/img/29e8257d-8db2-4f36-b298-1133a31b71c3.jpg", 
             description: "Восстанавливаю гармонию в отношениях между партнерами",
             rating: 4.9,
             sessions: 490,
@@ -226,15 +226,15 @@ const Index = () => {
     // Функция для получения дефолтного изображения на основе имени
     const getDefaultImage = (name: string) => {
       const imageMap: { [key: string]: string } = {
-        "Анна Петрова": "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
-        "Анна Смирнова": "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
-        "Мария Козлова": "/img/e46f379d-2965-4b93-832b-a2aa073c0bb0.jpg",
-        "Елена Волкова": "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
-        "Дарья Петрова": "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
-        "София Романова": "/img/4b2e6ff1-6a65-483d-9d56-631b510a50d3.jpg",
-        "Виктория Новикова": "/img/b50310a6-0322-4453-a080-ed2a130fc8a9.jpg"
+        "Анна Петрова": "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
+        "Анна Смирнова": "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
+        "Мария Козлова": "/img/aa484c8b-db6a-418c-b2fa-6ecc552a72ac.jpg",
+        "Елена Волкова": "/img/314793dd-0a21-41f5-a6ba-6abba58891e5.jpg",
+        "Дарья Петрова": "/img/5239e8de-b7dc-4b08-927e-1b7f9f6f7cdf.jpg",
+        "София Романова": "/img/f2effb86-7055-464e-9be7-7162f7d3eee3.jpg",
+        "Виктория Новикова": "/img/29e8257d-8db2-4f36-b298-1133a31b71c3.jpg"
       };
-      return imageMap[name] || "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg";
+      return imageMap[name] || "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg";
     };
 
     loadPsychologists();
