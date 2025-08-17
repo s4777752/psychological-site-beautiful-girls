@@ -141,8 +141,8 @@ const PsychologistsGrid: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="mb-4">
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
                   <div className="flex items-center">
                     <Icon name="Star" size={16} className="text-yellow-400 mr-1 fill-current" />
                     <span>{psychologist.rating}</span>
@@ -155,6 +155,10 @@ const PsychologistsGrid: React.FC = () => {
                     <Icon name="Clock" size={16} className="mr-1" />
                     <span>{psychologist.experience}</span>
                   </div>
+                </div>
+                <div className="flex items-center text-sm text-blue-600 font-medium">
+                  <Icon name="Timer" size={16} className="mr-1" />
+                  <span>Сеанс: 50 минут</span>
                 </div>
               </div>
 

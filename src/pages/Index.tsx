@@ -398,6 +398,21 @@ const Index = () => {
                   </div>
                   <p className="text-primary font-medium mb-3">{psychologist.specialization}</p>
                   <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
+                  
+                  <div className="flex items-center justify-between mb-4 text-sm text-warm-600">
+                    <div className="flex items-center">
+                      <Icon name="Star" size={16} className="text-yellow-400 mr-1 fill-current" />
+                      <span>{psychologist.rating}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Icon name="Timer" size={16} className="mr-1" />
+                      <span>50 мин</span>
+                    </div>
+                    <div className="font-semibold text-secondary">
+                      {psychologist.price.toLocaleString('ru-RU')} ₽
+                    </div>
+                  </div>
+                  
                   <Button 
                     className="w-full bg-primary hover:bg-primary/90 text-white"
                     onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
