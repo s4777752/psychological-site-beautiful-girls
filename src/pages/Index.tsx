@@ -334,13 +334,13 @@ const Index = () => {
       </section>
 
       {/* Psychologists Section */}
-      <section id="psychologists" className="py-20 bg-white">
+      <section id="psychologists" className="py-20 bg-warm-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-montserrat font-bold text-secondary mb-4">
+            <h2 className="text-4xl font-montserrat font-bold text-white mb-4">
               Наши психологи
             </h2>
-            <p className="text-lg text-warm-700 max-w-2xl mx-auto">
+            <p className="text-lg text-warm-100 max-w-2xl mx-auto">
               Команда опытных специалистов с высшим психологическим образованием
             </p>
           </div>
