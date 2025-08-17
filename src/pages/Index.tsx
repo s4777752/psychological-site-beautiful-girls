@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
+import BookingModal from "@/components/BookingModal";
+import BookingModal from "@/components/BookingModal";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,6 +22,21 @@ const Index = () => {
   const [replyFormData, setReplyFormData] = useState({name: '', text: ''});
   const [editingReply, setEditingReply] = useState<{show: boolean, reviewIndex: number, replyIndex: number}>({show: false, reviewIndex: -1, replyIndex: -1});
   const [editReplyData, setEditReplyData] = useState({name: '', text: ''});
+  
+  // Booking modal state
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedPsychologist, setSelectedPsychologist] = useState<{name: string, specialty: string}>({name: '', specialty: ''});
+
+  // Booking functions
+  const handleBookingClick = (name: string, specialty: string) => {
+    setSelectedPsychologist({ name, specialty });
+    setIsBookingModalOpen(true);
+  };
+
+  const closeBookingModal = () => {
+    setIsBookingModalOpen(false);
+    setSelectedPsychologist({ name: '', specialty: '' });
+  };
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [loginData, setLoginData] = useState({username: '', password: ''});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -368,7 +385,7 @@ const Index = () => {
                   <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
                   <Button 
                     className="w-full bg-primary hover:bg-primary/90 text-white"
-                    onClick={() => navigate('/client/login')}
+                    onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
                   >
                     <Icon name="Calendar" className="mr-2" size={16} />
                     Записаться
@@ -994,6 +1011,14 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={closeBookingModal}
+        psychologistName={selectedPsychologist.name}
+        psychologistSpecialty={selectedPsychologist.specialty}
+      />
     </div>
   );
 };
