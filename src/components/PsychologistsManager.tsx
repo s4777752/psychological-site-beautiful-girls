@@ -46,7 +46,7 @@ const PsychologistsManager = () => {
           specialization: "Семейная терапия",
           experience: 8,
           description: "Специализируюсь на работе с семейными парами и детско-родительскими отношениями",
-          photo: "/api/placeholder/150/150",
+          photo: "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
           price: 3500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -60,7 +60,7 @@ const PsychologistsManager = () => {
           specialization: "Когнитивно-поведенческая терапия",
           experience: 12,
           description: "Помогаю справиться с тревожными расстройствами и депрессией",
-          photo: "/api/placeholder/150/150",
+          photo: "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
           price: 4000,
           isActive: true,
           createdAt: new Date().toISOString()
