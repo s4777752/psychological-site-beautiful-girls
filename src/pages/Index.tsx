@@ -988,7 +988,7 @@ const Index = () => {
               <div className="space-y-2 text-warm-200">
                 <p>+7 (495) 123-45-67</p>
                 <p>info@mindcare.ru</p>
-                <p>Ежедневно 9:00 - 21:00</p>
+                <p>Ежедневно 9:00 - 24:00</p>
               </div>
             </div>
           </div>
