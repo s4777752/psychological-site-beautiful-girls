@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import BookingModal from "@/components/BookingModal";
-import BookingModal from "@/components/BookingModal";
 
 const Index = () => {
   const navigate = useNavigate();
