@@ -25,6 +25,10 @@ const Index = () => {
   // Booking modal state
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedPsychologist, setSelectedPsychologist] = useState<{name: string, specialty: string}>({name: '', specialty: ''});
+  
+  // Avatar modal state
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<{image: string, name: string}>({image: '', name: ''});
 
   // Booking functions
   const handleBookingClick = (name: string, specialty: string) => {
@@ -35,6 +39,17 @@ const Index = () => {
   const closeBookingModal = () => {
     setIsBookingModalOpen(false);
     setSelectedPsychologist({ name: '', specialty: '' });
+  };
+
+  // Avatar functions
+  const handleAvatarClick = (image: string, name: string) => {
+    setSelectedAvatar({ image, name });
+    setIsAvatarModalOpen(true);
+  };
+
+  const closeAvatarModal = () => {
+    setIsAvatarModalOpen(false);
+    setSelectedAvatar({ image: '', name: '' });
   };
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [loginData, setLoginData] = useState({username: '', password: ''});
@@ -364,11 +379,12 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {psychologists.map((psychologist) => (
               <Card key={psychologist.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 animate-fade-in border-4 border-warm-300">
-                <div className="aspect-[4/3] overflow-hidden">
+                <div className="aspect-[4/3] overflow-hidden cursor-pointer">
                   <img 
                     src={psychologist.image} 
                     alt={psychologist.name}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    onClick={() => handleAvatarClick(psychologist.image, psychologist.name)}
                   />
                 </div>
                 <CardContent className="p-6">
@@ -1018,6 +1034,40 @@ const Index = () => {
         psychologistName={selectedPsychologist.name}
         psychologistSpecialty={selectedPsychologist.specialty}
       />
+
+      {/* Avatar Modal */}
+      {isAvatarModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
+          onClick={closeAvatarModal}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] flex flex-col items-center">
+            <button
+              onClick={closeAvatarModal}
+              className="absolute -top-12 right-0 text-white hover:text-warm-300 transition-colors z-10"
+            >
+              <Icon name="X" size={32} />
+            </button>
+            
+            <div className="bg-white rounded-xl overflow-hidden shadow-2xl max-w-full max-h-full">
+              <img
+                src={selectedAvatar.image}
+                alt={selectedAvatar.name}
+                className="max-w-full max-h-[80vh] object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <div className="p-4 text-center bg-white">
+                <h3 className="text-xl font-montserrat font-semibold text-secondary">
+                  {selectedAvatar.name}
+                </h3>
+                <p className="text-warm-600 text-sm mt-1">
+                  Нажмите в любом месте, чтобы закрыть
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
