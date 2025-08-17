@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +55,7 @@ const Index = () => {
   const [loginData, setLoginData] = useState({username: '', password: ''});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<'psychologist' | 'manager' | null>(null);
-  const [psychologists, setPsychologists] = useState([
+  const psychologists = [
     {
       id: 1,
       name: "Анна Смирнова",
@@ -122,133 +122,7 @@ const Index = () => {
       sessions: 490,
       price: 2500
     }
-  ]);
-
-  // Загружаем психологов из localStorage
-  useEffect(() => {
-    const loadPsychologists = () => {
-      const savedPsychologists = localStorage.getItem("psychologists");
-      if (savedPsychologists) {
-        const psychologistData = JSON.parse(savedPsychologists);
-        // Преобразуем данные из формата управляющего в формат главной страницы
-        const transformedPsychologists = psychologistData.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          specialization: p.specialization,
-          experience: `${p.experience} лет`,
-          image: p.photo && p.photo !== "/api/placeholder/150/150" ? p.photo : getDefaultImage(p.name),
-          description: p.description,
-          rating: 4.8,
-          sessions: Math.floor(Math.random() * 500) + 100,
-          price: p.price,
-          isActive: p.isActive !== undefined ? p.isActive : true
-        }));
-        setPsychologists(transformedPsychologists);
-      } else {
-        // Если нет данных в localStorage, используем оригинальные данные
-        setPsychologists([
-          {
-            id: 1,
-            name: "Анна Смирнова",
-            specialization: "Семейная терапия",
-            experience: "8 лет",
-            image: "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
-            description: "Специалист по семейным отношениям и детской психологии",
-            rating: 4.9,
-            sessions: 450,
-            price: 2500,
-            isActive: true
-          },
-          {
-            id: 2, 
-            name: "Мария Козлова",
-            specialization: "Тревожные расстройства",
-            experience: "12 лет",
-            image: "/img/aa484c8b-db6a-418c-b2fa-6ecc552a72ac.jpg",
-            description: "Эксперт в области работы со стрессом и тревожностью",
-            rating: 4.8,
-            sessions: 720,
-            price: 2500,
-            isActive: true
-          },
-          {
-            id: 3,
-            name: "Елена Волкова", 
-            specialization: "Личностная терапия",
-            experience: "6 лет",
-            image: "/img/314793dd-0a21-41f5-a6ba-6abba58891e5.jpg",
-            description: "Помогаю в развитии личности и самопознании",
-            rating: 4.9,
-            sessions: 320,
-            price: 2500,
-            isActive: true
-          },
-          {
-            id: 4,
-            name: "Дарья Петрова",
-            specialization: "Когнитивно-поведенческая терапия",
-            experience: "10 лет",
-            image: "/img/5239e8de-b7dc-4b08-927e-1b7f9f6f7cdf.jpg",
-            description: "Специалист по работе с депрессией и фобиями",
-            rating: 4.7,
-            sessions: 580,
-            price: 2500,
-            isActive: true
-          },
-          {
-            id: 5,
-            name: "София Романова",
-            specialization: "Арт-терапия",
-            experience: "7 лет", 
-            image: "/img/f2effb86-7055-464e-9be7-7162f7d3eee3.jpg",
-            description: "Творческий подход к решению внутренних конфликтов",
-            rating: 4.8,
-            sessions: 380,
-            price: 2500,
-            isActive: true
-          },
-          {
-            id: 6,
-            name: "Виктория Новикова",
-            specialization: "Парная терапия",
-            experience: "9 лет",
-            image: "/img/29e8257d-8db2-4f36-b298-1133a31b71c3.jpg", 
-            description: "Восстанавливаю гармонию в отношениях между партнерами",
-            rating: 4.9,
-            sessions: 490,
-            price: 2500,
-            isActive: true
-          }
-        ]);
-      }
-    };
-
-    // Функция для получения дефолтного изображения на основе имени
-    const getDefaultImage = (name: string) => {
-      const imageMap: { [key: string]: string } = {
-        "Анна Петрова": "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
-        "Анна Смирнова": "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg",
-        "Мария Козлова": "/img/aa484c8b-db6a-418c-b2fa-6ecc552a72ac.jpg",
-        "Елена Волкова": "/img/314793dd-0a21-41f5-a6ba-6abba58891e5.jpg",
-        "Дарья Петрова": "/img/5239e8de-b7dc-4b08-927e-1b7f9f6f7cdf.jpg",
-        "София Романова": "/img/f2effb86-7055-464e-9be7-7162f7d3eee3.jpg",
-        "Виктория Новикова": "/img/29e8257d-8db2-4f36-b298-1133a31b71c3.jpg"
-      };
-      return imageMap[name] || "/img/709609a5-4a2c-4620-85c0-26ff7678568e.jpg";
-    };
-
-    loadPsychologists();
-
-    // Слушаем изменения в localStorage для синхронизации
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'psychologists') {
-        loadPsychologists();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  ];
 
   const services = [
     { name: "Индивидуальная консультация", price: "2500 ₽/час", icon: "User" },
@@ -504,58 +378,32 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {psychologists.map((psychologist) => (
-              <Card key={psychologist.id} className={`overflow-hidden transition-all duration-300 animate-fade-in border-4 ${
-                psychologist.isActive === false 
-                  ? 'border-gray-300 opacity-60 pointer-events-none' 
-                  : 'border-warm-300 hover:shadow-xl'
-              }`}>
-                <div className="aspect-[4/3] overflow-hidden cursor-pointer relative">
+              <Card key={psychologist.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 animate-fade-in border-4 border-warm-300">
+                <div className="aspect-[4/3] overflow-hidden cursor-pointer">
                   <img 
                     src={psychologist.image} 
                     alt={psychologist.name}
-                    className={`w-full h-full object-cover transition-transform duration-300 ${
-                      psychologist.isActive === false ? 'grayscale' : 'hover:scale-105'
-                    }`}
-                    onClick={() => psychologist.isActive !== false && handleAvatarClick(psychologist.image, psychologist.name)}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    onClick={() => handleAvatarClick(psychologist.image, psychologist.name)}
                   />
-                  {psychologist.isActive === false && (
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                      <div className="text-white text-center">
-                        <Icon name="Clock" size={32} className="mx-auto mb-2" />
-                        <p className="font-semibold">Временно недоступен</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className={`text-xl font-montserrat font-semibold ${
-                      psychologist.isActive === false ? 'text-gray-500' : 'text-secondary'
-                    }`}>
+                    <h3 className="text-xl font-montserrat font-semibold text-secondary">
                       {psychologist.name}
                     </h3>
-                    <Badge variant={psychologist.isActive === false ? "outline" : "secondary"} 
-                           className={psychologist.isActive === false ? "text-gray-500" : "bg-accent text-secondary"}>
+                    <Badge variant="secondary" className="bg-accent text-secondary">
                       {psychologist.experience}
                     </Badge>
                   </div>
-                  <p className={`font-medium mb-3 ${
-                    psychologist.isActive === false ? 'text-gray-500' : 'text-primary'
-                  }`}>{psychologist.specialization}</p>
-                  <p className={`text-sm mb-4 ${
-                    psychologist.isActive === false ? 'text-gray-400' : 'text-warm-700'
-                  }`}>{psychologist.description}</p>
+                  <p className="text-primary font-medium mb-3">{psychologist.specialization}</p>
+                  <p className="text-warm-700 text-sm mb-4">{psychologist.description}</p>
                   <Button 
-                    className={`w-full ${
-                      psychologist.isActive === false 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'bg-primary hover:bg-primary/90'
-                    } text-white`}
-                    onClick={() => psychologist.isActive !== false && handleBookingClick(psychologist.name, psychologist.specialization)}
-                    disabled={psychologist.isActive === false}
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
+                    onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
                   >
-                    <Icon name={psychologist.isActive === false ? "Clock" : "Calendar"} className="mr-2" size={16} />
-                    {psychologist.isActive === false ? "Недоступен" : "Записаться"}
+                    <Icon name="Calendar" className="mr-2" size={16} />
+                    Записаться
                   </Button>
                 </CardContent>
               </Card>

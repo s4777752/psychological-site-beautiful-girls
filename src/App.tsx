@@ -13,7 +13,6 @@ import PsychologistDashboard from "./pages/PsychologistDashboard";
 import ClientLogin from "./pages/ClientLogin";
 import ClientDashboard from "./pages/ClientDashboard";
 import NotFound from "./pages/NotFound";
-import PsychologistsGrid from "./components/PsychologistsGrid";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +24,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/grid" element={<PsychologistsGrid />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/manager" element={<ManagerLogin />} />
           <Route path="/admin/manager/dashboard" element={<ManagerDashboard />} />
