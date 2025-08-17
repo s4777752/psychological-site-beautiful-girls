@@ -347,7 +347,7 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {psychologists.map((psychologist) => (
-              <Card key={psychologist.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 animate-fade-in border-2 border-warm-300">
+              <Card key={psychologist.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 animate-fade-in border-4 border-warm-300">
                 <div className="aspect-[4/3] overflow-hidden">
                   <img 
                     src={psychologist.image} 
