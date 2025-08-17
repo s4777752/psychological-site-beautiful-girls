@@ -24,18 +24,46 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Генерация доступных временных слотов
-  const timeSlots: TimeSlot[] = [
-    { time: '09:00', available: true },
-    { time: '10:00', available: false },
-    { time: '11:00', available: true },
-    { time: '12:00', available: true },
-    { time: '14:00', available: false },
-    { time: '15:00', available: true },
-    { time: '16:00', available: true },
-    { time: '17:00', available: true },
-    { time: '18:00', available: false },
-    { time: '19:00', available: true }
-  ];
+  const getTimeSlots = (date: string): TimeSlot[] => {
+    if (!date) return [];
+    
+    const selectedDateObj = new Date(date);
+    const isWeekend = selectedDateObj.getDay() === 0 || selectedDateObj.getDay() === 6;
+    
+    if (isWeekend) {
+      // Расширенное время работы в выходные
+      return [
+        { time: '10:00', available: true },
+        { time: '11:00', available: true },
+        { time: '12:00', available: false },
+        { time: '13:00', available: true },
+        { time: '14:00', available: true },
+        { time: '15:00', available: true },
+        { time: '16:00', available: false },
+        { time: '17:00', available: true },
+        { time: '18:00', available: true },
+        { time: '19:00', available: true },
+        { time: '20:00', available: false },
+        { time: '21:00', available: true }
+      ];
+    } else {
+      // Обычные рабочие дни
+      return [
+        { time: '09:00', available: true },
+        { time: '10:00', available: false },
+        { time: '11:00', available: true },
+        { time: '12:00', available: true },
+        { time: '14:00', available: false },
+        { time: '15:00', available: true },
+        { time: '16:00', available: true },
+        { time: '17:00', available: true },
+        { time: '18:00', available: false },
+        { time: '19:00', available: true }
+      ];
+    }
+  };
+
+  const timeSlots = getTimeSlots(selectedDate);
 
   // Генерация календаря
   const generateCalendarDays = () => {
@@ -65,7 +93,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         isToday,
         isPast,
         isWeekend,
-        isAvailable: isCurrentMonth && !isPast && !isWeekend
+        isAvailable: isCurrentMonth && !isPast
       });
     }
     
@@ -75,7 +103,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const calendarDays = generateCalendarDays();
 
   const handleDateSelect = (date: Date) => {
-    if (date < new Date() || date.getDay() === 0 || date.getDay() === 6) return;
+    if (date < new Date()) return;
     setSelectedDate(date.toISOString().split('T')[0]);
     setSelectedTime('');
   };
@@ -122,7 +150,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
           {/* Calendar */}
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <h4 className="text-lg font-semibold text-secondary">Выберите дату</h4>
               <div className="flex items-center space-x-2">
                 <button
@@ -142,6 +170,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 </button>
               </div>
             </div>
+            
+            <p className="text-sm text-warm-600 mb-4">
+              <Icon name="Info" size={14} className="inline mr-1" />
+              Работаем 7 дней в неделю. Выходные дни выделены голубым цветом.
+            </p>
 
             <div className="grid grid-cols-7 gap-1 mb-2">
               {weekDays.map(day => (
@@ -158,12 +191,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => handleDateSelect(day.date)}
                   disabled={!day.isAvailable}
                   className={`
-                    p-2 text-sm rounded-lg transition-colors
+                    p-2 text-sm rounded-lg transition-colors relative
                     ${day.isCurrentMonth ? 'text-secondary' : 'text-warm-300'}
                     ${day.isToday ? 'bg-primary text-white font-bold' : ''}
                     ${day.isAvailable && !day.isToday ? 'hover:bg-warm-100' : ''}
                     ${selectedDate === day.date.toISOString().split('T')[0] ? 'bg-primary text-white' : ''}
                     ${!day.isAvailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                    ${day.isWeekend && day.isCurrentMonth ? 'bg-blue-50 border border-blue-200' : ''}
                   `}
                 >
                   {day.day}
@@ -175,9 +209,24 @@ const BookingModal: React.FC<BookingModalProps> = ({
           {/* Time Slots */}
           {selectedDate && (
             <div className="mb-6">
-              <h4 className="text-lg font-semibold text-secondary mb-4">
-                Доступное время на {new Date(selectedDate).toLocaleDateString('ru-RU')}
-              </h4>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg font-semibold text-secondary">
+                  Доступное время на {new Date(selectedDate).toLocaleDateString('ru-RU')}
+                </h4>
+                {(() => {
+                  const selectedDateObj = new Date(selectedDate);
+                  const isWeekend = selectedDateObj.getDay() === 0 || selectedDateObj.getDay() === 6;
+                  return isWeekend ? (
+                    <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                      Выходной день
+                    </span>
+                  ) : (
+                    <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                      Рабочий день
+                    </span>
+                  );
+                })()}
+              </div>
               <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
                 {timeSlots.map(slot => (
                   <button
