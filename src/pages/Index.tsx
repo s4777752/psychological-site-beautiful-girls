@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import BookingModal from "@/components/BookingModal";
+import PaymentForm from "@/components/PaymentForm";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -30,6 +31,10 @@ const Index = () => {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<{image: string, name: string}>({image: '', name: ''});
 
+  // Payment modal state
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPaymentPsychologist, setSelectedPaymentPsychologist] = useState<{name: string, price: number}>({name: '', price: 2500});
+
   // Booking functions
   const handleBookingClick = (name: string, specialty: string) => {
     setSelectedPsychologist({ name, specialty });
@@ -39,6 +44,17 @@ const Index = () => {
   const closeBookingModal = () => {
     setIsBookingModalOpen(false);
     setSelectedPsychologist({ name: '', specialty: '' });
+  };
+
+  // Payment functions
+  const handlePaymentClick = (name: string, price: number) => {
+    setSelectedPaymentPsychologist({ name, price });
+    setIsPaymentModalOpen(true);
+  };
+
+  const closePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedPaymentPsychologist({ name: '', price: 2500 });
   };
 
   // Avatar functions
@@ -413,13 +429,22 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary/90 text-white"
-                    onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
-                  >
-                    <Icon name="Calendar" className="mr-2" size={16} />
-                    Записаться
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                      onClick={() => handleBookingClick(psychologist.name, psychologist.specialization)}
+                    >
+                      <Icon name="Calendar" className="mr-2" size={16} />
+                      Записаться
+                    </Button>
+                    <Button 
+                      className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
+                      onClick={() => handlePaymentClick(psychologist.name, psychologist.price)}
+                    >
+                      <Icon name="CreditCard" className="mr-2" size={16} />
+                      Оплатить
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -1082,6 +1107,19 @@ const Index = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Payment Modal */}
+      {isPaymentModalOpen && (
+        <Dialog open={isPaymentModalOpen} onOpenChange={closePaymentModal}>
+          <DialogContent className="max-w-md">
+            <PaymentForm
+              psychologistName={selectedPaymentPsychologist.name}
+              sessionPrice={selectedPaymentPsychologist.price}
+              onClose={closePaymentModal}
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

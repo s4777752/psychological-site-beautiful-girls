@@ -162,15 +162,21 @@ const PsychologistsGrid: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="text-lg font-bold text-gray-900">
+              <div className="mb-4">
+                <div className="text-lg font-bold text-gray-900 text-center mb-3">
                   {psychologist.price.toLocaleString('ru-RU')} ₽
                   <span className="text-sm font-normal text-gray-500"> / сеанс</span>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Icon name="MessageCircle" size={16} className="mr-2" />
-                  Записаться
-                </Button>
+                <div className="flex gap-2">
+                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                    <Icon name="MessageCircle" size={16} className="mr-2" />
+                    Записаться
+                  </Button>
+                  <Button className="flex-1 bg-yellow-500 hover:bg-yellow-600">
+                    <Icon name="CreditCard" size={16} className="mr-2" />
+                    Оплатить
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
