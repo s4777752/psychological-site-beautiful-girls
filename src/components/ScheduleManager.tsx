@@ -285,14 +285,14 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                     className={`
                       w-8 h-8 p-0
                       ${slot.available 
-                        ? 'bg-red-500 hover:bg-red-600' 
-                        : 'bg-green-500 hover:bg-green-600'
+                        ? 'bg-green-500 hover:bg-green-600' 
+                        : 'bg-red-500 hover:bg-red-600'
                       }
                       ${slot.booked ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                   >
                     <Icon 
-                      name={slot.available ? "Minus" : "Plus"} 
+                      name={slot.available ? "Plus" : "Minus"} 
                       size={16} 
                       className="text-white"
                     />
