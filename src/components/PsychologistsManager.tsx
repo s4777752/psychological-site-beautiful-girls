@@ -409,7 +409,7 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
         <Input
           id="price"
           type="number"
-          min="10"
+          min="100"
           max="20000"
           step="10"
           value={formData.price}
