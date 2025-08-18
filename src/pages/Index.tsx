@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PsychologistsSection from "@/components/PsychologistsSection";
@@ -8,10 +9,11 @@ import Footer from "@/components/Footer";
 import IndexModals from "@/components/IndexModals";
 import { useIndexLogic } from "@/hooks/useIndexLogic";
 
-const Index = () => {
-  const logic = useIndexLogic();
-
-  const psychologists = [
+// Функция для загрузки психологов из localStorage
+const getUpdatedPsychologists = () => {
+  const storedPsychologists = JSON.parse(localStorage.getItem("psychologists") || "[]");
+  
+  const defaultPsychologists = [
     {
       id: 1,
       name: "Анна Смирнова",
@@ -80,11 +82,58 @@ const Index = () => {
     }
   ];
 
+  // Если есть сохраненные психологи, используем их цены и данные
+  if (storedPsychologists.length > 0) {
+    return defaultPsychologists.map(defaultPsych => {
+      const storedPsych = storedPsychologists.find(stored => stored.name === defaultPsych.name);
+      return storedPsych ? { ...defaultPsych, ...storedPsych } : defaultPsych;
+    });
+  }
+  
+  return defaultPsychologists;
+};
+
+const Index = () => {
+  const logic = useIndexLogic();
+  const [psychologists, setPsychologists] = useState(() => getUpdatedPsychologists());
+
+  // Обновляем данные психологов при изменении localStorage
+  useEffect(() => {
+    // Инициализируем localStorage если данных нет
+    const storedPsychologists = localStorage.getItem("psychologists");
+    if (!storedPsychologists) {
+      localStorage.setItem("psychologists", JSON.stringify(getUpdatedPsychologists()));
+    }
+
+    const handleStorageChange = () => {
+      setPsychologists(getUpdatedPsychologists());
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Также периодически проверяем обновления (для случаев когда изменения в том же окне)
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Получаем среднюю цену из настроек психологов
+  const getAveragePrice = () => {
+    if (psychologists.length === 0) return 2500;
+    const totalPrice = psychologists.reduce((sum, psych) => sum + psych.price, 0);
+    return Math.round(totalPrice / psychologists.length);
+  };
+
+  const averagePrice = getAveragePrice();
+
   const services = [
-    { name: "Индивидуальная консультация", price: "2500 ₽/час", icon: "User" },
-    { name: "Семейная терапия", price: "3000 ₽/час", icon: "Users" },
-    { name: "Групповая терапия", price: "1500 ₽/час", icon: "UserCheck" },
-    { name: "Экстренная помощь", price: "3500 ₽/час", icon: "Phone" }
+    { name: "Индивидуальная консультация", price: `${averagePrice.toLocaleString('ru-RU')} ₽/час`, icon: "User" },
+    { name: "Семейная терапия", price: `${Math.round(averagePrice * 1.2).toLocaleString('ru-RU')} ₽/час`, icon: "Users" },
+    { name: "Групповая терапия", price: `${Math.round(averagePrice * 0.6).toLocaleString('ru-RU')} ₽/час`, icon: "UserCheck" },
+    { name: "Экстренная помощь", price: `${Math.round(averagePrice * 1.4).toLocaleString('ru-RU')} ₽/час`, icon: "Phone" }
   ];
 
   const defaultReviews = [
