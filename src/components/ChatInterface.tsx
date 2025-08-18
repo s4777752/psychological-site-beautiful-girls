@@ -30,7 +30,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     stopRecording,
     cancelRecording,
     deleteMessage
-  } = useChatLogic(userType);
+  } = useChatLogic(userType, recipientName);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -1,8 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Message } from '@/types/chat';
 
-export const useChatLogic = (userType: 'client' | 'psychologist') => {
-  const [messages, setMessages] = useState<Message[]>([]);
+export const useChatLogic = (userType: 'client' | 'psychologist', recipientName?: string) => {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (!recipientName) return [];
+    const saved = localStorage.getItem(`messages_${recipientName}`);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [newMessage, setNewMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -12,6 +16,16 @@ export const useChatLogic = (userType: 'client' | 'psychologist') => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Загружаем сообщения при смене клиента
+  useEffect(() => {
+    if (recipientName) {
+      const saved = localStorage.getItem(`messages_${recipientName}`);
+      setMessages(saved ? JSON.parse(saved) : []);
+    } else {
+      setMessages([]);
+    }
+  }, [recipientName]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -23,8 +37,14 @@ export const useChatLogic = (userType: 'client' | 'psychologist') => {
         read: false
       };
 
-      setMessages(prev => [...prev, message]);
+      const updatedMessages = [...messages, message];
+      setMessages(updatedMessages);
       setNewMessage('');
+      
+      // Сохраняем сообщения для конкретного клиента
+      if (recipientName) {
+        localStorage.setItem(`messages_${recipientName}`, JSON.stringify(updatedMessages));
+      }
     }
   };
 
