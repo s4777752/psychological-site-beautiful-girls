@@ -17,25 +17,8 @@ const ClientLogin = () => {
   const [step, setStep] = useState<'phone' | 'code'>('phone');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Демо-данные клиентов
-  const demoClients = [
-    {
-      id: "1",
-      name: "Анна Петрова",
-      phone: "+7 (999) 123-45-67",
-      code: "1234",
-      psychologist: "Елена Козлова",
-      nextSession: "2025-08-16 10:00"
-    },
-    {
-      id: "2", 
-      name: "Михаил Сидоров",
-      phone: "+7 (999) 987-65-43",
-      code: "5678",
-      psychologist: "Дмитрий Петров",
-      nextSession: "2025-08-16 14:00"
-    }
-  ];
+  // Демо-данные отключены
+  const demoClients: any[] = [];
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '');
