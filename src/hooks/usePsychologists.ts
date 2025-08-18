@@ -21,7 +21,7 @@ export const usePsychologists = () => {
           specialization: "Семейная терапия",
           experience: 8,
           description: "Специалист по семейным отношениям и детской психологии",
-          photo: "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
+          photo: "/img/e8819b40-1740-4422-9215-a1e091b65dd1.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -35,7 +35,7 @@ export const usePsychologists = () => {
           specialization: "Тревожные расстройства",
           experience: 12,
           description: "Эксперт в области работы со стрессом и тревожностью",
-          photo: "/img/e46f379d-2965-4b93-832b-a2aa073c0bb0.jpg",
+          photo: "/img/1835074a-97c0-454f-8e5d-c1122380e83b.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -49,7 +49,7 @@ export const usePsychologists = () => {
           specialization: "Личностная терапия",
           experience: 6,
           description: "Помогаю в развитии личности и самопознании",
-          photo: "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
+          photo: "/img/39c5356f-e920-4028-91d2-4d922e28ace3.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -63,7 +63,7 @@ export const usePsychologists = () => {
           specialization: "Когнитивно-поведенческая терапия",
           experience: 10,
           description: "Специалист по работе с депрессией и фобиями",
-          photo: "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
+          photo: "/img/aadbab90-e716-4c17-b281-0ea1773babd2.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -77,7 +77,7 @@ export const usePsychologists = () => {
           specialization: "Арт-терапия",
           experience: 7,
           description: "Творческий подход к решению внутренних конфликтов",
-          photo: "/img/4b2e6ff1-6a65-483d-9d56-631b510a50d3.jpg",
+          photo: "/img/ecc98f30-32e3-48a6-9fe3-3258858f72d0.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
@@ -91,7 +91,7 @@ export const usePsychologists = () => {
           specialization: "Парная терапия",
           experience: 9,
           description: "Восстанавливаю гармонию в отношениях между партнерами",
-          photo: "/img/b50310a6-0322-4453-a080-ed2a130fc8a9.jpg",
+          photo: "/img/4fcc6a49-2857-451e-81c7-c59a9186dffd.jpg",
           price: 2500,
           isActive: true,
           createdAt: new Date().toISOString()
