@@ -17,7 +17,25 @@ const ClientLogin = () => {
   const [step, setStep] = useState<'phone' | 'code'>('phone');
   const [isLoading, setIsLoading] = useState(false);
 
-  // В реальной системе здесь будет интеграция с API
+  // Демо-данные клиентов
+  const demoClients = [
+    {
+      id: "1",
+      name: "Анна Петрова",
+      phone: "+7 (999) 123-45-67",
+      code: "1234",
+      psychologist: "Елена Козлова",
+      nextSession: "2025-08-16 10:00"
+    },
+    {
+      id: "2", 
+      name: "Михаил Сидоров",
+      phone: "+7 (999) 987-65-43",
+      code: "5678",
+      psychologist: "Дмитрий Петров",
+      nextSession: "2025-08-16 14:00"
+    }
+  ];
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -32,28 +50,59 @@ const ClientLogin = () => {
   const handlePhoneSubmit = () => {
     setIsLoading(true);
     
-    // В реальной системе здесь будет запрос к API
+    // Проверяем, есть ли клиент с таким телефоном
+    const client = demoClients.find(c => c.phone === credentials.phone);
+    
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Функция временно недоступна",
-        description: "Авторизация клиентов в разработке. Обратитесь к администратору.",
-        variant: "destructive"
-      });
+      if (client) {
+        setStep('code');
+        toast({
+          title: "Код отправлен",
+          description: `SMS с кодом отправлен на ${credentials.phone}`
+        });
+      } else {
+        toast({
+          title: "Клиент не найден",
+          description: "Данный номер телефона не найден в системе. Обратитесь к психологу для регистрации.",
+          variant: "destructive"
+        });
+      }
     }, 1500);
   };
 
   const handleCodeSubmit = () => {
     setIsLoading(true);
     
-    // В реальной системе здесь будет проверка кода через API
+    const client = demoClients.find(c => 
+      c.phone === credentials.phone && c.code === credentials.code
+    );
+    
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Функция временно недоступна",
-        description: "Авторизация клиентов в разработке. Обратитесь к администратору.",
-        variant: "destructive"
-      });
+      if (client) {
+        // Сохраняем данные авторизации
+        localStorage.setItem("clientAuth", JSON.stringify({
+          id: client.id,
+          name: client.name,
+          phone: client.phone,
+          psychologist: client.psychologist,
+          nextSession: client.nextSession
+        }));
+        
+        toast({
+          title: "Добро пожаловать!",
+          description: `Здравствуйте, ${client.name}`
+        });
+        
+        navigate("/client/dashboard");
+      } else {
+        toast({
+          title: "Неверный код",
+          description: "Проверьте правильность введенного кода",
+          variant: "destructive"
+        });
+      }
     }, 1000);
   };
 
@@ -79,23 +128,7 @@ const ClientLogin = () => {
           </p>
         </div>
 
-        {/* Информационный блок */}
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Icon name="Info" size={16} className="text-blue-600" />
-            </div>
-            <div>
-              <h3 className="font-medium text-blue-800 mb-1">Функция в разработке</h3>
-              <p className="text-sm text-blue-700">
-                Авторизация клиентов находится в стадии разработки. 
-                Для доступа к личному кабинету обратитесь к вашему психологу.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <Card className="border-warm-200 opacity-60">
+        <Card className="border-warm-200">
           <CardHeader>
             <CardTitle className="text-center text-warm-800">
               {step === 'phone' ? 'Номер телефона' : 'Код подтверждения'}
@@ -112,16 +145,15 @@ const ClientLogin = () => {
                     value={credentials.phone}
                     onChange={handlePhoneChange}
                     placeholder="+7 (999) 123-45-67"
-                    className="border-gray-300 bg-gray-100"
+                    className="border-warm-300 focus:border-warm-500"
                     maxLength={18}
-                    disabled={true}
                   />
                 </div>
                 
                 <Button 
                   onClick={handlePhoneSubmit}
-                  disabled={true}
-                  className="w-full bg-gray-400 cursor-not-allowed"
+                  disabled={credentials.phone.length < 18 || isLoading}
+                  className="w-full bg-warm-600 hover:bg-warm-700"
                 >
                   {isLoading ? (
                     <>
@@ -146,16 +178,15 @@ const ClientLogin = () => {
                     value={credentials.code}
                     onChange={(e) => setCredentials({ ...credentials, code: e.target.value })}
                     placeholder="0000"
-                    className="border-gray-300 bg-gray-100 text-center text-xl tracking-wider"
+                    className="border-warm-300 focus:border-warm-500 text-center text-xl tracking-wider"
                     maxLength={4}
-                    disabled={true}
                   />
                 </div>
                 
                 <Button 
                   onClick={handleCodeSubmit}
-                  disabled={true}
-                  className="w-full bg-gray-400 cursor-not-allowed"
+                  disabled={credentials.code.length < 4 || isLoading}
+                  className="w-full bg-warm-600 hover:bg-warm-700"
                 >
                   {isLoading ? (
                     <>
