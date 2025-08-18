@@ -12,11 +12,26 @@ interface DashboardTabsProps {
 }
 
 const DashboardTabs = ({ activeTab, onTabChange }: DashboardTabsProps) => {
+  // Проверяем наличие активных слотов в расписании
+  const hasActiveSlots = () => {
+    const schedule = localStorage.getItem('psychologistSchedule');
+    if (!schedule) return false;
+    
+    try {
+      const scheduleData = JSON.parse(schedule);
+      return Object.values(scheduleData).some((slots: any) => 
+        Array.isArray(slots) && slots.some((slot: any) => slot.available)
+      );
+    } catch {
+      return false;
+    }
+  };
+
   const tabs: Tab[] = [
     { id: "overview", name: "Обзор", icon: "BarChart3" },
     { id: "clients", name: "Клиенты", icon: "Users" },
     { id: "messages", name: "Сообщения", icon: "MessageSquare" },
-    { id: "schedule", name: "Расписание", icon: "Calendar" },
+    { id: "schedule", name: hasActiveSlots() ? "Расписание +" : "Расписание", icon: "Calendar" },
     { id: "records", name: "Записи", icon: "FileText" },
     { id: "profile", name: "Профиль", icon: "User" }
   ];
