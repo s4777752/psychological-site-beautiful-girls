@@ -146,14 +146,14 @@ export const usePsychologists = () => {
 
   const updateAvatars = () => {
     const avatarUrls = [
-      "/img/06ca6347-cf2a-4845-ad6e-a99ee9aa60d8.jpg",
-      "/img/4612134c-d159-4642-b081-55660a636593.jpg", 
-      "/img/8b2ed6b5-485c-4fc5-86bf-2beb64d39103.jpg",
-      "/img/ed9d93bd-7c6e-4ab9-aa4b-a207b2f4420a.jpg",
-      "/img/17a06106-f8dd-4912-8b3b-fa97592f8744.jpg",
-      "/img/d13e66d6-78b5-4248-929a-02e4fe1f2227.jpg",
-      "/img/692f568b-35c6-463d-9b0c-6eb26fd9d16a.jpg",
-      "/img/c3145130-ce14-454d-9157-9d4923306229.jpg"
+      "/img/743727a6-92b0-47c6-b4dc-926aef54a241.jpg",
+      "/img/e162e1fa-ae56-47e5-8df5-b8190528bb91.jpg", 
+      "/img/d5179d5b-a13b-4c43-be48-07a64a06fd23.jpg",
+      "/img/021337b6-a2db-4670-b44b-4feadd737b3f.jpg",
+      "/img/059de7e2-2247-4531-acc4-b02a6aa1769f.jpg",
+      "/img/a9ba1598-4d23-4f18-a9c1-032e4eaa95b0.jpg",
+      "/img/a6c1d5c8-c40f-4189-ae6d-cbc2803ed76b.jpg",
+      "/img/0e53ab86-b645-40a4-bd86-ea9aa87e9911.jpg"
     ];
     
     setPsychologists(prev => prev.map((p, index) => ({
