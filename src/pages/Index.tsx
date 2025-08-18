@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import PsychologistsSection from "@/components/PsychologistsSection";
@@ -8,123 +8,34 @@ import ReviewsSection from "@/components/ReviewsSection";
 import Footer from "@/components/Footer";
 import IndexModals from "@/components/IndexModals";
 import { useIndexLogic } from "@/hooks/useIndexLogic";
+import { usePsychologists } from "@/hooks/usePsychologists";
 
-// Функция для загрузки психологов из localStorage
-const getUpdatedPsychologists = () => {
-  const storedPsychologists = JSON.parse(localStorage.getItem("psychologists") || "[]");
-  
-  const defaultPsychologists = [
-    {
-      id: 1,
-      name: "Анна Смирнова",
-      specialization: "Семейная терапия",
-      experience: "8 лет",
-      image: "/img/6e21af90-d81e-4f4e-b067-43f75a026d70.jpg",
-      description: "Специалист по семейным отношениям и детской психологии",
-      rating: 4.9,
-      sessions: 450,
-      price: 2500
-    },
-    {
-      id: 2, 
-      name: "Мария Козлова",
-      specialization: "Тревожные расстройства",
-      experience: "12 лет",
-      image: "/img/e46f379d-2965-4b93-832b-a2aa073c0bb0.jpg",
-      description: "Эксперт в области работы со стрессом и тревожностью",
-      rating: 4.8,
-      sessions: 720,
-      price: 2500
-    },
-    {
-      id: 3,
-      name: "Елена Волкова", 
-      specialization: "Личностная терапия",
-      experience: "6 лет",
-      image: "/img/fd3261af-65ed-4738-b175-5bb7aa8bcc4a.jpg",
-      description: "Помогаю в развитии личности и самопознании",
-      rating: 4.9,
-      sessions: 320,
-      price: 2500
-    },
-    {
-      id: 4,
-      name: "Дарья Петрова",
-      specialization: "Когнитивно-поведенческая терапия",
-      experience: "10 лет",
-      image: "/img/507d09f6-4ed0-4a89-a012-fa2fba147e52.jpg",
-      description: "Специалист по работе с депрессией и фобиями",
-      rating: 4.7,
-      sessions: 580,
-      price: 2500
-    },
-    {
-      id: 5,
-      name: "София Романова",
-      specialization: "Арт-терапия",
-      experience: "7 лет", 
-      image: "/img/4b2e6ff1-6a65-483d-9d56-631b510a50d3.jpg",
-      description: "Творческий подход к решению внутренних конфликтов",
-      rating: 4.8,
-      sessions: 380,
-      price: 2500
-    },
-    {
-      id: 6,
-      name: "Виктория Новикова",
-      specialization: "Парная терапия",
-      experience: "9 лет",
-      image: "/img/b50310a6-0322-4453-a080-ed2a130fc8a9.jpg", 
-      description: "Восстанавливаю гармонию в отношениях между партнерами",
-      rating: 4.9,
-      sessions: 490,
-      price: 2500
-    }
-  ];
 
-  // Если есть сохраненные психологи, используем их цены и данные
-  if (storedPsychologists.length > 0) {
-    return defaultPsychologists.map(defaultPsych => {
-      const storedPsych = storedPsychologists.find(stored => stored.name === defaultPsych.name);
-      return storedPsych ? { ...defaultPsych, ...storedPsych } : defaultPsych;
-    });
-  }
-  
-  return defaultPsychologists;
-};
 
 const Index = () => {
   const logic = useIndexLogic();
-  const [psychologists, setPsychologists] = useState(() => getUpdatedPsychologists());
+  const { psychologists } = usePsychologists();
 
-  // Обновляем данные психологов при изменении localStorage
-  useEffect(() => {
-    // Инициализируем localStorage если данных нет
-    const storedPsychologists = localStorage.getItem("psychologists");
-    if (!storedPsychologists) {
-      localStorage.setItem("psychologists", JSON.stringify(getUpdatedPsychologists()));
-    }
-
-    const handleStorageChange = () => {
-      setPsychologists(getUpdatedPsychologists());
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Также периодически проверяем обновления (для случаев когда изменения в том же окне)
-    const interval = setInterval(handleStorageChange, 1000);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, []);
+  // Конвертируем данные из usePsychologists в формат для PsychologistsSection
+  const convertedPsychologists = psychologists
+    .filter(psych => psych.isActive)  // Показываем только активных психологов
+    .map(psych => ({
+      id: parseInt(psych.id),
+      name: psych.name,
+      specialization: psych.specialization,
+      experience: `${psych.experience} лет`,
+      image: psych.photo || "/api/placeholder/300/300",
+      description: psych.description,
+      rating: 4.8, // Можно добавить рейтинг в модель Psychologist
+      sessions: 350, // Можно добавить количество сессий в модель
+      price: psych.price
+    }));
 
   // Получаем среднюю цену из настроек психологов
   const getAveragePrice = () => {
-    if (psychologists.length === 0) return 2500;
-    const totalPrice = psychologists.reduce((sum, psych) => sum + psych.price, 0);
-    return Math.round(totalPrice / psychologists.length);
+    if (convertedPsychologists.length === 0) return 2500;
+    const totalPrice = convertedPsychologists.reduce((sum, psych) => sum + psych.price, 0);
+    return Math.round(totalPrice / convertedPsychologists.length);
   };
 
   const averagePrice = getAveragePrice();
@@ -158,7 +69,7 @@ const Index = () => {
       <HeroSection onVideoClick={() => logic.setIsVideoDialogOpen(true)} />
       
       <PsychologistsSection 
-        psychologists={psychologists}
+        psychologists={convertedPsychologists}
         onBookingClick={logic.handleBookingClick}
         onAvatarClick={logic.handleAvatarClick}
       />

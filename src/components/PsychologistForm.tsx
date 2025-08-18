@@ -25,7 +25,7 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
     experience: psychologist?.experience || 1,
     description: psychologist?.description || "",
     photo: psychologist?.photo || "/api/placeholder/150/150",
-    price: psychologist?.price || 10,
+    price: psychologist?.price || 2500,
     isActive: psychologist?.isActive || true
   });
 
@@ -151,11 +151,11 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
         <Input
           id="price"
           type="number"
-          min="10"
+          min="1000"
           max="20000"
-          step="1"
+          step="100"
           value={formData.price}
-          onChange={(e) => setFormData(prev => ({ ...prev, price: parseInt(e.target.value) || 10 }))}
+          onChange={(e) => setFormData(prev => ({ ...prev, price: parseInt(e.target.value) || 2500 }))}
           className="border-warm-300 focus:border-warm-500"
         />
       </div>
