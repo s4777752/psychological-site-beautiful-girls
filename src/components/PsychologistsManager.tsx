@@ -283,7 +283,7 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
     experience: psychologist?.experience || 1,
     description: psychologist?.description || "",
     photo: psychologist?.photo || "/api/placeholder/150/150",
-    price: psychologist?.price || 3000,
+    price: psychologist?.price || 10,
     isActive: psychologist?.isActive || true
   });
 
