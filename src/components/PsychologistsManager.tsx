@@ -120,6 +120,41 @@ const PsychologistsManager = () => {
     ));
   };
 
+  const resetToDefaultData = () => {
+    const demoPsychologists: Psychologist[] = [
+      {
+        id: "1",
+        name: "Анна Петрова",
+        email: "anna@mindcare.ru",
+        login: "anna_petrova",
+        password: "secure123",
+        specialization: "Семейная терапия",
+        experience: 8,
+        description: "Специализируюсь на работе с семейными парами и детско-родительскими отношениями",
+        photo: "/api/placeholder/150/150",
+        price: 10,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: "2", 
+        name: "Михаил Сидоров",
+        email: "mikhail@mindcare.ru",
+        login: "mikhail_sid",
+        password: "pass456",
+        specialization: "Когнитивно-поведенческая терапия",
+        experience: 12,
+        description: "Помогаю справиться с тревожными расстройствами и депрессией",
+        photo: "/api/placeholder/150/150",
+        price: 10,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      }
+    ];
+    setPsychologists(demoPsychologists);
+    localStorage.setItem("psychologists", JSON.stringify(demoPsychologists));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -127,16 +162,25 @@ const PsychologistsManager = () => {
           <h2 className="text-2xl font-bold text-warm-800">Управление психологами</h2>
           <p className="text-warm-600">Всего специалистов: {psychologists.length}</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              className="bg-warm-600 hover:bg-warm-700"
-              onClick={() => setEditingPsychologist(null)}
-            >
-              <Icon name="UserPlus" className="mr-2" size={16} />
-              Добавить психолога
-            </Button>
-          </DialogTrigger>
+        <div className="flex space-x-3">
+          <Button 
+            variant="outline"
+            onClick={resetToDefaultData}
+            className="border-warm-300 text-warm-700 hover:bg-warm-50"
+          >
+            <Icon name="RotateCcw" className="mr-2" size={16} />
+            Сбросить цены
+          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                className="bg-warm-600 hover:bg-warm-700"
+                onClick={() => setEditingPsychologist(null)}
+              >
+                <Icon name="UserPlus" className="mr-2" size={16} />
+                Добавить психолога
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
@@ -158,6 +202,7 @@ const PsychologistsManager = () => {
             />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <div className="grid gap-6">
