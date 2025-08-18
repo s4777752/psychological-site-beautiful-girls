@@ -45,7 +45,7 @@ const PsychologistCalendar = () => {
       clientPhone: '+7 (999) 123-45-67',
       date: '2024-08-15',
       time: '10:00',
-      duration: 1440, // 24 часа в минутах
+      duration: 60,
       type: 'therapy',
       notes: 'Повторная сессия, работа с тревожностью',
       status: 'scheduled'
@@ -56,7 +56,7 @@ const PsychologistCalendar = () => {
       clientPhone: '+7 (999) 987-65-43',
       date: '2024-08-15',
       time: '14:00',
-      duration: 1440, // 24 часа в минутах
+      duration: 60,
       type: 'consultation',
       status: 'scheduled'
     }
@@ -73,22 +73,24 @@ const PsychologistCalendar = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Генерация временных слотов - 24-часовые слоты
+  // Генерация временных слотов с 9:00 до 20:00
   const generateTimeSlots = (): TimeSlot[] => {
     const slots: TimeSlot[] = [];
     const dateStr = selectedDate.toISOString().split('T')[0];
     
-    for (let hour = 0; hour <= 23; hour++) {
-      const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-      const appointment = appointments.find(app => 
-        app.date === dateStr && app.time === timeStr
-      );
-      
-      slots.push({
-        time: timeStr,
-        available: !appointment,
-        appointment
-      });
+    for (let hour = 9; hour <= 23; hour++) {
+      for (let minute = 0; minute < 60; minute += 60) {
+        const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        const appointment = appointments.find(app => 
+          app.date === dateStr && app.time === timeStr
+        );
+        
+        slots.push({
+          time: timeStr,
+          available: !appointment,
+          appointment
+        });
+      }
     }
     
     return slots;
@@ -152,7 +154,7 @@ const PsychologistCalendar = () => {
       clientName: '',
       clientPhone: '',
       time: '',
-      duration: 1440, // 24 часа в минутах
+      duration: 60,
       type: 'consultation',
       notes: ''
     });
@@ -312,9 +314,9 @@ const PsychologistCalendar = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1440">24 часа</SelectItem>
-                        <SelectItem value="2880">48 часов</SelectItem>
-                        <SelectItem value="4320">72 часа</SelectItem>
+                        <SelectItem value="60">60 минут</SelectItem>
+                        <SelectItem value="90">90 минут</SelectItem>
+                        <SelectItem value="120">120 минут</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -382,7 +384,7 @@ const PsychologistCalendar = () => {
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-warm-800">{slot.time} - {String(parseInt(slot.time.split(':')[0]) + 1).padStart(2, '0')}:00</span>
+                  <span className="font-medium text-warm-800">{slot.time}</span>
                   {slot.available ? (
                     <Badge variant="outline" className="text-green-600 border-green-300">
                       Свободно
@@ -403,7 +405,7 @@ const PsychologistCalendar = () => {
                       {slot.appointment.clientPhone}
                     </div>
                     <Badge className={`text-xs ${getTypeColor(slot.appointment.type)}`}>
-                      {getTypeLabel(slot.appointment.type)} • {slot.appointment.duration / 60} ч
+                      {getTypeLabel(slot.appointment.type)} • {slot.appointment.duration} мин
                     </Badge>
                     {slot.appointment.notes && (
                       <div className="text-xs text-warm-600 italic">
@@ -463,7 +465,7 @@ const PsychologistCalendar = () => {
                 {appointments
                   .filter(app => app.date === selectedDate.toISOString().split('T')[0])
                   .reduce((total, app) => total + app.duration, 0)
-                / 60} ч
+                } мин
               </div>
               <div className="text-sm text-warm-600">Общее время</div>
             </div>

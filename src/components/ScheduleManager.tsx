@@ -23,12 +23,10 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     return savedSchedule ? JSON.parse(savedSchedule) : {};
   });
 
-  // Базовые временные слоты - теперь 24-часовые периоды
+  // Базовые временные слоты
   const baseTimeSlots: string[] = [
-    '00:00', '01:00', '02:00', '03:00', '04:00', '05:00',
-    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
-    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
-    '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
+    '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
+    '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'
   ];
 
   // Получение слотов для конкретной даты
@@ -228,7 +226,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                   `}
                 >
                   <div className="flex items-center space-x-3">
-                    <span className="font-medium text-secondary">{slot.time} - {String(parseInt(slot.time.split(':')[0]) + 1).padStart(2, '0')}:00</span>
+                    <span className="font-medium text-secondary">{slot.time}</span>
                     <div className="flex items-center space-x-2">
                       {slot.booked && (
                         <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
@@ -332,7 +330,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                   const hour = parseInt(time.split(':')[0]);
                   return {
                     time,
-                    available: hour >= 9 && hour <= 17, // 9:00-17:00 (9 слотов по 24 часа)
+                    available: hour >= 9 && hour <= 18,
                     booked: false
                   };
                 });
@@ -344,7 +342,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
               className="border-blue-300 text-blue-600 hover:bg-blue-50"
             >
               <Icon name="Clock" size={16} className="mr-2" />
-              Рабочее время (9:00-17:00)
+              Рабочие часы (9:00-18:00)
             </Button>
           </div>
         </CardContent>

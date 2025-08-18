@@ -287,7 +287,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                       ${selectedTime === slot.time ? 'border-primary bg-primary text-white' : 'text-secondary'}
                     `}
                   >
-                    {slot.time} - {String(parseInt(slot.time.split(':')[0]) + 1).padStart(2, '0')}:00
+                    {slot.time}
                     {!slot.available && (
                       <div className="text-xs mt-1">Занято</div>
                     )}
@@ -362,7 +362,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   <p><strong>Специализация:</strong> {psychologistSpecialty}</p>
                   <p><strong>Дата:</strong> {new Date(selectedDate).toLocaleDateString('ru-RU')}</p>
                   <p><strong>Время:</strong> {selectedTime}</p>
-                  <p><strong>Длительность:</strong> 24 часа</p>
+                  <p><strong>Длительность:</strong> 50 минут</p>
                   <p><strong>Стоимость:</strong> 2 500 ₽</p>
                 </div>
               </div>
