@@ -33,7 +33,7 @@ const OverviewTab = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-warm-800">₽84,000</div>
-            <p className="text-xs text-warm-600">+15% к прошлому</p>
+            <p className="text-xs text-warm-600">-15% к прошлому</p>
           </CardContent>
         </Card>
         <Card className="border-warm-200">
