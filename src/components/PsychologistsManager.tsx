@@ -19,6 +19,7 @@ const PsychologistsManager = () => {
     savePsychologist,
     deletePsychologist,
     togglePsychologistStatus,
+    updateAvatars,
     resetToDefaultData
   } = usePsychologists();
 
@@ -51,6 +52,14 @@ const PsychologistsManager = () => {
           <p className="text-warm-600">Всего специалистов: {psychologists.length}</p>
         </div>
         <div className="flex space-x-3">
+          <Button 
+            variant="outline"
+            onClick={updateAvatars}
+            className="border-warm-300 text-warm-700 hover:bg-warm-50"
+          >
+            <Icon name="Camera" className="mr-2" size={16} />
+            Обновить фото
+          </Button>
           <Button 
             variant="outline"
             onClick={resetToDefaultData}
