@@ -152,7 +152,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             className="payform-tbank-row" 
             type="hidden" 
             name="terminalkey" 
-            value="1755530914676DEMO" 
+            value="1755530914695" 
           />
           <input 
             className="payform-tbank-row" 
