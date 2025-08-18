@@ -457,7 +457,7 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
           min="100"
           max="20000"
           step="1"
-          value={formData.price}
+          value={10}
           onChange={(e) => setFormData(prev => ({ ...prev, price: parseInt(e.target.value) || 10 }))}
           className="border-warm-300 focus:border-warm-500"
         />
