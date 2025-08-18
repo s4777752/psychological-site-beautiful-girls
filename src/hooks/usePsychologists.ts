@@ -144,6 +144,22 @@ export const usePsychologists = () => {
     ));
   };
 
+  const updateAvatars = () => {
+    const avatarUrls = [
+      "/img/e8819b40-1740-4422-9215-a1e091b65dd1.jpg",
+      "/img/1835074a-97c0-454f-8e5d-c1122380e83b.jpg", 
+      "/img/39c5356f-e920-4028-91d2-4d922e28ace3.jpg",
+      "/img/aadbab90-e716-4c17-b281-0ea1773babd2.jpg",
+      "/img/ecc98f30-32e3-48a6-9fe3-3258858f72d0.jpg",
+      "/img/4fcc6a49-2857-451e-81c7-c59a9186dffd.jpg"
+    ];
+    
+    setPsychologists(prev => prev.map((p, index) => ({
+      ...p,
+      photo: avatarUrls[index % avatarUrls.length] || p.photo
+    })));
+  };
+
   const resetToDefaultData = () => {
     const demoPsychologists: Psychologist[] = [
       {
@@ -242,6 +258,7 @@ export const usePsychologists = () => {
     savePsychologist,
     deletePsychologist,
     togglePsychologistStatus,
+    updateAvatars,
     resetToDefaultData
   };
 };
