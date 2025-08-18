@@ -266,7 +266,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                       )}
                       {slot.available && !slot.booked && (
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                          Доступно +
+                          Доступно
                         </span>
                       )}
                       {!slot.available && !slot.booked && (
