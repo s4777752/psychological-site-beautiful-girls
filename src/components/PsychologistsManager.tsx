@@ -47,7 +47,7 @@ const PsychologistsManager = () => {
           experience: 8,
           description: "Специализируюсь на работе с семейными парами и детско-родительскими отношениями",
           photo: "/api/placeholder/150/150",
-          price: 3500,
+          price: 10,
           isActive: true,
           createdAt: new Date().toISOString()
         },
@@ -61,7 +61,7 @@ const PsychologistsManager = () => {
           experience: 12,
           description: "Помогаю справиться с тревожными расстройствами и депрессией",
           photo: "/api/placeholder/150/150",
-          price: 4000,
+          price: 10,
           isActive: true,
           createdAt: new Date().toISOString()
         }
