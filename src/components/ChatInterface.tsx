@@ -40,17 +40,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     scrollToBottom();
   }, [messages]);
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | string) => {
+    const messageDate = typeof date === 'string' ? new Date(date) : date;
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    if (date.toDateString() === today.toDateString()) {
+    if (messageDate.toDateString() === today.toDateString()) {
       return 'Сегодня';
-    } else if (date.toDateString() === yesterday.toDateString()) {
+    } else if (messageDate.toDateString() === yesterday.toDateString()) {
       return 'Вчера';
     } else {
-      return date.toLocaleDateString('ru-RU', { 
+      return messageDate.toLocaleDateString('ru-RU', { 
         day: 'numeric', 
         month: 'long' 
       });

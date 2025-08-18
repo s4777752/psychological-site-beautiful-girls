@@ -23,8 +23,9 @@ const MessageBubble = ({ message, userType, onDelete }: MessageBubbleProps) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('ru-RU', { 
+  const formatTime = (date: Date | string) => {
+    const messageDate = typeof date === 'string' ? new Date(date) : date;
+    return messageDate.toLocaleTimeString('ru-RU', { 
       hour: '2-digit', 
       minute: '2-digit' 
     });

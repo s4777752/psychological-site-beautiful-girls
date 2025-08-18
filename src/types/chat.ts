@@ -2,7 +2,7 @@ export interface Message {
   id: string;
   text: string;
   sender: 'client' | 'psychologist';
-  timestamp: Date;
+  timestamp: Date | string;
   read: boolean;
   file?: {
     name: string;
