@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
@@ -17,18 +17,35 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
-  // Состояние временных слотов для каждой даты
-  const [scheduleData, setScheduleData] = useState<{[date: string]: TimeSlot[]}>(() => {
-    const savedSchedule = localStorage.getItem('psychologistSchedule');
-    return savedSchedule ? JSON.parse(savedSchedule) : {};
-  });
-
   // Базовые временные слоты
   const baseTimeSlots: string[] = [
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
     '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', 
     '21:00', '22:00', '23:00', '24:00'
   ];
+
+  // Состояние временных слотов для каждой даты
+  const [scheduleData, setScheduleData] = useState<{[date: string]: TimeSlot[]}>(() => {
+    const savedSchedule = localStorage.getItem('psychologistSchedule');
+    const data = savedSchedule ? JSON.parse(savedSchedule) : {};
+    
+    // Автоматически активируем 18 августа 2025
+    const aug18 = '2025-08-18';
+    if (!data[aug18]) {
+      data[aug18] = baseTimeSlots.map(time => ({
+        time,
+        available: true,
+        booked: false
+      }));
+    }
+    
+    return data;
+  });
+
+  // Сохраняем изменения при инициализации
+  useEffect(() => {
+    localStorage.setItem('psychologistSchedule', JSON.stringify(scheduleData));
+  }, [scheduleData]);
 
   // Получение слотов для конкретной даты
   const getTimeSlotsForDate = (date: string): TimeSlot[] => {
@@ -61,6 +78,19 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     setScheduleData(newScheduleData);
     
     // Сохраняем в localStorage для использования в BookingModal
+    localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+  };
+
+  // Активация всех слотов на дату
+  const activateAllSlotsForDate = (date: string) => {
+    const updatedSlots = baseTimeSlots.map(time => ({
+      time,
+      available: true,
+      booked: false
+    }));
+    
+    const newScheduleData = { ...scheduleData, [date]: updatedSlots };
+    setScheduleData(newScheduleData);
     localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
   };
 
