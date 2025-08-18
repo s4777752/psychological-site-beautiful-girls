@@ -214,21 +214,7 @@ const ClientLogin = () => {
           </CardContent>
         </Card>
 
-        {/* Demo info */}
-        <Card className="mt-6 border-blue-200 bg-blue-50">
-          <CardContent className="p-4">
-            <div className="flex items-start space-x-3">
-              <Icon name="Info" className="text-blue-600 mt-0.5" size={16} />
-              <div>
-                <p className="text-sm font-medium text-blue-800 mb-2">Демо-доступ:</p>
-                <div className="text-xs text-blue-700 space-y-1">
-                  <div>📱 +7 (999) 123-45-67 → код: 1234</div>
-                  <div>📱 +7 (999) 987-65-43 → код: 5678</div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+
 
         {/* Back to main */}
         <div className="mt-6 text-center">
