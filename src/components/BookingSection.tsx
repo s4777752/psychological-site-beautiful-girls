@@ -1,9 +1,32 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
+import PublicBookingCalendar from "@/components/PublicBookingCalendar";
 
 const BookingSection = () => {
   const navigate = useNavigate();
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  if (showCalendar) {
+    return (
+      <section id="booking" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <Button
+              variant="outline"
+              onClick={() => setShowCalendar(false)}
+              className="mb-4"
+            >
+              <Icon name="ArrowLeft" className="mr-2" size={16} />
+              Вернуться к описанию
+            </Button>
+          </div>
+          <PublicBookingCalendar />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="booking" className="py-20 bg-white">
@@ -35,14 +58,29 @@ const BookingSection = () => {
               <p className="text-warm-700 text-sm">Встреча через защищенную видеосвязь</p>
             </div>
           </div>
-          <Button 
-            size="lg" 
-            className="bg-primary hover:bg-primary/90 text-white px-12 py-3"
-            onClick={() => navigate('/client/login')}
-          >
-            <Icon name="Calendar" className="mr-2" size={20} />
-            Начать запись
-          </Button>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-white px-12 py-3"
+              onClick={() => setShowCalendar(true)}
+            >
+              <Icon name="Calendar" className="mr-2" size={20} />
+              Онлайн календарь записи
+            </Button>
+            
+            <span className="text-warm-500 text-sm">или</span>
+            
+            <Button 
+              size="lg"
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-white px-12 py-3"
+              onClick={() => navigate('/client/login')}
+            >
+              <Icon name="UserPlus" className="mr-2" size={20} />
+              Войти в личный кабинет
+            </Button>
+          </div>
         </div>
       </div>
     </section>
