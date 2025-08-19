@@ -10,7 +10,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <Icon name="Heart" className="text-primary" size={32} />
+            <Icon name="Heart" className="text-red-500 fill-red-500" size={32} />
             <span className="text-2xl font-montserrat font-bold text-secondary">MindCare</span>
           </div>
           <nav className="hidden md:flex space-x-8">
