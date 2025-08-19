@@ -162,6 +162,17 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const weekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
+  // Функция для правильного форматирования даты без проблем с часовыми поясами
+  const formatSelectedDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    
+    const monthName = monthNames[date.getMonth()];
+    const dayName = weekDays[date.getDay()];
+    
+    return `${day} ${monthName.toLowerCase()} ${year} г. (${dayName})`;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -402,7 +413,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 <div className="text-left">
                   <p><strong>Психолог:</strong> {psychologistName}</p>
                   <p><strong>Специализация:</strong> {psychologistSpecialty}</p>
-                  <p><strong>Дата:</strong> {new Date(selectedDate).toLocaleDateString('ru-RU')}</p>
+                  <p><strong>Дата:</strong> {formatSelectedDate(selectedDate)}</p>
                   <p><strong>Время:</strong> {selectedTime}</p>
                   <p><strong>Длительность:</strong> 50 минут</p>
                   <p><strong>Стоимость:</strong> 2 500 ₽</p>

@@ -120,6 +120,17 @@ const PublicBookingCalendar: React.FC = () => {
 
   const weekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
+  // Функция для правильного форматирования даты без проблем с часовыми поясами
+  const formatSelectedDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    
+    const monthName = monthNames[date.getMonth()];
+    const dayName = weekDays[date.getDay()];
+    
+    return `${day} ${monthName.toLowerCase()} ${year} г. (${dayName})`;
+  };
+
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
     if (selectedPsychologist) {
@@ -152,7 +163,7 @@ const PublicBookingCalendar: React.FC = () => {
     // Здесь будет логика отправки заявки
     toast({
       title: "Заявка отправлена!",
-      description: `Мы свяжемся с вами в ближайшее время для подтверждения записи на ${new Date(bookingData.date).toLocaleDateString('ru-RU')} в ${bookingData.time}`,
+      description: `Мы свяжемся с вами в ближайшее время для подтверждения записи на ${formatSelectedDate(bookingData.date)} в ${bookingData.time}`,
     });
 
     // Сброс формы

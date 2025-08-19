@@ -21,8 +21,13 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
   const baseTimeSlots: string[] = [
     '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
     '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', 
-    '21:00', '22:00', '23:00', '24:00'
+    '21:00', '22:00', '23:00'
   ];
+
+  // Функция для форматирования времени
+  const formatTime = (time: string) => {
+    return time === '24:00' ? '00:00' : time;
+  };
 
   // Индивидуальное расписание для каждого психолога
   const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
@@ -149,6 +154,17 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
 
   const weekDays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
+  // Функция для правильного форматирования даты без проблем с часовыми поясами
+  const formatSelectedDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    
+    const monthName = monthNames[date.getMonth()];
+    const dayName = weekDays[date.getDay()];
+    
+    return `${day} ${monthName.toLowerCase()} ${year} г. (${dayName})`;
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-6">
@@ -239,7 +255,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
           <CardContent className="p-6">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-secondary mb-2">
-                Временные слоты на {new Date(selectedDate).toLocaleDateString('ru-RU')}
+                Временные слоты на {formatSelectedDate(selectedDate)}
               </h3>
               <p className="text-sm text-warm-600">
                 Нажмите + чтобы активировать слот, - чтобы деактивировать
@@ -261,7 +277,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                   `}
                 >
                   <div className="flex items-center space-x-3">
-                    <span className="font-medium text-secondary">{slot.time}</span>
+                    <span className="font-medium text-secondary">{formatTime(slot.time)}</span>
                     <div className="flex items-center space-x-2">
                       {slot.booked && (
                         <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
