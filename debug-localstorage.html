@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LocalStorage Psychologists Debug</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        pre { 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            border-radius: 4px; 
+            overflow-x: auto;
+        }
+        button {
+            margin: 5px 10px 5px 0;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #0056b3; }
+        .status { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+        }
+        .active { background: #d4edda; color: #155724; }
+        .inactive { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>LocalStorage Psychologists Debug Tool</h1>
+    
+    <div class="section">
+        <h2>Current localStorage State</h2>
+        <button onclick="checkLocalStorage()">Check Current State</button>
+        <button onclick="clearLocalStorage()">Clear All Data</button>
+        <pre id="currentState">Click "Check Current State" to see data...</pre>
+    </div>
+    
+    <div class="section">
+        <h2>Psychologists List</h2>
+        <div id="psychologistsList">No data loaded...</div>
+    </div>
+    
+    <div class="section">
+        <h2>Actions</h2>
+        <button onclick="toggleFirstPsychologist()">Toggle First Psychologist Status</button>
+        <button onclick="simulateNavigationIssue()">Simulate Navigation Issue</button>
+        <button onclick="checkAfterToggle()">Check State After Toggle</button>
+    </div>
+    
+    <div class="section">
+        <h2>Debug Log</h2>
+        <button onclick="clearDebugLog()">Clear Log</button>
+        <pre id="debugLog">Debug log will appear here...</pre>
+    </div>
+
+    <script>
+        let debugLog = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.push(`[${timestamp}] ${message}`);
+            document.getElementById('debugLog').textContent = debugLog.join('\n');
+        }
+        
+        function clearDebugLog() {
+            debugLog = [];
+            document.getElementById('debugLog').textContent = 'Debug log cleared...';
+        }
+        
+        function checkLocalStorage() {
+            log('Checking localStorage...');
+            
+            const psychologistsData = localStorage.getItem('psychologists');
+            const authData = localStorage.getItem('psychologistAuth');
+            const managerAuth = localStorage.getItem('managerAuth');
+            
+            log(`psychologists key exists: ${psychologistsData !== null}`);
+            log(`psychologists data length: ${psychologistsData ? psychologistsData.length : 0} characters`);
+            log(`psychologistAuth exists: ${authData !== null}`);
+            log(`managerAuth exists: ${managerAuth !== null}`);
+            
+            if (psychologistsData) {
+                try {
+                    const parsed = JSON.parse(psychologistsData);
+                    log(`Parsed psychologists count: ${parsed.length}`);
+                    log(`Active psychologists: ${parsed.filter(p => p.isActive).length}`);
+                    log(`Inactive psychologists: ${parsed.filter(p => !p.isActive).length}`);
+                } catch (e) {
+                    log(`Error parsing psychologists data: ${e.message}`);
+                }
+            }
+            
+            document.getElementById('currentState').textContent = JSON.stringify({
+                psychologists: psychologistsData ? JSON.parse(psychologistsData) : null,
+                psychologistAuth: authData ? JSON.parse(authData) : null,
+                managerAuth: managerAuth ? JSON.parse(managerAuth) : null
+            }, null, 2);
+            
+            displayPsychologists();
+        }
+        
+        function displayPsychologists() {
+            const psychologistsData = localStorage.getItem('psychologists');
+            const container = document.getElementById('psychologistsList');
+            
+            if (!psychologistsData) {
+                container.innerHTML = 'No psychologists data found in localStorage';
+                return;
+            }
+            
+            try {
+                const psychologists = JSON.parse(psychologistsData);
+                let html = '';
+                
+                psychologists.forEach((p, index) => {
+                    const statusClass = p.isActive ? 'active' : 'inactive';
+                    const statusText = p.isActive ? 'ACTIVE' : 'INACTIVE';
+                    
+                    html += `
+                        <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <strong>${p.name}</strong> (ID: ${p.id})
+                            <span class="status ${statusClass}">${statusText}</span><br>
+                            <small>Login: ${p.login}, Email: ${p.email}</small><br>
+                            <button onclick="togglePsychologist('${p.id}')">Toggle Status</button>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = `Error parsing data: ${e.message}`;
+                log(`Error displaying psychologists: ${e.message}`);
+            }
+        }
+        
+        function togglePsychologist(id) {
+            log(`Attempting to toggle psychologist ${id}...`);
+            
+            const psychologistsData = localStorage.getItem('psychologists');
+            if (!psychologistsData) {
+                log('No psychologists data found!');
+                return;
+            }
+            
+            try {
+                const psychologists = JSON.parse(psychologistsData);
+                log(`Found ${psychologists.length} psychologists before toggle`);
+                
+                const updatedPsychologists = psychologists.map(p => {
+                    if (p.id === id) {
+                        log(`Toggling ${p.name} from ${p.isActive} to ${!p.isActive}`);
+                        return { ...p, isActive: !p.isActive };
+                    }
+                    return p;
+                });
+                
+                localStorage.setItem('psychologists', JSON.stringify(updatedPsychologists));
+                log('Data saved to localStorage');
+                
+                // Verify the save
+                const verification = JSON.parse(localStorage.getItem('psychologists'));
+                const toggledPsychologist = verification.find(p => p.id === id);
+                log(`Verification: ${toggledPsychologist.name} is now ${toggledPsychologist.isActive ? 'active' : 'inactive'}`);
+                
+                displayPsychologists();
+                
+            } catch (e) {
+                log(`Error toggling psychologist: ${e.message}`);
+            }
+        }
+        
+        function toggleFirstPsychologist() {
+            const psychologistsData = localStorage.getItem('psychologists');
+            if (psychologistsData) {
+                const psychologists = JSON.parse(psychologistsData);
+                if (psychologists.length > 0) {
+                    togglePsychologist(psychologists[0].id);
+                }
+            }
+        }
+        
+        function simulateNavigationIssue() {
+            log('=== SIMULATING NAVIGATION ISSUE ===');
+            
+            // 1. Check current state
+            log('Step 1: Checking initial state...');
+            checkLocalStorage();
+            
+            // 2. Toggle a psychologist
+            log('Step 2: Toggling first psychologist...');
+            setTimeout(() => {
+                toggleFirstPsychologist();
+                
+                // 3. Simulate page refresh/navigation
+                log('Step 3: Simulating navigation (page reload simulation)...');
+                setTimeout(() => {
+                    // Check if data persists
+                    log('Step 4: Checking state after "navigation"...');
+                    checkLocalStorage();
+                }, 1000);
+            }, 500);
+        }
+        
+        function checkAfterToggle() {
+            log('=== CHECKING STATE AFTER TOGGLE ===');
+            checkLocalStorage();
+        }
+        
+        function clearLocalStorage() {
+            if (confirm('Are you sure you want to clear all localStorage data?')) {
+                localStorage.clear();
+                log('LocalStorage cleared');
+                document.getElementById('currentState').textContent = 'LocalStorage cleared';
+                document.getElementById('psychologistsList').innerHTML = 'No data - localStorage cleared';
+            }
+        }
+        
+        // Initial load
+        window.onload = function() {
+            log('Page loaded, checking initial state...');
+            checkLocalStorage();
+        };
+        
+        // Listen for storage events (useful for debugging across tabs)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'psychologists') {
+                log(`Storage event detected for psychologists key`);
+                log(`Old value length: ${e.oldValue ? e.oldValue.length : 0}`);
+                log(`New value length: ${e.newValue ? e.newValue.length : 0}`);
+                checkLocalStorage();
+            }
+        });
+    </script>
+</body>
+</html>

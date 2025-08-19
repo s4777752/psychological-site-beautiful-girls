@@ -20,6 +20,12 @@ const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: Ps
   }, [psychologist.isActive]);
 
   const handleToggleStatus = () => {
+    console.log("🎯 [PsychologistCard] Toggle clicked:", {
+      psychologistId: psychologist.id,
+      currentLocalState: isActive,
+      psychologistPropState: psychologist.isActive,
+      newState: !isActive
+    });
     setIsActive(!isActive);
     onToggleStatus(psychologist.id);
   };

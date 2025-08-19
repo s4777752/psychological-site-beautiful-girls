@@ -7,7 +7,6 @@ export const usePsychologists = () => {
   // Загружаем психологов из localStorage при монтировании
   useEffect(() => {
     const saved = localStorage.getItem("psychologists");
-    // Принудительно загружаем все 6 психологов для главной страницы
     let existingPsychologists = [];
     try {
       existingPsychologists = saved ? JSON.parse(saved) : [];
@@ -15,9 +14,14 @@ export const usePsychologists = () => {
       existingPsychologists = [];
     }
     
-    const activePsychologists = existingPsychologists.filter((p: Psychologist) => p.isActive);
+    console.log("🔍 [usePsychologists] Loading from localStorage:", {
+      saved: !!saved,
+      existingCount: existingPsychologists.length,
+      activeCount: existingPsychologists.filter((p: Psychologist) => p.isActive).length
+    });
     
-    if (!saved || existingPsychologists.length < 6 || activePsychologists.length < 6) {
+    // Only initialize with demo data if NO data exists at all
+    if (!saved || existingPsychologists.length === 0) {
       // Добавляем демо данные соответствующие главной странице
       const demoPsychologists: Psychologist[] = [
         {
@@ -105,16 +109,25 @@ export const usePsychologists = () => {
           createdAt: new Date().toISOString()
         }
       ];
+      console.log("🔧 [usePsychologists] Initializing with demo data");
       setPsychologists(demoPsychologists);
       localStorage.setItem("psychologists", JSON.stringify(demoPsychologists));
     } else {
+      console.log("🔄 [usePsychologists] Loading existing data with preserved statuses");
       setPsychologists(existingPsychologists);
     }
   }, []);
 
   // Сохраняем в localStorage при изменении
   useEffect(() => {
-    localStorage.setItem("psychologists", JSON.stringify(psychologists));
+    if (psychologists.length > 0) {
+      console.log("💾 [usePsychologists] Saving to localStorage:", {
+        count: psychologists.length,
+        activeCount: psychologists.filter(p => p.isActive).length,
+        psychologists: psychologists.map(p => ({ id: p.id, name: p.name, isActive: p.isActive }))
+      });
+      localStorage.setItem("psychologists", JSON.stringify(psychologists));
+    }
   }, [psychologists]);
 
   const generateLogin = (name: string) => {
@@ -149,9 +162,17 @@ export const usePsychologists = () => {
   };
 
   const togglePsychologistStatus = (id: string) => {
-    setPsychologists(prev => prev.map(p => 
-      p.id === id ? { ...p, isActive: !p.isActive } : p
-    ));
+    console.log("🔄 [usePsychologists] Toggling psychologist status:", id);
+    setPsychologists(prev => {
+      const updated = prev.map(p => {
+        if (p.id === id) {
+          console.log(`🔄 [usePsychologists] Toggling ${p.name} from ${p.isActive} to ${!p.isActive}`);
+          return { ...p, isActive: !p.isActive };
+        }
+        return p;
+      });
+      return updated;
+    });
   };
 
   const updateAvatars = () => {

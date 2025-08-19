@@ -46,9 +46,10 @@ const ProfileTab = ({ psychologist }: ProfileTabProps) => {
   const handleSaveProfile = () => {
     // Обновляем данные в localStorage
     const psychologists = JSON.parse(localStorage.getItem("psychologists") || "[]");
+    console.log("📝 [ProfileTab] Updating profile for:", psychologist.id);
     const updatedPsychologists = psychologists.map((p: any) => {
       if (p.id === psychologist.id) {
-        return {
+        const updated = {
           ...p,
           name: profileData.name,
           email: profileData.email,
@@ -57,11 +58,14 @@ const ProfileTab = ({ psychologist }: ProfileTabProps) => {
           description: profileData.description,
           price: parseInt(profileData.price)
         };
+        console.log("📝 [ProfileTab] Profile updated, isActive preserved:", updated.isActive);
+        return updated;
       }
       return p;
     });
     
     localStorage.setItem("psychologists", JSON.stringify(updatedPsychologists));
+    console.log("📝 [ProfileTab] Profile saved to localStorage");
     
     // Обновляем данные авторизации
     const updatedAuth = { ...psychologist, name: profileData.name };
