@@ -24,6 +24,9 @@ interface Session {
   status: 'upcoming' | 'active' | 'completed' | 'cancelled';
   notes?: string;
   psychologist: string;
+  amount: number;
+  paymentStatus: 'paid' | 'pending' | 'failed' | 'refunded';
+  paymentId?: string;
 }
 
 const ClientDashboard = () => {
@@ -97,7 +100,10 @@ const ClientDashboard = () => {
       time: "10:00",
       status: "upcoming",
       psychologist: client.psychologist,
-      notes: "Плановая консультация"
+      notes: "Плановая консультация",
+      amount: 2500,
+      paymentStatus: "paid",
+      paymentId: "PAY_12345"
     },
     {
       id: "2",
@@ -105,14 +111,41 @@ const ClientDashboard = () => {
       time: "10:00",
       status: "completed",
       psychologist: client.psychologist,
-      notes: "Работа с тревожностью - хорошие результаты"
+      notes: "Работа с тревожностью - хорошие результаты",
+      amount: 2500,
+      paymentStatus: "paid",
+      paymentId: "PAY_12344"
     },
     {
       id: "3",
       date: "2025-08-21",
       time: "10:00",
       status: "upcoming",
-      psychologist: client.psychologist
+      psychologist: client.psychologist,
+      amount: 2500,
+      paymentStatus: "pending"
+    },
+    {
+      id: "4",
+      date: "2025-08-12",
+      time: "15:00",
+      status: "completed",
+      psychologist: client.psychologist,
+      notes: "Первичная консультация",
+      amount: 2500,
+      paymentStatus: "paid",
+      paymentId: "PAY_12342"
+    },
+    {
+      id: "5",
+      date: "2025-08-19",
+      time: "14:00",
+      status: "cancelled",
+      psychologist: client.psychologist,
+      notes: "Отменено клиентом",
+      amount: 2500,
+      paymentStatus: "refunded",
+      paymentId: "PAY_12346"
     }
   ];
 
@@ -121,6 +154,7 @@ const ClientDashboard = () => {
 
   const tabs = [
     { id: "sessions", name: "Сеансы", icon: "Calendar" },
+    { id: "payments", name: "Платежи", icon: "CreditCard" },
     { id: "messages", name: "Сообщения", icon: "MessageSquare" },
     { id: "video", name: "Видеозвонок", icon: "Video" },
     { id: "profile", name: "Профиль", icon: "User" }
@@ -244,6 +278,7 @@ const ClientDashboard = () => {
 
         {/* Tab Content */}
         {activeTab === "sessions" && <SessionsTab sessions={sessions} />}
+        {activeTab === "payments" && <PaymentsTab sessions={sessions} />}
         {activeTab === "messages" && (
           <ChatInterface 
             userType="client" 
@@ -279,10 +314,54 @@ const SessionsTab = ({ sessions }: { sessions: Session[] }) => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
+  const getPaymentBadge = (paymentStatus: Session['paymentStatus']) => {
+    const paymentConfig = {
+      paid: { label: 'Оплачено', variant: 'default' as const, color: 'text-green-600' },
+      pending: { label: 'Ожидает оплаты', variant: 'secondary' as const, color: 'text-orange-600' },
+      failed: { label: 'Ошибка оплаты', variant: 'destructive' as const, color: 'text-red-600' },
+      refunded: { label: 'Возвращено', variant: 'outline' as const, color: 'text-blue-600' }
+    };
+    
+    const config = paymentConfig[paymentStatus];
+    return (
+      <Badge className={`bg-opacity-20 ${config.color} border-current`}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  const totalPaid = sessions
+    .filter(s => s.paymentStatus === 'paid')
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  const pendingPayments = sessions.filter(s => s.paymentStatus === 'pending').length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-warm-800">Мои сеансы</h2>
+      </div>
+
+      {/* Статистика оплат */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">₽{totalPaid.toLocaleString()}</div>
+            <p className="text-sm text-warm-600">Всего оплачено</p>
+          </CardContent>
+        </Card>
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-warm-800">{sessions.filter(s => s.paymentStatus === 'paid').length}</div>
+            <p className="text-sm text-warm-600">Оплаченных сессий</p>
+          </CardContent>
+        </Card>
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-orange-600">{pendingPayments}</div>
+            <p className="text-sm text-warm-600">Ожидают оплаты</p>
+          </CardContent>
+        </Card>
       </div>
       
       <div className="grid gap-4">
@@ -299,18 +378,41 @@ const SessionsTab = ({ sessions }: { sessions: Session[] }) => {
                       {new Date(session.date).toLocaleDateString('ru-RU')} в {session.time}
                     </h3>
                     <p className="text-sm text-warm-600">Психолог: {session.psychologist}</p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <p className="text-sm font-medium text-warm-800">₽{session.amount.toLocaleString()}</p>
+                      {getPaymentBadge(session.paymentStatus)}
+                    </div>
+                    {session.paymentId && (
+                      <p className="text-xs text-warm-500 mt-1">ID платежа: {session.paymentId}</p>
+                    )}
                     {session.notes && (
                       <p className="text-sm text-warm-500 mt-1">{session.notes}</p>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
-                  {getStatusBadge(session.status)}
+                  <div className="mb-2">{getStatusBadge(session.status)}</div>
                   {session.status === 'upcoming' && (
-                    <div className="mt-2">
+                    <div className="space-y-2">
                       <Button size="sm" className="bg-warm-600 hover:bg-warm-700">
                         <Icon name="Video" className="mr-1" size={14} />
                         Подключиться
+                      </Button>
+                      {session.paymentStatus === 'pending' && (
+                        <div>
+                          <Button size="sm" variant="outline" className="border-orange-300 text-orange-600 hover:bg-orange-50">
+                            <Icon name="CreditCard" className="mr-1" size={14} />
+                            Оплатить
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {session.paymentStatus === 'failed' && (
+                    <div className="mt-2">
+                      <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50">
+                        <Icon name="RefreshCw" className="mr-1" size={14} />
+                        Повторить оплату
                       </Button>
                     </div>
                   )}
@@ -400,6 +502,138 @@ const VideoTab = ({ nextSession }: { nextSession?: Session }) => {
   );
 };
 
+const PaymentsTab = ({ sessions }: { sessions: Session[] }) => {
+  const getPaymentBadge = (paymentStatus: Session['paymentStatus']) => {
+    const paymentConfig = {
+      paid: { label: 'Оплачено', color: 'bg-green-100 text-green-800' },
+      pending: { label: 'Ожидает оплаты', color: 'bg-orange-100 text-orange-800' },
+      failed: { label: 'Ошибка оплаты', color: 'bg-red-100 text-red-800' },
+      refunded: { label: 'Возвращено', color: 'bg-blue-100 text-blue-800' }
+    };
+    
+    const config = paymentConfig[paymentStatus];
+    return (
+      <Badge className={config.color}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  const totalPaid = sessions
+    .filter(s => s.paymentStatus === 'paid')
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  const totalRefunded = sessions
+    .filter(s => s.paymentStatus === 'refunded')
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  const pendingAmount = sessions
+    .filter(s => s.paymentStatus === 'pending')
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-warm-800">История платежей</h2>
+        <Button variant="outline" className="border-warm-300 text-warm-600 hover:bg-warm-100">
+          <Icon name="Download" className="mr-2" size={16} />
+          Скачать чеки
+        </Button>
+      </div>
+
+      {/* Статистика платежей */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">₽{totalPaid.toLocaleString()}</div>
+            <p className="text-sm text-warm-600">Всего оплачено</p>
+          </CardContent>
+        </Card>
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-orange-600">₽{pendingAmount.toLocaleString()}</div>
+            <p className="text-sm text-warm-600">К оплате</p>
+          </CardContent>
+        </Card>
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">₽{totalRefunded.toLocaleString()}</div>
+            <p className="text-sm text-warm-600">Возвращено</p>
+          </CardContent>
+        </Card>
+        <Card className="border-warm-200">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-warm-800">{sessions.length}</div>
+            <p className="text-sm text-warm-600">Всего транзакций</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* История платежей */}
+      <Card className="border-warm-200">
+        <CardHeader>
+          <CardTitle className="text-warm-800">Детальная история</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {sessions
+              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+              .map((session) => (
+                <div
+                  key={session.id}
+                  className="flex items-center justify-between p-4 border border-warm-200 rounded-lg hover:bg-warm-50"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-warm-100 rounded-full flex items-center justify-center">
+                      <Icon name="CreditCard" className="text-warm-600" size={16} />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-warm-800">
+                        Сессия от {new Date(session.date).toLocaleDateString('ru-RU')}
+                      </h4>
+                      <p className="text-sm text-warm-600">
+                        {session.time} • Психолог: {session.psychologist}
+                      </p>
+                      {session.paymentId && (
+                        <p className="text-xs text-warm-500 font-mono">ID: {session.paymentId}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center space-x-3">
+                      <div>
+                        <p className="font-semibold text-warm-800">₽{session.amount.toLocaleString()}</p>
+                        <p className="text-xs text-warm-500">
+                          {new Date(session.date).toLocaleDateString('ru-RU')}
+                        </p>
+                      </div>
+                      {getPaymentBadge(session.paymentStatus)}
+                    </div>
+                    {session.paymentStatus === 'pending' && (
+                      <div className="mt-2">
+                        <Button size="sm" className="bg-primary hover:bg-primary-dark">
+                          <Icon name="CreditCard" className="mr-1" size={12} />
+                          Оплатить
+                        </Button>
+                      </div>
+                    )}
+                    {session.paymentStatus === 'failed' && (
+                      <div className="mt-2">
+                        <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50">
+                          <Icon name="RefreshCw" className="mr-1" size={12} />
+                          Повторить
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 const ProfileTab = ({ client }: { client: ClientAuth }) => (
   <div className="space-y-6">

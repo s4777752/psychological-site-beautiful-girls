@@ -48,26 +48,123 @@ const OverviewTab = () => {
         </Card>
       </div>
 
-      {/* Сегодняшние сессии */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Сегодняшние сессии */}
+        <Card className="border-warm-200">
+          <CardHeader>
+            <CardTitle className="text-warm-800">Сегодняшние сессии</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-warm-50 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-warm-800">Елена Иванова</h4>
+                  <p className="text-sm text-warm-600">10:00 - 11:00</p>
+                  <p className="text-xs text-green-600 font-medium">Оплачено: ₽2,500</p>
+                </div>
+                <Badge variant="default">Подтверждена</Badge>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-warm-50 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-warm-800">Алексей Петров</h4>
+                  <p className="text-sm text-warm-600">14:00 - 15:00</p>
+                  <p className="text-xs text-orange-600 font-medium">Ожидает оплаты: ₽2,500</p>
+                </div>
+                <Badge variant="outline">Ожидает</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Финансовая сводка */}
+        <Card className="border-warm-200">
+          <CardHeader>
+            <CardTitle className="text-warm-800">Финансы за август 2025</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-warm-600">Всего сессий:</span>
+                <span className="font-semibold text-warm-800">32</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-warm-600">Оплаченных:</span>
+                <span className="font-semibold text-green-600">29</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-warm-600">Ожидают оплаты:</span>
+                <span className="font-semibold text-orange-600">3</span>
+              </div>
+              <div className="border-t border-warm-200 pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-warm-600">Получено:</span>
+                  <span className="font-bold text-green-600 text-lg">₽72,500</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-warm-600">Ожидается:</span>
+                  <span className="font-bold text-orange-600">₽7,500</span>
+                </div>
+                <div className="flex justify-between items-center mt-2 pt-2 border-t border-warm-200">
+                  <span className="font-medium text-warm-700">Итого за месяц:</span>
+                  <span className="font-bold text-primary text-xl">₽80,000</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Последние оплаты */}
       <Card className="border-warm-200">
         <CardHeader>
-          <CardTitle className="text-warm-800">Сегодняшние сессии</CardTitle>
+          <CardTitle className="text-warm-800">Последние оплаты</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-warm-50 rounded-lg">
-              <div>
-                <h4 className="font-medium text-warm-800">Елена Иванова</h4>
-                <p className="text-sm text-warm-600">10:00 - 11:00</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <Icon name="Check" className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-warm-800">Мария Козлова</h4>
+                  <p className="text-sm text-warm-600">18 августа 2025, 16:00</p>
+                </div>
               </div>
-              <Badge variant="default">Подтверждена</Badge>
+              <div className="text-right">
+                <p className="font-semibold text-green-600">₽2,500</p>
+                <p className="text-xs text-warm-500">Оплачено</p>
+              </div>
             </div>
-            <div className="flex items-center justify-between p-4 bg-warm-50 rounded-lg">
-              <div>
-                <h4 className="font-medium text-warm-800">Алексей Петров</h4>
-                <p className="text-sm text-warm-600">14:00 - 15:00</p>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <Icon name="Check" className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-warm-800">Елена Иванова</h4>
+                  <p className="text-sm text-warm-600">17 августа 2025, 10:00</p>
+                </div>
               </div>
-              <Badge variant="outline">Ожидает</Badge>
+              <div className="text-right">
+                <p className="font-semibold text-green-600">₽2,500</p>
+                <p className="text-xs text-warm-500">Оплачено</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                  <Icon name="Clock" className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-warm-800">Дмитрий Сидоров</h4>
+                  <p className="text-sm text-warm-600">16 августа 2025, 15:30</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold text-orange-600">₽2,500</p>
+                <p className="text-xs text-warm-500">Ожидает оплаты</p>
+              </div>
             </div>
           </div>
         </CardContent>
