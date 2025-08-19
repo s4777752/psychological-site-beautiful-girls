@@ -14,7 +14,13 @@ interface ScheduleManagerProps {
 }
 
 const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) => {
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
   // Базовые временные слоты
@@ -38,7 +44,8 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     const data = savedSchedule ? JSON.parse(savedSchedule) : {};
     
     // Автоматически активируем текущую дату для нового психолога
-    const today = new Date().toISOString().split('T')[0];
+    const todayDate = new Date();
+    const today = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
     if (!data[today]) {
       data[today] = baseTimeSlots.map(time => ({
         time,
