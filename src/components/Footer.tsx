@@ -81,9 +81,7 @@ const Footer = () => {
             <div className="flex justify-between items-center">
               <div>
                 <p>&copy; 2024 MindCare. Все права защищены.</p>
-                <p className="text-xs text-warm-400 mt-1">
-                  ИП Паклин Сергей Владимирович | ИНН 594200005879 | ОГРНИП 305591619400016
-                </p>
+                <p className="text-xs text-warm-400 mt-1">ИП Паклин Сергей Васильевич | ИНН 594200005879 | ОГРНИП 305591619400016</p>
               </div>
               <Button 
                 variant="ghost" 
