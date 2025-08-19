@@ -33,7 +33,7 @@ const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: Ps
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
                 <h3 className="text-lg font-semibold text-warm-800">{psychologist.name}</h3>
-                <Badge variant={psychologist.isActive ? "default" : "secondary"}>
+                <Badge className={psychologist.isActive ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"}>
                   {psychologist.isActive ? "Активен" : "Неактивен"}
                 </Badge>
               </div>
