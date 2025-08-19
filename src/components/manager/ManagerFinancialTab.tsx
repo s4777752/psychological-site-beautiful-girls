@@ -79,8 +79,23 @@ const ManagerFinancialTab = () => {
     }
   ];
 
-  const psychologistsData: PsychologistData[] = [
-    {
+  // Проверяем есть ли флаг о выплате в localStorage
+  const getUpdatedPsychologistData = () => {
+    const payoutFlag = localStorage.getItem('mariaPayout');
+    if (payoutFlag) {
+      return {
+        id: 1,
+        name: "Мария Козлова",
+        email: "maria@example.com",
+        totalSessions: 0, // Обнулено после выплаты
+        totalEarned: 0,   // Обнулено после выплаты
+        commission: 0,    // Обнулено после выплаты
+        lastSession: "2024-08-16",
+        rating: 4.8,
+        clientsCount: 18
+      };
+    }
+    return {
       id: 1,
       name: "Мария Козлова",
       email: "maria@example.com",
@@ -90,7 +105,11 @@ const ManagerFinancialTab = () => {
       lastSession: "2024-08-16",
       rating: 4.8,
       clientsCount: 18
-    },
+    };
+  };
+
+  const psychologistsData: PsychologistData[] = [
+    getUpdatedPsychologistData(),
     {
       id: 2,
       name: "Анна Смирнова",
@@ -142,10 +161,58 @@ const ManagerFinancialTab = () => {
 
   const handlePayoutConfirm = () => {
     if (selectedPsychologist) {
-      // Здесь будет логика выплаты
-      alert(`Выплата ₽${selectedPsychologist.commission.toLocaleString()} для ${selectedPsychologist.name} успешно инициирована!`);
+      // Создаем запись для архива
+      const payoutRecord = {
+        id: `payout_${Date.now()}`,
+        psychologistName: selectedPsychologist.name,
+        psychologistEmail: selectedPsychologist.email,
+        amount: selectedPsychologist.commission,
+        totalSessions: selectedPsychologist.totalSessions,
+        payoutDate: new Date().toISOString().split('T')[0],
+        period: `Август 2025`,
+        status: 'completed' as const,
+        paymentMethod: 'Банковский перевод',
+        transactionId: `TXN_${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      };
+
+      // Сохраняем в архив
+      const existingArchive = localStorage.getItem('payoutArchive');
+      const archive = existingArchive ? JSON.parse(existingArchive) : [];
+      archive.push(payoutRecord);
+      localStorage.setItem('payoutArchive', JSON.stringify(archive));
+
+      // Устанавливаем флаг выплаты для демонстрации (в реальности будет API)
+      if (selectedPsychologist.name === "Мария Козлова") {
+        localStorage.setItem('mariaPayout', 'true');
+      }
+
+      // Обнуляем показатели психолога (в реальном приложении это будет API запрос)
+      const updatedPsychologist = {
+        ...selectedPsychologist,
+        totalEarned: 0,
+        commission: 0,
+        totalSessions: 0
+      };
+
+      // Здесь бы мы обновили данные через API
+      // В демо просто показываем успешное сообщение
+      alert(
+        `✅ Выплата успешно завершена!\n\n` +
+        `Психолог: ${selectedPsychologist.name}\n` +
+        `Сумма: ₽${selectedPsychologist.commission.toLocaleString()}\n` +
+        `ID транзакции: ${payoutRecord.transactionId}\n\n` +
+        `📋 Данные сохранены в архиве\n` +
+        `🔄 Показатели психолога обнулены`
+      );
+
       setShowPayoutModal(false);
       setSelectedPsychologist(null);
+
+      // В реальном приложении здесь бы был перезапрос данных
+      // Для демонстрации просто перезагружаем страницу через 2 секунды
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
   };
 
@@ -533,6 +600,17 @@ const ManagerFinancialTab = () => {
                     ₽{selectedPsychologist.commission.toLocaleString()}
                   </div>
                   <p className="text-sm text-warm-500 mt-1">К выплате</p>
+                </div>
+
+                <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <Icon name="AlertTriangle" className="text-orange-600" size={16} />
+                    <p className="text-sm font-medium text-orange-800">Внимание!</p>
+                  </div>
+                  <p className="text-xs text-orange-700 mt-1">
+                    После выплаты все показатели психолога будут обнулены, 
+                    а данные перенесены в архив.
+                  </p>
                 </div>
 
                 <div className="space-y-3">

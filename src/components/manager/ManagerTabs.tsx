@@ -17,6 +17,7 @@ const ManagerTabs = ({ activeTab, onTabChange }: ManagerTabsProps) => {
     { id: "sessions", name: "Записи", icon: "Calendar" },
     { id: "payments", name: "Уведомления", icon: "Bell" },
     { id: "financial", name: "Финансы", icon: "DollarSign" },
+    { id: "archive", name: "Архив", icon: "Archive" },
     { id: "content", name: "Контент", icon: "FileText" },
     { id: "psychologists", name: "Психологи", icon: "Users" },
     { id: "settings", name: "Настройки", icon: "Settings" }
