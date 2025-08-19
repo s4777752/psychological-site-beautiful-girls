@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
 import { Psychologist } from "@/types/psychologist";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PsychologistCardProps {
   psychologist: Psychologist;
@@ -14,6 +14,10 @@ interface PsychologistCardProps {
 
 const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: PsychologistCardProps) => {
   const [isActive, setIsActive] = useState(psychologist.isActive);
+
+  useEffect(() => {
+    setIsActive(psychologist.isActive);
+  }, [psychologist.isActive]);
 
   const handleToggleStatus = () => {
     setIsActive(!isActive);
