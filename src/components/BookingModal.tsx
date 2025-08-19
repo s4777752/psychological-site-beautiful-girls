@@ -65,8 +65,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
       
       const isCurrentMonth = date.getMonth() === month;
       const isToday = date.toDateString() === today.toDateString();
-      const isPast = date < today;
+      // Разрешаем запись с текущего дня (включительно)
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      
+      // Проверяем наличие доступных слотов для данной даты
+      const dateStr = date.toISOString().split('T')[0];
+      const dateSlots = getTimeSlots(dateStr);
+      const hasAvailableSlots = dateSlots.some(slot => slot.available);
       
       days.push({
         date,
@@ -75,7 +81,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
         isToday,
         isPast,
         isWeekend,
-        isAvailable: isCurrentMonth && !isPast
+        hasAvailableSlots,
+        isAvailable: isCurrentMonth && !isPast && hasAvailableSlots
       });
     }
     
@@ -85,7 +92,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const calendarDays = generateCalendarDays();
 
   const handleDateSelect = (date: Date) => {
-    if (date < new Date()) return;
+    // Разрешаем выбор начиная с текущего дня
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (date < todayStart) return;
+    
     setSelectedDate(date.toISOString().split('T')[0]);
     setSelectedTime('');
   };
@@ -117,6 +128,18 @@ const BookingModal: React.FC<BookingModalProps> = ({
     const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     existingBookings.push(booking);
     localStorage.setItem('bookings', JSON.stringify(existingBookings));
+
+    // Обновляем расписание психолога - помечаем слот как забронированный
+    const scheduleData = JSON.parse(localStorage.getItem('psychologistSchedule') || '{}');
+    if (scheduleData[selectedDate]) {
+      scheduleData[selectedDate] = scheduleData[selectedDate].map((slot: any) => {
+        if (slot.time === selectedTime) {
+          return { ...slot, booked: true };
+        }
+        return slot;
+      });
+      localStorage.setItem('psychologistSchedule', JSON.stringify(scheduleData));
+    }
 
     setStep('confirmation');
   };
@@ -216,10 +239,22 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   </div>
                 </div>
             
-            <p className="text-sm text-warm-600 mb-4">
-              <Icon name="Info" size={14} className="inline mr-1" />
-              Работаем 7 дней в неделю. Выходные дни выделены голубым цветом.
-            </p>
+            <div className="text-xs text-warm-600 mb-4 space-y-1">
+              <p>
+                <Icon name="Info" size={12} className="inline mr-1" />
+                Работаем 7 дней в неделю. Выходные дни выделены голубым цветом.
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  <span>Есть свободные слоты</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                  <span>Сегодня / Выбранная дата</span>
+                </div>
+              </div>
+            </div>
 
             <div className="grid grid-cols-7 gap-1 mb-2">
               {weekDays.map(day => (
@@ -236,7 +271,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => handleDateSelect(day.date)}
                   disabled={!day.isAvailable}
                   className={`
-                    p-2 text-sm rounded-lg transition-colors relative
+                    p-2 text-sm rounded-lg transition-colors relative min-h-[40px] flex flex-col items-center justify-center
                     ${day.isCurrentMonth ? 'text-secondary' : 'text-warm-300'}
                     ${day.isToday ? 'bg-primary text-white font-bold' : ''}
                     ${day.isAvailable && !day.isToday ? 'hover:bg-warm-100' : ''}
@@ -245,7 +280,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     ${day.isWeekend && day.isCurrentMonth ? 'bg-blue-50 border border-blue-200' : ''}
                   `}
                 >
-                  {day.day}
+                  <span>{day.day}</span>
+                  {day.hasAvailableSlots && (
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1"></div>
+                  )}
                 </button>
               ))}
             </div>
