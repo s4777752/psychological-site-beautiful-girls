@@ -60,8 +60,8 @@ const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: Ps
               size="sm"
               onClick={() => onToggleStatus(psychologist.id)}
               className={psychologist.isActive 
-                ? "text-orange-600 border-orange-300 hover:bg-orange-50"
-                : "text-green-600 border-green-300 hover:bg-green-50"
+                ? "text-green-600 border-green-300 hover:bg-green-50"
+                : "text-red-600 border-red-300 hover:bg-red-50"
               }
             >
               <Icon name={psychologist.isActive ? "UserX" : "UserCheck"} size={16} />
