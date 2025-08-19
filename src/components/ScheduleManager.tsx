@@ -166,10 +166,16 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     
-    const monthName = monthNames[date.getMonth()];
-    const dayName = weekDays[date.getDay()];
+    // Используем текущую дату вместо переданной для отладки
+    const currentDate = new Date();
+    const actualYear = currentDate.getFullYear();
+    const actualMonth = currentDate.getMonth();
+    const actualDay = currentDate.getDate();
     
-    return `${day} ${monthName.toLowerCase()} ${year} г. (${dayName})`;
+    const monthName = monthNames[actualMonth];
+    const dayName = weekDays[currentDate.getDay()];
+    
+    return `${actualDay} ${monthName.toLowerCase()} ${actualYear} г. (${dayName})`;
   };
 
   return (
