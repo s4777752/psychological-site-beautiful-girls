@@ -29,10 +29,10 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     const savedSchedule = localStorage.getItem('psychologistSchedule');
     const data = savedSchedule ? JSON.parse(savedSchedule) : {};
     
-    // Автоматически активируем текущую дату (19 августа 2025)
-    const today = new Date().toISOString().split('T')[0];
-    if (!data[today]) {
-      data[today] = baseTimeSlots.map(time => ({
+    // Автоматически активируем 18 августа 2025
+    const aug18 = '2025-08-18';
+    if (!data[aug18]) {
+      data[aug18] = baseTimeSlots.map(time => ({
         time,
         available: true,
         booked: false
@@ -112,8 +112,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
       
       const isCurrentMonth = date.getMonth() === month;
       const isToday = date.toDateString() === today.toDateString();
-      // Разрешаем запись с текущего дня (включительно)
-      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const isPast = date < today;
       const isWeekend = date.getDay() === 0 || date.getDay() === 6;
       
       const dateStr = date.toISOString().split('T')[0];
