@@ -19,8 +19,8 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
   const [formData, setFormData] = useState({
     name: psychologist?.name || "",
     email: psychologist?.email || "",
-    login: psychologist?.login || "",
-    password: psychologist?.password || "",
+    login: psychologist?.login || "сергей",
+    password: psychologist?.password || "1234",
     specialization: psychologist?.specialization || "",
     experience: psychologist?.experience || 1,
     description: psychologist?.description || "",
@@ -33,7 +33,8 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
     setFormData(prev => ({
       ...prev,
       name,
-      login: prev.login || generateLogin(name)
+      // Автогенерация только если редактируем существующего психолога и поле логина пустое
+      login: psychologist && !prev.login ? generateLogin(name) : prev.login
     }));
   };
 
