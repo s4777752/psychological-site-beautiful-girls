@@ -30,6 +30,11 @@ interface PsychologistData {
 const ManagerFinancialTab = () => {
   const [reportType, setReportType] = useState("overview");
   const [dateRange, setDateRange] = useState("all");
+  const [selectedPsychologist, setSelectedPsychologist] = useState<PsychologistData | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+  const [showClientModal, setShowClientModal] = useState(false);
 
   const clientsData: ClientData[] = [
     {
@@ -124,6 +129,30 @@ const ManagerFinancialTab = () => {
   const totalRevenue = clientsData.reduce((sum, client) => sum + client.totalPaid, 0);
   const totalCommissions = psychologistsData.reduce((sum, psychologist) => sum + psychologist.commission, 0);
   const platformRevenue = totalRevenue - totalCommissions;
+
+  const handleDetailedReport = (psychologist: PsychologistData) => {
+    setSelectedPsychologist(psychologist);
+    setShowDetailModal(true);
+  };
+
+  const handlePayout = (psychologist: PsychologistData) => {
+    setSelectedPsychologist(psychologist);
+    setShowPayoutModal(true);
+  };
+
+  const handlePayoutConfirm = () => {
+    if (selectedPsychologist) {
+      // Здесь будет логика выплаты
+      alert(`Выплата ₽${selectedPsychologist.commission.toLocaleString()} для ${selectedPsychologist.name} успешно инициирована!`);
+      setShowPayoutModal(false);
+      setSelectedPsychologist(null);
+    }
+  };
+
+  const handleClientReport = (client: ClientData) => {
+    setSelectedClient(client);
+    setShowClientModal(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -256,6 +285,7 @@ const ManagerFinancialTab = () => {
                     variant="outline"
                     size="sm"
                     className="border-warm-300 text-warm-600 hover:bg-warm-100"
+                    onClick={() => handleClientReport(client)}
                   >
                     <Icon name="FileText" size={14} className="mr-1" />
                     Детальный отчёт
@@ -315,6 +345,7 @@ const ManagerFinancialTab = () => {
                       variant="outline"
                       size="sm"
                       className="border-warm-300 text-warm-600 hover:bg-warm-100"
+                      onClick={() => handleDetailedReport(psychologist)}
                     >
                       <Icon name="FileText" size={14} className="mr-1" />
                       Детальный отчёт
@@ -323,6 +354,7 @@ const ManagerFinancialTab = () => {
                       variant="outline"
                       size="sm"
                       className="border-green-300 text-green-600 hover:bg-green-50"
+                      onClick={() => handlePayout(psychologist)}
                     >
                       <Icon name="CreditCard" size={14} className="mr-1" />
                       Выплатить
@@ -385,6 +417,284 @@ const ManagerFinancialTab = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {/* Модальное окно детального отчёта */}
+      {showDetailModal && selectedPsychologist && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-warm-800">
+                  Детальный отчёт: {selectedPsychologist.name}
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowDetailModal(false)}
+                >
+                  <Icon name="X" size={16} />
+                </Button>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Основная статистика</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between">
+                      <span>Всего сессий:</span>
+                      <span className="font-semibold">{selectedPsychologist.totalSessions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Общий доход:</span>
+                      <span className="font-semibold text-green-600">₽{selectedPsychologist.totalEarned.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Комиссия (45%):</span>
+                      <span className="font-semibold text-blue-600">₽{selectedPsychologist.commission.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Активных клиентов:</span>
+                      <span className="font-semibold">{selectedPsychologist.clientsCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Рейтинг:</span>
+                      <span className="font-semibold text-yellow-600">★ {selectedPsychologist.rating}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Детализация по месяцам</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between p-2 bg-warm-50 rounded">
+                      <span>Август 2025:</span>
+                      <span className="font-semibold">₽25,000</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-warm-50 rounded">
+                      <span>Июль 2025:</span>
+                      <span className="font-semibold">₽30,000</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-warm-50 rounded">
+                      <span>Июнь 2025:</span>
+                      <span className="font-semibold">₽27,500</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-warm-50 rounded">
+                      <span>Май 2025:</span>
+                      <span className="font-semibold">₽30,000</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => alert("Экспорт отчёта в PDF (функция в разработке)")}
+                >
+                  <Icon name="Download" className="mr-2" size={16} />
+                  Экспорт PDF
+                </Button>
+                <Button onClick={() => setShowDetailModal(false)}>
+                  Закрыть
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно выплаты */}
+      {showPayoutModal && selectedPsychologist && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-warm-800">Выплата психологу</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPayoutModal(false)}
+                >
+                  <Icon name="X" size={16} />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="text-center p-4 bg-warm-50 rounded-lg">
+                  <h4 className="font-semibold text-warm-800 mb-2">{selectedPsychologist.name}</h4>
+                  <p className="text-sm text-warm-600 mb-3">{selectedPsychologist.email}</p>
+                  <div className="text-2xl font-bold text-green-600">
+                    ₽{selectedPsychologist.commission.toLocaleString()}
+                  </div>
+                  <p className="text-sm text-warm-500 mt-1">К выплате</p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span>Всего сессий:</span>
+                    <span>{selectedPsychologist.totalSessions}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Общий доход:</span>
+                    <span>₽{selectedPsychologist.totalEarned.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Комиссия платформы (55%):</span>
+                    <span>₽{(selectedPsychologist.totalEarned - selectedPsychologist.commission).toLocaleString()}</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between font-semibold">
+                      <span>Выплата психологу (45%):</span>
+                      <span className="text-green-600">₽{selectedPsychologist.commission.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPayoutModal(false)}
+                >
+                  Отмена
+                </Button>
+                <Button
+                  onClick={handlePayoutConfirm}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Icon name="CreditCard" className="mr-2" size={16} />
+                  Подтвердить выплату
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно отчёта клиента */}
+      {showClientModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-warm-800">
+                  Детальный отчёт: {selectedClient.name}
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowClientModal(false)}
+                >
+                  <Icon name="X" size={16} />
+                </Button>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Информация о клиенте</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between">
+                      <span>Имя:</span>
+                      <span className="font-semibold">{selectedClient.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Email:</span>
+                      <span className="font-semibold">{selectedClient.email}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Статус:</span>
+                      <Badge className={selectedClient.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                        {selectedClient.status === "active" ? "Активный" : "Неактивный"}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Средний рейтинг:</span>
+                      <span className="font-semibold text-yellow-600">★ {selectedClient.averageRating}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Последний сеанс:</span>
+                      <span className="font-semibold">{selectedClient.lastSession}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Финансовая статистика</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between">
+                      <span>Всего сессий:</span>
+                      <span className="font-semibold">{selectedClient.totalSessions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Всего оплачено:</span>
+                      <span className="font-semibold text-green-600">₽{selectedClient.totalPaid.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Средняя стоимость сессии:</span>
+                      <span className="font-semibold">₽{Math.round(selectedClient.totalPaid / selectedClient.totalSessions).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Доход платформы (55%):</span>
+                      <span className="font-semibold text-warm-800">₽{Math.round(selectedClient.totalPaid * 0.55).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Комиссия психолога (45%):</span>
+                      <span className="font-semibold text-blue-600">₽{Math.round(selectedClient.totalPaid * 0.45).toLocaleString()}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>История платежей</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 bg-green-50 rounded border border-green-200">
+                      <span>15.08.2025</span>
+                      <span className="font-semibold text-green-600">₽2,500</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-green-50 rounded border border-green-200">
+                      <span>08.08.2025</span>
+                      <span className="font-semibold text-green-600">₽2,500</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-green-50 rounded border border-green-200">
+                      <span>01.08.2025</span>
+                      <span className="font-semibold text-green-600">₽2,500</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-orange-50 rounded border border-orange-200">
+                      <span>25.07.2025</span>
+                      <span className="font-semibold text-orange-600">₽2,500 (ожидает)</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => alert("Экспорт отчёта клиента в PDF (функция в разработке)")}
+                >
+                  <Icon name="Download" className="mr-2" size={16} />
+                  Экспорт PDF
+                </Button>
+                <Button onClick={() => setShowClientModal(false)}>
+                  Закрыть
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
