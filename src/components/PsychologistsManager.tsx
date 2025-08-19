@@ -7,7 +7,6 @@ import PsychologistForm from "@/components/PsychologistForm";
 import EmptyPsychologistState from "@/components/EmptyPsychologistState";
 import { usePsychologists } from "@/hooks/usePsychologists";
 import { Psychologist } from "@/types/psychologist";
-import LocalStorageDebugger from "@/components/debug/LocalStorageDebugger";
 
 const PsychologistsManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,9 +46,6 @@ const PsychologistsManager = () => {
 
   return (
     <div className="space-y-6">
-      {/* Debug Component - Remove in production */}
-      <LocalStorageDebugger />
-      
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-warm-800">Управление психологами</h2>
