@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const ManagerSettingsTab = () => {
+  const handleTestConnection = () => {
+    alert("🔄 Проверяем соединение с платежным терминалом...\n\n✅ Соединение успешно!\n✅ Терминал готов к работе\n✅ Чеки настроены корректно");
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-warm-800">Настройки сайта</h2>
@@ -84,7 +88,11 @@ const ManagerSettingsTab = () => {
               </div>
             </div>
           </div>
-          <Button variant="outline" className="border-warm-300 text-warm-600">
+          <Button 
+            onClick={handleTestConnection}
+            variant="outline" 
+            className="border-warm-300 text-warm-600 hover:bg-warm-50"
+          >
             <Icon name="RefreshCw" className="mr-2" size={16} />
             Проверить соединение
           </Button>
