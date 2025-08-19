@@ -7,9 +7,17 @@ export const usePsychologists = () => {
   // Загружаем психологов из localStorage при монтировании
   useEffect(() => {
     const saved = localStorage.getItem("psychologists");
-    if (saved) {
-      setPsychologists(JSON.parse(saved));
-    } else {
+    // Принудительно загружаем все 6 психологов для главной страницы
+    let existingPsychologists = [];
+    try {
+      existingPsychologists = saved ? JSON.parse(saved) : [];
+    } catch {
+      existingPsychologists = [];
+    }
+    
+    const activePsychologists = existingPsychologists.filter((p: Psychologist) => p.isActive);
+    
+    if (!saved || existingPsychologists.length < 6 || activePsychologists.length < 6) {
       // Добавляем демо данные соответствующие главной странице
       const demoPsychologists: Psychologist[] = [
         {
@@ -99,6 +107,8 @@ export const usePsychologists = () => {
       ];
       setPsychologists(demoPsychologists);
       localStorage.setItem("psychologists", JSON.stringify(demoPsychologists));
+    } else {
+      setPsychologists(existingPsychologists);
     }
   }, []);
 
