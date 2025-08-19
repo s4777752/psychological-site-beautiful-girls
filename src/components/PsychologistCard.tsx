@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
 import { Psychologist } from "@/types/psychologist";
+import { useState } from "react";
 
 interface PsychologistCardProps {
   psychologist: Psychologist;
@@ -12,6 +13,13 @@ interface PsychologistCardProps {
 }
 
 const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: PsychologistCardProps) => {
+  const [isActive, setIsActive] = useState(psychologist.isActive);
+
+  const handleToggleStatus = () => {
+    setIsActive(!isActive);
+    onToggleStatus(psychologist.id);
+  };
+
   return (
     <Card className="border-warm-200">
       <CardContent className="p-6">
@@ -33,8 +41,8 @@ const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: Ps
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
                 <h3 className="text-lg font-semibold text-warm-800">{psychologist.name}</h3>
-                <Badge className={psychologist.isActive ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"}>
-                  {psychologist.isActive ? "Активен" : "Неактивен"}
+                <Badge className={isActive ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"}>
+                  {isActive ? "Активен" : "Неактивен"}
                 </Badge>
               </div>
               <p className="text-warm-600 mb-1">{psychologist.specialization}</p>
@@ -58,13 +66,13 @@ const PsychologistCard = ({ psychologist, onEdit, onToggleStatus, onDelete }: Ps
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onToggleStatus(psychologist.id)}
-              className={psychologist.isActive 
+              onClick={handleToggleStatus}
+              className={isActive 
                 ? "text-green-600 border-green-300 hover:bg-green-50"
                 : "text-red-600 border-red-300 hover:bg-red-50"
               }
             >
-              <Icon name={psychologist.isActive ? "UserX" : "UserCheck"} size={16} />
+              <Icon name={isActive ? "UserX" : "UserCheck"} size={16} />
             </Button>
             <Button
               variant="outline"
