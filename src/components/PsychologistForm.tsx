@@ -79,7 +79,7 @@ const PsychologistForm = ({ psychologist, onSave, onCancel, generateLogin, gener
               id="login"
               value={formData.login}
               onChange={(e) => setFormData(prev => ({ ...prev, login: e.target.value }))}
-              placeholder="логин"
+              placeholder="сергей"
               required
               className="border-warm-300 focus:border-warm-500"
             />
