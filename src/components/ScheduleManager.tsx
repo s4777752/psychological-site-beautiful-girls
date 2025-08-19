@@ -24,15 +24,18 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     '21:00', '22:00', '23:00', '24:00'
   ];
 
+  // Индивидуальное расписание для каждого психолога
+  const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
+  
   // Состояние временных слотов для каждой даты
   const [scheduleData, setScheduleData] = useState<{[date: string]: TimeSlot[]}>(() => {
-    const savedSchedule = localStorage.getItem('psychologistSchedule');
+    const savedSchedule = localStorage.getItem(psychologistScheduleKey);
     const data = savedSchedule ? JSON.parse(savedSchedule) : {};
     
-    // Автоматически активируем 18 августа 2025
-    const aug18 = '2025-08-18';
-    if (!data[aug18]) {
-      data[aug18] = baseTimeSlots.map(time => ({
+    // Автоматически активируем текущую дату для нового психолога
+    const today = new Date().toISOString().split('T')[0];
+    if (!data[today]) {
+      data[today] = baseTimeSlots.map(time => ({
         time,
         available: true,
         booked: false
@@ -44,8 +47,8 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
 
   // Сохраняем изменения при инициализации
   useEffect(() => {
-    localStorage.setItem('psychologistSchedule', JSON.stringify(scheduleData));
-  }, [scheduleData]);
+    localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
+  }, [scheduleData, psychologistScheduleKey]);
 
   // Получение слотов для конкретной даты
   const getTimeSlotsForDate = (date: string): TimeSlot[] => {
@@ -78,7 +81,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     setScheduleData(newScheduleData);
     
     // Сохраняем в localStorage для использования в BookingModal
-    localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+    localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
   };
 
   // Активация всех слотов на дату
@@ -91,7 +94,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     
     const newScheduleData = { ...scheduleData, [date]: updatedSlots };
     setScheduleData(newScheduleData);
-    localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+    localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
   };
 
   // Генерация календаря
@@ -330,7 +333,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                 }));
                 const newScheduleData = { ...scheduleData, [selectedDate]: allActive };
                 setScheduleData(newScheduleData);
-                localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+                localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
               }}
               className="bg-green-500 hover:bg-green-600 text-white"
             >
@@ -347,7 +350,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                 }));
                 const newScheduleData = { ...scheduleData, [selectedDate]: allInactive };
                 setScheduleData(newScheduleData);
-                localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+                localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
               }}
               variant="outline"
               className="border-red-300 text-red-600 hover:bg-red-50"
@@ -368,7 +371,7 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                 });
                 const newScheduleData = { ...scheduleData, [selectedDate]: workingHours };
                 setScheduleData(newScheduleData);
-                localStorage.setItem('psychologistSchedule', JSON.stringify(newScheduleData));
+                localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
               }}
               variant="outline"
               className="border-blue-300 text-blue-600 hover:bg-blue-50"

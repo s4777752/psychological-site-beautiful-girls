@@ -40,16 +40,35 @@ const PublicBookingCalendar: React.FC = () => {
   const { psychologists } = usePsychologists();
   const { toast } = useToast();
 
-  // Получение расписания из localStorage
-  const getScheduleData = (): {[date: string]: TimeSlot[]} => {
-    const savedSchedule = localStorage.getItem('psychologistSchedule');
+  // Получение расписания конкретного психолога из localStorage
+  const getScheduleData = (psychologistName: string): {[date: string]: TimeSlot[]} => {
+    const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
+    const savedSchedule = localStorage.getItem(psychologistScheduleKey);
     return savedSchedule ? JSON.parse(savedSchedule) : {};
   };
 
-  // Получение доступных слотов для даты
+  // Получение доступных слотов для даты (объединение всех психологов)
   const getAvailableSlotsForDate = (date: string): TimeSlot[] => {
-    const scheduleData = getScheduleData();
-    return scheduleData[date] ? scheduleData[date].filter(slot => slot.available && !slot.booked) : [];
+    const activePsychologists = psychologists.filter(p => p.isActive);
+    const allSlots: TimeSlot[] = [];
+    
+    activePsychologists.forEach(psychologist => {
+      const scheduleData = getScheduleData(psychologist.name);
+      if (scheduleData[date]) {
+        const availableSlots = scheduleData[date].filter(slot => slot.available && !slot.booked);
+        allSlots.push(...availableSlots);
+      }
+    });
+    
+    // Убираем дубликаты по времени, оставляя уникальные слоты
+    const uniqueSlots = allSlots.reduce((unique: TimeSlot[], current) => {
+      if (!unique.find(slot => slot.time === current.time)) {
+        unique.push(current);
+      }
+      return unique;
+    }, []);
+    
+    return uniqueSlots.sort((a, b) => a.time.localeCompare(b.time));
   };
 
   // Генерация календаря

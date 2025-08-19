@@ -25,16 +25,19 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [step, setStep] = useState<'date' | 'payment' | 'confirmation'>('date');
 
-  // Генерация доступных временных слотов на основе расписания психолога
+  // Генерация доступных временных слотов на основе индивидуального расписания психолога
   const getTimeSlots = (date: string): TimeSlot[] => {
     if (!date) return [];
     
-    // Получаем расписание психолога из localStorage
-    const scheduleData = JSON.parse(localStorage.getItem('psychologistSchedule') || '{}');
+    // Создаем уникальный ключ для каждого психолога
+    const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
+    
+    // Получаем индивидуальное расписание психолога из localStorage
+    const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
     const psychologistSlots = scheduleData[date];
     
     if (psychologistSlots) {
-      // Используем расписание психолога
+      // Используем расписание конкретного психолога
       return psychologistSlots.map((slot: any) => ({
         time: slot.time,
         available: slot.available && !slot.booked
@@ -129,8 +132,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
     existingBookings.push(booking);
     localStorage.setItem('bookings', JSON.stringify(existingBookings));
 
-    // Обновляем расписание психолога - помечаем слот как забронированный
-    const scheduleData = JSON.parse(localStorage.getItem('psychologistSchedule') || '{}');
+    // Обновляем индивидуальное расписание психолога - помечаем слот как забронированный
+    const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
+    const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
     if (scheduleData[selectedDate]) {
       scheduleData[selectedDate] = scheduleData[selectedDate].map((slot: any) => {
         if (slot.time === selectedTime) {
@@ -138,7 +142,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         }
         return slot;
       });
-      localStorage.setItem('psychologistSchedule', JSON.stringify(scheduleData));
+      localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
     }
 
     setStep('confirmation');
