@@ -112,7 +112,8 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
       
       const isCurrentMonth = date.getMonth() === month;
       const isToday = date.toDateString() === today.toDateString();
-      const isPast = date < today;
+      // Разрешаем управление расписанием с текущего дня (включительно)
+      const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isWeekend = date.getDay() === 0 || date.getDay() === 6;
       
       const dateStr = date.toISOString().split('T')[0];
