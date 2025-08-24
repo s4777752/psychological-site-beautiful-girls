@@ -38,14 +38,14 @@ const Footer = () => {
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Phone" className="text-primary" size={24} />
               </div>
-              <h3 className="font-montserrat font-semibold text-secondary mb-2">Основной</h3>
+              <h3 className="font-montserrat font-semibold text-secondary mb-2">Основной телефон</h3>
               <p className="text-warm-700">{siteSettings.contactPhone}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Smartphone" className="text-primary" size={24} />
               </div>
-              <h3 className="font-montserrat font-semibold text-secondary mb-2">Дополнительный</h3>
+              <h3 className="font-montserrat font-semibold text-secondary mb-2">Второй телефон</h3>
               <p className="text-warm-700">{siteSettings.contactPhone2}</p>
             </div>
             <div className="flex flex-col items-center">
