@@ -26,7 +26,7 @@ const HeroSection = ({ onVideoClick }: HeroSectionProps) => {
             onClick={() => window.open('tel:89024777752', '_self')}
           >
             <Icon name="Phone" className="mr-2" size={20} />
-            Позвонить
+            Позвонить для записи
           </Button>
           <Button 
             variant="outline" 
