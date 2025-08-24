@@ -43,7 +43,7 @@ const ManagerSettingsTab = () => {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contact-phone">Телефон для связи</Label>
+            <Label htmlFor="contact-phone">Телефон для связи основной</Label>
             <Input
               id="contact-phone"
               value={contactPhone}
