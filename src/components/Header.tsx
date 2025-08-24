@@ -1,9 +1,22 @@
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [siteSettings, setSiteSettings] = useState({
+    siteName: "MindCare",
+    contactPhone: "+7 (495) 123-45-67",
+    contactEmail: "info@psyhelp.ru"
+  });
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('siteSettings');
+    if (savedSettings) {
+      setSiteSettings(JSON.parse(savedSettings));
+    }
+  }, []);
 
   return (
     <header className="bg-white shadow-sm border-b border-warm-200">
@@ -11,7 +24,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
             <Icon name="Heart" className="text-red-500 fill-red-500" size={32} />
-            <span className="text-2xl font-montserrat font-bold text-secondary">MindCare</span>
+            <span className="text-2xl font-montserrat font-bold text-secondary">{siteSettings.siteName}</span>
           </div>
           <nav className="hidden md:flex space-x-8">
             <a href="#home" className="text-secondary hover:text-primary transition-colors">Главная</a>

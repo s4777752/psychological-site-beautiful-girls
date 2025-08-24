@@ -3,10 +3,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import { useState } from "react";
 
 const ManagerSettingsTab = () => {
+  const [siteName, setSiteName] = useState("Психологическая помощь");
+  const [contactPhone, setContactPhone] = useState("+7 (495) 123-45-67");
+  const [contactEmail, setContactEmail] = useState("info@psyhelp.ru");
+
   const handleTestConnection = () => {
     alert("🔄 Проверяем соединение с платежным терминалом...\n\n✅ Соединение успешно!\n✅ Терминал готов к работе\n✅ Чеки настроены корректно");
+  };
+
+  const handleSaveSettings = () => {
+    localStorage.setItem('siteSettings', JSON.stringify({
+      siteName,
+      contactPhone,
+      contactEmail
+    }));
+    alert("✅ Настройки сохранены!\n\nИзменения отобразятся на главной странице.");
   };
 
   return (
@@ -21,7 +35,8 @@ const ManagerSettingsTab = () => {
             <Label htmlFor="site-name">Название сайта</Label>
             <Input
               id="site-name"
-              defaultValue="Психологическая помощь"
+              value={siteName}
+              onChange={(e) => setSiteName(e.target.value)}
               className="border-warm-300 focus:border-warm-500"
             />
           </div>
@@ -29,7 +44,8 @@ const ManagerSettingsTab = () => {
             <Label htmlFor="contact-phone">Телефон для связи</Label>
             <Input
               id="contact-phone"
-              defaultValue="+7 (495) 123-45-67"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
               className="border-warm-300 focus:border-warm-500"
             />
           </div>
@@ -37,11 +53,15 @@ const ManagerSettingsTab = () => {
             <Label htmlFor="contact-email">Email для связи</Label>
             <Input
               id="contact-email"
-              defaultValue="info@psyhelp.ru"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
               className="border-warm-300 focus:border-warm-500"
             />
           </div>
-          <Button className="bg-warm-600 hover:bg-warm-700">
+          <Button 
+            onClick={handleSaveSettings}
+            className="bg-warm-600 hover:bg-warm-700"
+          >
             <Icon name="Save" className="mr-2" size={16} />
             Сохранить настройки
           </Button>

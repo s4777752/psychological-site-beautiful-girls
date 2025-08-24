@@ -1,9 +1,22 @@
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const [siteSettings, setSiteSettings] = useState({
+    siteName: "MindCare",
+    contactPhone: "+7 (495) 123-45-67",
+    contactEmail: "info@mindcare.ru"
+  });
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('siteSettings');
+    if (savedSettings) {
+      setSiteSettings(JSON.parse(savedSettings));
+    }
+  }, []);
 
   return (
     <>
@@ -25,14 +38,14 @@ const Footer = () => {
                 <Icon name="Phone" className="text-primary" size={24} />
               </div>
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Телефон</h3>
-              <p className="text-warm-700">+7 (495) 123-45-67</p>
+              <p className="text-warm-700">{siteSettings.contactPhone}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Mail" className="text-primary" size={24} />
               </div>
               <h3 className="font-montserrat font-semibold text-secondary mb-2">Email</h3>
-              <p className="text-warm-700">info@mindcare.ru</p>
+              <p className="text-warm-700">{siteSettings.contactEmail}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
