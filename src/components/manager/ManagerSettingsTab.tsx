@@ -54,7 +54,7 @@ const ManagerSettingsTab = () => {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contact-phone">Второй телефон</Label>
+            <Label htmlFor="contact-phone">Основной телефон</Label>
             <Input
               id="contact-phone"
               value={contactPhone}
@@ -63,7 +63,7 @@ const ManagerSettingsTab = () => {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contact-phone2">Основной телефон</Label>
+            <Label htmlFor="contact-phone2">Второй телефон</Label>
             <Input
               id="contact-phone2"
               value={contactPhone2}
