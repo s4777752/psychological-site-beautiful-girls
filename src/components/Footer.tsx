@@ -84,8 +84,8 @@ const Footer = () => {
             <div>
               <h4 className="font-montserrat font-semibold mb-4">Контакты</h4>
               <div className="space-y-2 text-warm-200">
-                <p>+7 (495) 123-45-67</p>
-                <p>info@mindcare.ru</p>
+                <p>{siteSettings.contactPhone}</p>
+                <p>{siteSettings.contactEmail}</p>
                 <p>Ежедневно 9:00 - 24:00</p>
               </div>
             </div>
