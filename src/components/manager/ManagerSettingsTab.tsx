@@ -3,13 +3,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ManagerSettingsTab = () => {
   const [siteName, setSiteName] = useState("Психологическая помощь");
   const [contactPhone, setContactPhone] = useState("+7 (495) 123-45-67");
   const [contactPhone2, setContactPhone2] = useState("+7 (902) 477-77-52");
   const [contactEmail, setContactEmail] = useState("info@psyhelp.ru");
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('siteSettings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      setSiteName(settings.siteName || "Психологическая помощь");
+      setContactPhone(settings.contactPhone || "+7 (495) 123-45-67");
+      setContactPhone2(settings.contactPhone2 || "+7 (902) 477-77-52");
+      setContactEmail(settings.contactEmail || "info@psyhelp.ru");
+    }
+  }, []);
 
   const handleTestConnection = () => {
     alert("🔄 Проверяем соединение с платежным терминалом...\n\n✅ Соединение успешно!\n✅ Терминал готов к работе\n✅ Чеки настроены корректно");
