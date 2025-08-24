@@ -8,6 +8,7 @@ import { useState } from "react";
 const ManagerSettingsTab = () => {
   const [siteName, setSiteName] = useState("Психологическая помощь");
   const [contactPhone, setContactPhone] = useState("+7 (495) 123-45-67");
+  const [contactPhone2, setContactPhone2] = useState("+7 (902) 477-77-52");
   const [contactEmail, setContactEmail] = useState("info@psyhelp.ru");
 
   const handleTestConnection = () => {
@@ -18,6 +19,7 @@ const ManagerSettingsTab = () => {
     localStorage.setItem('siteSettings', JSON.stringify({
       siteName,
       contactPhone,
+      contactPhone2,
       contactEmail
     }));
     alert("✅ Настройки сохранены!\n\nИзменения отобразятся на главной странице.");
@@ -46,6 +48,15 @@ const ManagerSettingsTab = () => {
               id="contact-phone"
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
+              className="border-warm-300 focus:border-warm-500"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contact-phone2">Второй телефон</Label>
+            <Input
+              id="contact-phone2"
+              value={contactPhone2}
+              onChange={(e) => setContactPhone2(e.target.value)}
               className="border-warm-300 focus:border-warm-500"
             />
           </div>

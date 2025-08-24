@@ -8,6 +8,7 @@ const Footer = () => {
   const [siteSettings, setSiteSettings] = useState({
     siteName: "MindCare",
     contactPhone: "+7 (495) 123-45-67",
+    contactPhone2: "+7 (902) 477-77-52",
     contactEmail: "info@mindcare.ru"
   });
 
@@ -32,13 +33,20 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                 <Icon name="Phone" className="text-primary" size={24} />
               </div>
-              <h3 className="font-montserrat font-semibold text-secondary mb-2">Телефон</h3>
+              <h3 className="font-montserrat font-semibold text-secondary mb-2">Основной телефон</h3>
               <p className="text-warm-700">{siteSettings.contactPhone}</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                <Icon name="Smartphone" className="text-primary" size={24} />
+              </div>
+              <h3 className="font-montserrat font-semibold text-secondary mb-2">Второй телефон</h3>
+              <p className="text-warm-700">{siteSettings.contactPhone2}</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
@@ -117,6 +125,7 @@ const Footer = () => {
               <h4 className="font-montserrat font-semibold mb-4">Контакты</h4>
               <div className="space-y-2 text-warm-200">
                 <p>{siteSettings.contactPhone}</p>
+                <p>{siteSettings.contactPhone2}</p>
                 <p>{siteSettings.contactEmail}</p>
                 <p>Ежедневно 9:00 - 24:00</p>
               </div>
