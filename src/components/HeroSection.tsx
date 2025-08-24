@@ -23,10 +23,10 @@ const HeroSection = ({ onVideoClick }: HeroSectionProps) => {
           <Button 
             size="lg" 
             className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
-            onClick={() => navigate('/client/login')}
+            onClick={() => window.open('tel:89024777752', '_self')}
           >
-            <Icon name="Calendar" className="mr-2" size={20} />
-            Записаться на сеанс
+            <Icon name="Phone" className="mr-2" size={20} />
+            Позвонить
           </Button>
           <Button 
             variant="outline" 
