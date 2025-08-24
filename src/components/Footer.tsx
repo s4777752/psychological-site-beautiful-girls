@@ -55,6 +55,38 @@ const Footer = () => {
               <p className="text-warm-700">Ежедневно 9:00 - 21:00</p>
             </div>
           </div>
+          
+          {/* Кнопки связи */}
+          <div className="flex justify-center gap-4 mt-12">
+            <Button 
+              onClick={() => window.open('https://wa.me/89024777752', '_blank')}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
+            >
+              <Icon name="MessageCircle" className="mr-2" size={18} />
+              WhatsApp
+            </Button>
+            <Button 
+              onClick={() => window.open('https://t.me/+79024777752', '_blank')}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3"
+            >
+              <Icon name="Send" className="mr-2" size={18} />
+              Telegram
+            </Button>
+            <Button 
+              onClick={() => window.open('sms:89024777752', '_blank')}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3"
+            >
+              <Icon name="MessageSquare" className="mr-2" size={18} />
+              SMS
+            </Button>
+            <Button 
+              onClick={() => window.open('tel:89024777752', '_blank')}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
+            >
+              <Icon name="Phone" className="mr-2" size={18} />
+              Позвонить
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -91,37 +123,7 @@ const Footer = () => {
             </div>
           </div>
           <div className="border-t border-warm-600 mt-8 pt-8 text-center text-warm-300">
-            {/* Кнопки связи */}
-            <div className="flex justify-center gap-4 mb-6">
-              <Button 
-                onClick={() => window.open('https://wa.me/89024777752', '_blank')}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3"
-              >
-                <Icon name="MessageCircle" className="mr-2" size={18} />
-                WhatsApp
-              </Button>
-              <Button 
-                onClick={() => window.open('https://t.me/+79024777752', '_blank')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3"
-              >
-                <Icon name="Send" className="mr-2" size={18} />
-                Telegram
-              </Button>
-              <Button 
-                onClick={() => window.open('sms:89024777752', '_blank')}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3"
-              >
-                <Icon name="MessageSquare" className="mr-2" size={18} />
-                SMS
-              </Button>
-              <Button 
-                onClick={() => window.open('tel:89024777752', '_blank')}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
-              >
-                <Icon name="Phone" className="mr-2" size={18} />
-                Позвонить
-              </Button>
-            </div>
+
             
             <div className="flex justify-between items-center">
               <div>
