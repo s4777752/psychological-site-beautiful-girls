@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 
 interface Client {
@@ -15,7 +19,7 @@ interface Client {
 }
 
 const ClientsTab = () => {
-  const [clients] = useState<Client[]>([
+  const [clients, setClients] = useState<Client[]>([
     {
       id: "1",
       name: "Елена Иванова",
@@ -36,14 +40,114 @@ const ClientsTab = () => {
     }
   ]);
 
+  const [newClient, setNewClient] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    nextSession: "",
+    notes: ""
+  });
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleAddClient = () => {
+    const client: Client = {
+      id: (clients.length + 1).toString(),
+      name: newClient.name,
+      email: newClient.email,
+      phone: newClient.phone,
+      nextSession: newClient.nextSession,
+      status: "active",
+      sessionsCount: 0
+    };
+    
+    setClients([...clients, client]);
+    setNewClient({ name: "", email: "", phone: "", nextSession: "", notes: "" });
+    setIsDialogOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-warm-800">Мои клиенты</h2>
-        <Button className="bg-warm-600 hover:bg-warm-700">
-          <Icon name="UserPlus" className="mr-2" size={16} />
-          Добавить клиента
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-warm-600 hover:bg-warm-700">
+              <Icon name="UserPlus" className="mr-2" size={16} />
+              Добавить клиента
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Добавить нового клиента</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Имя и фамилия</Label>
+                <Input
+                  id="name"
+                  value={newClient.name}
+                  onChange={(e) => setNewClient({...newClient, name: e.target.value})}
+                  placeholder="Введите имя клиента"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newClient.email}
+                  onChange={(e) => setNewClient({...newClient, email: e.target.value})}
+                  placeholder="client@example.com"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Телефон</Label>
+                <Input
+                  id="phone"
+                  value={newClient.phone}
+                  onChange={(e) => setNewClient({...newClient, phone: e.target.value})}
+                  placeholder="+7 (999) 123-45-67"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="nextSession">Следующая сессия</Label>
+                <Input
+                  id="nextSession"
+                  type="datetime-local"
+                  value={newClient.nextSession}
+                  onChange={(e) => setNewClient({...newClient, nextSession: e.target.value})}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="notes">Заметки</Label>
+                <Textarea
+                  id="notes"
+                  value={newClient.notes}
+                  onChange={(e) => setNewClient({...newClient, notes: e.target.value})}
+                  placeholder="Дополнительная информация о клиенте..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  onClick={handleAddClient}
+                  disabled={!newClient.name || !newClient.email || !newClient.phone}
+                  className="bg-warm-600 hover:bg-warm-700 flex-1"
+                >
+                  <Icon name="Plus" className="mr-2" size={16} />
+                  Добавить клиента
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDialogOpen(false)}
+                >
+                  Отмена
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       
       <div className="grid gap-4">
