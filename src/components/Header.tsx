@@ -24,7 +24,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
             <Icon name="Heart" className="text-red-500 fill-red-500" size={32} />
-            <span className="text-2xl font-montserrat font-bold text-secondary">{siteSettings.siteName}</span>
+            <span className="text-2xl font-montserrat font-bold text-secondary">MindCare</span>
           </div>
           <nav className="hidden md:flex space-x-8">
             <a href="#home" className="text-secondary hover:text-primary transition-colors">Главная</a>
