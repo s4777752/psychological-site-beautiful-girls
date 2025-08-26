@@ -33,6 +33,7 @@ const DashboardTabs = ({ activeTab, onTabChange }: DashboardTabsProps) => {
     { id: "messages", name: "Сообщения", icon: "MessageSquare" },
     { id: "schedule", name: hasActiveSlots() ? "Расписание +" : "Расписание", icon: "Calendar" },
     { id: "records", name: "Записи", icon: "FileText" },
+    { id: "documents", name: "Документы", icon: "FolderOpen" },
     { id: "profile", name: "Профиль", icon: "User" }
   ];
 

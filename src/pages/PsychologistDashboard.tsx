@@ -7,6 +7,7 @@ import ClientsTab from "@/components/ClientsTab";
 import MessagesTab from "@/components/MessagesTab";
 import ScheduleTab from "@/components/ScheduleTab";
 import RecordsTab from "@/components/RecordsTab";
+import DocumentsTab from "@/components/DocumentsTab";
 import ProfileTab from "@/components/ProfileTab";
 
 interface PsychologistAuth {
@@ -51,6 +52,8 @@ const PsychologistDashboard = () => {
         return <ScheduleTab />;
       case "records":
         return <RecordsTab />;
+      case "documents":
+        return <DocumentsTab />;
       case "profile":
         return <ProfileTab psychologist={psychologist} />;
       default:
