@@ -29,9 +29,7 @@ const PsychologistsSection = ({ psychologists, onBookingClick, onAvatarClick }: 
           <h2 className="text-4xl font-montserrat font-bold text-white mb-4">
             Наши психологи
           </h2>
-          <p className="text-lg text-warm-100 max-w-2xl mx-auto">
-            Команда опытных специалистов с высшим психологическим образованием
-          </p>
+          <p className="text-lg text-warm-100 max-w-2xl mx-auto">Команда опытных специалистов с психологическим образованием</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
