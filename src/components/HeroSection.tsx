@@ -13,11 +13,11 @@ const HeroSection = ({ onVideoClick }: HeroSectionProps) => {
     <section id="home" className="py-20 bg-gradient-to-br from-warm-50 to-warm-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-5xl font-montserrat font-bold text-secondary mb-6 animate-fade-in">
-          Онлайн психологическая помощь
+          Психологическая помощь для женщин онлайн
         </h1>
         <p className="text-xl text-warm-700 mb-8 max-w-3xl mx-auto animate-fade-in">
-          Профессиональная поддержка через видеосвязь в комфортной домашней обстановке. 
-          Квалифицированные психологи готовы помочь вам в решении любых жизненных вопросов.
+          Профессиональные психологи специализируются на работе с женщинами. Индивидуальные консультации, 
+          семейная терапия, работа с тревожностью и депрессией. Конфиденциально и эффективно.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
           <Button 

@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: */dashboard
+Disallow: */login
+
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Специфично для психологических услуг
+Allow: /client/login
+Allow: /psychologist/
+
+# Блокируем сканирование админки
+Disallow: /admin/manager/
+Disallow: /admin/psychologist/
