@@ -14,8 +14,8 @@ const HeroSection = ({ onVideoClick }: HeroSectionProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 className="text-5xl font-montserrat font-bold text-secondary mb-6 animate-fade-in">Психологическая помощь онлайн</h1>
         <p className="text-xl text-warm-700 mb-8 max-w-3xl mx-auto animate-fade-in">
-          Опытные психологи помогают людям любого возраста справиться с жизненными трудностями. 
-          Индивидуальные и семейные консультации, работа с тревожностью и депрессией. Конфиденциально и эффективно.
+          Профессиональная психологическая поддержка для женщин в трудные моменты жизни. 
+          Онлайн консультации с опытными специалистами - удобно, конфиденциально, эффективно.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
           <Button 
