@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import BookAppointmentModal from "./BookAppointmentModal";
 
 interface Session {
   id: number;
@@ -18,7 +19,7 @@ interface Session {
 }
 
 const ManagerSessionsTab = () => {
-  const [sessions] = useState<Session[]>([
+  const [sessions, setSessions] = useState<Session[]>([
     {
       id: 1,
       clientName: "Анна Иванова",
@@ -78,6 +79,7 @@ const ManagerSessionsTab = () => {
 
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -111,6 +113,23 @@ const ManagerSessionsTab = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-warm-800">Управление записями</h2>
         <div className="flex space-x-4">
+          <Button
+            className="bg-warm-600 hover:bg-warm-700 text-white"
+            onClick={() => setIsBookingModalOpen(true)}
+          >
+            <Icon name="Plus" size={16} className="mr-2" />
+            Записать клиента
+          </Button>
+          <Button
+            variant="outline"
+            className="border-warm-300 text-warm-600 hover:bg-warm-100"
+            onClick={() => {
+              alert("Синхронизация записей... Функция находится в разработке.");
+            }}
+          >
+            <Icon name="RefreshCw" size={16} className="mr-2" />
+            Синхронизировать
+          </Button>
           <Input
             placeholder="Поиск по клиенту или психологу..."
             value={searchTerm}
@@ -207,8 +226,19 @@ const ManagerSessionsTab = () => {
                   </div>
                   <div className="mt-1 text-sm text-warm-600">{session.type}</div>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                   {getStatusBadge(session.status)}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-warm-300 text-warm-600 hover:bg-warm-100"
+                    onClick={() => {
+                      alert("Синхронизация записи с внешними системами... Функция находится в разработке.");
+                    }}
+                  >
+                    <Icon name="RefreshCw" size={14} className="mr-1" />
+                    Синхр.
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -223,6 +253,32 @@ const ManagerSessionsTab = () => {
           </div>
         </CardContent>
       </Card>
+
+      <BookAppointmentModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onBookAppointment={(appointmentData) => {
+          const psychologists = [
+            { id: "1", name: "Мария Козлова" },
+            { id: "2", name: "Анна Смирнова" },
+            { id: "3", name: "Елена Волкова" },
+            { id: "4", name: "Дарья Петрова" }
+          ];
+          
+          const newSession: Session = {
+            id: sessions.length + 1,
+            clientName: appointmentData.clientName,
+            psychologistName: psychologists.find(p => p.id === appointmentData.psychologistId)?.name || "Неизвестный психолог",
+            date: appointmentData.date,
+            time: appointmentData.time,
+            status: "upcoming",
+            type: appointmentData.type,
+            duration: "50 мин",
+            price: 2500
+          };
+          setSessions([...sessions, newSession]);
+        }}
+      />
     </div>
   );
 };
