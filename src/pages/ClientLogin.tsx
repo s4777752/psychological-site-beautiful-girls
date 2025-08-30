@@ -50,12 +50,30 @@ const ClientLogin = () => {
   const handlePhoneSubmit = () => {
     setIsLoading(true);
     
-    // Проверяем, есть ли клиент с таким телефоном
-    const client = demoClients.find(c => c.phone === credentials.phone);
+    // Проверяем, есть ли записи с таким номером телефона
+    const cleanPhone = credentials.phone.replace(/\D/g, '');
+    const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    const hasManualRecords = manualRecords.some((record: any) => {
+      if (!record.clientPhone) return false;
+      const recordPhone = record.clientPhone.replace(/\D/g, '');
+      const normalizedRecordPhone = recordPhone.startsWith('8') ? '7' + recordPhone.slice(1) : recordPhone;
+      const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      return normalizedRecordPhone === normalizedCleanPhone;
+    });
+    
+    const hasBookings = bookings.some((booking: any) => {
+      if (!booking.clientPhone) return false;
+      const bookingPhone = booking.clientPhone.replace(/\D/g, '');
+      const normalizedBookingPhone = bookingPhone.startsWith('8') ? '7' + bookingPhone.slice(1) : bookingPhone;
+      const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      return normalizedBookingPhone === normalizedCleanPhone;
+    });
     
     setTimeout(() => {
       setIsLoading(false);
-      if (client) {
+      if (hasManualRecords || hasBookings) {
         setStep('code');
         toast({
           title: "Код отправлен",
@@ -64,7 +82,7 @@ const ClientLogin = () => {
       } else {
         toast({
           title: "Клиент не найден",
-          description: "Данный номер телефона не найден в системе. Обратитесь к психологу для регистрации.",
+          description: "Данный номер телефона не найден в записях на сессии. Обратитесь к администратору или запишитесь на консультацию.",
           variant: "destructive"
         });
       }
@@ -74,32 +92,30 @@ const ClientLogin = () => {
   const handleCodeSubmit = () => {
     setIsLoading(true);
     
-    const client = demoClients.find(c => 
-      c.phone === credentials.phone && c.code === credentials.code
-    );
+    // В демо-режиме используем код 1234
+    const isCodeValid = credentials.code === '1234';
     
     setTimeout(() => {
       setIsLoading(false);
-      if (client) {
-        // Сохраняем данные авторизации
-        localStorage.setItem("clientAuth", JSON.stringify({
-          id: client.id,
-          name: client.name,
-          phone: client.phone,
-          psychologist: client.psychologist,
-          nextSession: client.nextSession
+      if (isCodeValid) {
+        const cleanPhone = credentials.phone.replace(/\D/g, '');
+        
+        // Сохраняем сессию клиента
+        localStorage.setItem('clientSession', JSON.stringify({
+          phone: cleanPhone,
+          timestamp: Date.now()
         }));
         
         toast({
           title: "Добро пожаловать!",
-          description: `Здравствуйте, ${client.name}`
+          description: "Вы успешно авторизованы"
         });
         
-        navigate("/client/dashboard");
+        navigate("/client");
       } else {
         toast({
           title: "Неверный код",
-          description: "Проверьте правильность введенного кода",
+          description: "В демо-режиме используйте код: 1234",
           variant: "destructive"
         });
       }
