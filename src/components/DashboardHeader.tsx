@@ -18,7 +18,7 @@ const DashboardHeader = ({ psychologistName, onLogout }: DashboardHeaderProps) =
             <Icon name="Heart" className="text-warm-600 mr-3" size={24} />
             <div>
               <h1 className="text-xl font-bold text-warm-800">Кабинет психолога</h1>
-              <p className="text-sm text-warm-600">Добро пожаловать, {psychologistName}</p>
+              <p className="text-sm text-warm-600">{psychologistName}</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
