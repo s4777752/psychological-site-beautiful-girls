@@ -185,43 +185,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                       {record.notes && <p><strong>Заметки:</strong> {record.notes}</p>}
                     </div>
 
-                    {/* Кнопки связи с психологом */}
-                    {record.status === 'scheduled' && (
-                      <div className="mt-4 pt-3 border-t border-warm-200">
-                        <p className="text-sm font-medium text-warm-700 mb-3">Связь с психологом:</p>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
-                          >
-                            <Icon name="Video" size={14} className="mr-1" />
-                            Видео
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              const message = prompt('Напишите сообщение психологу:');
-                              if (message && message.trim()) {
-                                alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
-                              }
-                            }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
-                          >
-                            <Icon name="Mail" size={14} className="mr-1" />
-                            Сообщение
-                          </Button>
-                        </div>
-                        
-                        <div className="mt-3 text-xs text-warm-500">
-                          <p>
-                            <Icon name="Info" size={12} className="inline mr-1" />
-                            Кнопки связи активны только для запланированных сессий
-                          </p>
-                        </div>
-                      </div>
-                    )}
+
                   </div>
                 ))}
               </div>
