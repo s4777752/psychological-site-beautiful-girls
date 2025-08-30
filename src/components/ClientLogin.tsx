@@ -33,16 +33,37 @@ const ClientLogin: React.FC<ClientLoginProps> = ({ onLogin }) => {
     
     // Проверяем, есть ли записи с таким номером телефона
     const cleanPhone = phone.replace(/\D/g, '');
+    console.log('Ищем номер:', cleanPhone);
+    
     const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
     const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
     
-    const hasManualRecords = manualRecords.some((record: any) => 
-      record.clientPhone && record.clientPhone.replace(/\D/g, '') === cleanPhone
-    );
+    console.log('Manual records:', manualRecords.map((r: any) => ({
+      phone: r.clientPhone,
+      clean: r.clientPhone?.replace(/\D/g, '')
+    })));
+    console.log('Bookings:', bookings.map((b: any) => ({
+      phone: b.clientPhone,
+      clean: b.clientPhone?.replace(/\D/g, '')
+    })));
     
-    const hasBookings = bookings.some((booking: any) => 
-      booking.clientPhone && booking.clientPhone.replace(/\D/g, '') === cleanPhone
-    );
+    const hasManualRecords = manualRecords.some((record: any) => {
+      if (!record.clientPhone) return false;
+      const recordPhone = record.clientPhone.replace(/\D/g, '');
+      // Учитываем разные форматы номеров (с +7 и с 8)
+      const normalizedRecordPhone = recordPhone.startsWith('8') ? '7' + recordPhone.slice(1) : recordPhone;
+      const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      return normalizedRecordPhone === normalizedCleanPhone;
+    });
+    
+    const hasBookings = bookings.some((booking: any) => {
+      if (!booking.clientPhone) return false;
+      const bookingPhone = booking.clientPhone.replace(/\D/g, '');
+      // Учитываем разные форматы номеров (с +7 и с 8)
+      const normalizedBookingPhone = bookingPhone.startsWith('8') ? '7' + bookingPhone.slice(1) : bookingPhone;
+      const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      return normalizedBookingPhone === normalizedCleanPhone;
+    });
     
     if (!hasManualRecords && !hasBookings) {
       setLoading(false);
