@@ -250,7 +250,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                           {new Date(record.sessionDate).toLocaleDateString('ru-RU')} в {record.sessionTime}
                         </p>
                         <p className="text-sm text-warm-600 mt-1">
-                          <strong>Психолог:</strong> {record.psychologistName}
+                          <strong>Ваш психолог:</strong> {record.psychologistName}
                         </p>
                       </div>
                       <div className="flex items-center space-x-3">
