@@ -170,8 +170,8 @@ const RecordsTab = () => {
         setManualRecords(updatedRecords);
         localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
       } else if (onlineRecord) {
-        // Удаляем онлайн-запись полностью
-        allBookings.splice(onlineRecordIndex, 1);
+        // Обновляем статус онлайн-записи
+        allBookings[onlineRecordIndex].status = 'cancelled';
         localStorage.setItem('bookings', JSON.stringify(allBookings));
       }
       
