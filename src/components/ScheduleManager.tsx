@@ -96,13 +96,40 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
     localStorage.setItem(psychologistScheduleKey, JSON.stringify(newScheduleData));
   };
 
-  // Активация всех слотов на дату
+  // Активация всех слотов на дату с учетом существующих записей
   const activateAllSlotsForDate = (date: string) => {
-    const updatedSlots = baseTimeSlots.map(time => ({
-      time,
-      available: true,
-      booked: false
-    }));
+    // Получаем существующие записи
+    const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+    const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    // Фильтруем записи для данного психолога и даты
+    const psychologistManualRecords = manualRecords.filter((record: any) => 
+      record.sessionDate === date && 
+      record.status !== 'cancelled'
+    );
+    
+    const psychologistBookings = existingBookings.filter((booking: any) => 
+      booking.psychologistName === psychologistName && 
+      booking.date === date && 
+      booking.status !== 'cancelled'
+    );
+    
+    const updatedSlots = baseTimeSlots.map(time => {
+      // Проверяем, есть ли записи на это время
+      const isManuallyBooked = psychologistManualRecords.some((record: any) => 
+        record.sessionTime === time
+      );
+      
+      const isAlreadyBooked = psychologistBookings.some((booking: any) => 
+        booking.time === time
+      );
+      
+      return {
+        time,
+        available: true,
+        booked: isManuallyBooked || isAlreadyBooked
+      };
+    });
     
     const newScheduleData = { ...scheduleData, [date]: updatedSlots };
     setScheduleData(newScheduleData);
