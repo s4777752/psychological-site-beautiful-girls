@@ -89,6 +89,39 @@ export const DoxyMeeting: React.FC<DoxyMeetingProps> = ({
           <Button
             size="sm"
             variant="outline"
+            onClick={() => {
+              const message = prompt(`Напишите сообщение для ${psychologistName}:`);
+              if (message && message.trim()) {
+                // Создаем уникальный ID чата (тот же формат что и у психолога)
+                const psychologistId = psychologistName.replace(/\s+/g, '').toLowerCase();
+                const clientName = localStorage.getItem('clientName') || 'Клиент';
+                const chatId = `${psychologistId}-${clientName.replace(/\s+/g, '').toLowerCase()}`;
+                
+                // Сохраняем сообщение в localStorage для синхронизации
+                const existingMessages = JSON.parse(localStorage.getItem(`chat_${chatId}`) || '[]');
+                const newMessage = {
+                  id: Date.now().toString(),
+                  sender: 'client',
+                  senderName: clientName,
+                  text: message.trim(),
+                  timestamp: new Date().toISOString(),
+                  psychologistName: psychologistName
+                };
+                
+                existingMessages.push(newMessage);
+                localStorage.setItem(`chat_${chatId}`, JSON.stringify(existingMessages));
+                
+                alert(`✅ Сообщение отправлено психологу ${psychologistName}!`);
+              }
+            }}
+            className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+          >
+            <Icon name="MessageSquare" size={16} className="mr-1" />
+            Сообщение
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => copyRoomUrl(roomUrl)}
             className="border-green-300 text-green-700 hover:bg-green-50"
           >
