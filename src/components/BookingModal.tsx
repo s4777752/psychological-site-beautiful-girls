@@ -36,12 +36,39 @@ const BookingModal: React.FC<BookingModalProps> = ({
     const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
     const psychologistSlots = scheduleData[date];
     
+    // Получаем ручные записи психолога
+    const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+    const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    // Фильтруем записи для данного психолога и даты
+    const psychologistManualRecords = manualRecords.filter((record: any) => 
+      record.sessionDate === date && 
+      record.status !== 'cancelled'
+    );
+    
+    const psychologistBookings = existingBookings.filter((booking: any) => 
+      booking.psychologistName === psychologistName && 
+      booking.date === date && 
+      booking.status !== 'cancelled'
+    );
+    
     if (psychologistSlots) {
       // Используем расписание конкретного психолога
-      return psychologistSlots.map((slot: any) => ({
-        time: slot.time,
-        available: slot.available && !slot.booked
-      }));
+      return psychologistSlots.map((slot: any) => {
+        // Проверяем, занят ли этот слот ручными записями или существующими бронированиями
+        const isManuallyBooked = psychologistManualRecords.some((record: any) => 
+          record.sessionTime === slot.time
+        );
+        
+        const isAlreadyBooked = psychologistBookings.some((booking: any) => 
+          booking.time === slot.time
+        );
+        
+        return {
+          time: slot.time,
+          available: slot.available && !slot.booked && !isManuallyBooked && !isAlreadyBooked
+        };
+      });
     }
     
     // Если расписание не настроено, возвращаем пустой массив
