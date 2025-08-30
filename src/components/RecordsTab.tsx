@@ -348,6 +348,72 @@ const RecordsTab = () => {
                     <p><strong>Создано:</strong> {record.createdAt}</p>
                     {record.notes && <p><strong>Заметки:</strong> {record.notes}</p>}
                   </div>
+                  
+                  {/* Кнопки связи с клиентом */}
+                  {record.clientPhone && (
+                    <div className="mt-4 pt-3 border-t border-warm-200">
+                      <p className="text-sm font-medium text-warm-700 mb-3">Связь с клиентом:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
+                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                        >
+                          <Icon name="Video" size={14} className="mr-1" />
+                          Видео
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            const fileInput = document.createElement('input');
+                            fileInput.type = 'file';
+                            fileInput.multiple = true;
+                            fileInput.accept = '*/*';
+                            fileInput.onchange = (e) => {
+                              const files = (e.target as HTMLInputElement).files;
+                              if (files && files.length > 0) {
+                                const fileList = Array.from(files).map(f => f.name).join(', ');
+                                alert(`Выбраны файлы для отправки: ${fileList}\n\nДля отправки файлов клиенту используйте предпочитаемый мессенджер.`);
+                              }
+                            };
+                            fileInput.click();
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                        >
+                          <Icon name="FileText" size={14} className="mr-1" />
+                          Документы
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`https://wa.me/${record.clientPhone.replace(/[^0-9]/g, '')}?text=Здравствуйте! Это ваш психолог. Напоминаю о сеансе ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank')}
+                          className="bg-green-500 hover:bg-green-600 text-white text-xs"
+                        >
+                          <Icon name="MessageCircle" size={14} className="mr-1" />
+                          WhatsApp
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`https://t.me/${record.clientPhone.replace(/[^0-9]/g, '')}`, '_blank')}
+                          className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                        >
+                          <Icon name="Send" size={14} className="mr-1" />
+                          Telegram
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`sms:${record.clientPhone}?body=Здравствуйте! Это ваш психолог. Напоминаю о сеансе ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank')}
+                          className="bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                        >
+                          <Icon name="MessageSquare" size={14} className="mr-1" />
+                          SMS
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </CardContent>
