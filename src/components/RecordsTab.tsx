@@ -396,6 +396,12 @@ const RecordsTab = () => {
               ))}
             </CardContent>
           </Card>
+        ) : (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <p className="text-warm-600">Нет записей для отображения</p>
+            </CardContent>
+          </Card>
         )}
 
         {/* Автоматические записи из системы оплат */}
