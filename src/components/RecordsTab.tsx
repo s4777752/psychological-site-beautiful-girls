@@ -128,6 +128,31 @@ const RecordsTab = () => {
     }
   };
 
+  const deleteRecord = (id: string) => {
+    const recordToDelete = manualRecords.find(record => record.id === id);
+    
+    // Удаляем запись полностью
+    const updatedRecords = manualRecords.filter(record => record.id !== id);
+    setManualRecords(updatedRecords);
+    localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
+    
+    // Освобождаем слот в расписании
+    if (recordToDelete && psychologist?.name) {
+      const psychologistScheduleKey = `psychologistSchedule_${psychologist.name.replace(/\s+/g, '_')}`;
+      const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
+      
+      if (scheduleData[recordToDelete.sessionDate]) {
+        scheduleData[recordToDelete.sessionDate] = scheduleData[recordToDelete.sessionDate].map((slot: any) => {
+          if (slot.time === recordToDelete.sessionTime) {
+            return { ...slot, booked: false };
+          }
+          return slot;
+        });
+        localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -298,6 +323,18 @@ const RecordsTab = () => {
                         }`}
                       >
                         Отменена
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm('Вы уверены, что хотите удалить эту запись? Это действие нельзя отменить.')) {
+                            deleteRecord(record.id);
+                          }
+                        }}
+                        className="bg-red-600 hover:bg-red-700 text-white p-2"
+                        title="Удалить запись"
+                      >
+                        <Icon name="Trash2" size={14} />
                       </Button>
                     </div>
                   </div>
