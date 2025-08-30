@@ -53,8 +53,16 @@ const BookingModal: React.FC<BookingModalProps> = ({
     );
     
     if (psychologistSlots) {
-      // Используем расписание конкретного психолога
-      return psychologistSlots.map((slot: any) => {
+      // Используем расписание конкретного психолога с дедупликацией
+      const uniqueSlots = psychologistSlots.reduce((acc: any[], slot: any) => {
+        const existingSlot = acc.find(s => s.time === slot.time);
+        if (!existingSlot) {
+          acc.push(slot);
+        }
+        return acc;
+      }, []);
+      
+      return uniqueSlots.map((slot: any) => {
         // Проверяем, занят ли этот слот ручными записями или существующими бронированиями
         const isManuallyBooked = psychologistManualRecords.some((record: any) => 
           record.sessionTime === slot.time
