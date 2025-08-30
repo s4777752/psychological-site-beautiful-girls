@@ -30,38 +30,13 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
       const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
       const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       
-      console.log('Client phone:', clientPhone);
-      console.log('Manual records:', manualRecords);
-      console.log('Bookings:', bookings);
-      
-      // Нормализуем номер клиента
-      const normalizePhone = (phone: string) => {
-        const cleaned = phone.replace(/\D/g, '');
-        return cleaned.startsWith('8') ? '7' + cleaned.slice(1) : cleaned;
-      };
-      
-      const normalizedClientPhone = normalizePhone(clientPhone);
-      console.log('Normalized client phone:', normalizedClientPhone);
-      
       // Фильтруем записи по номеру телефона клиента
-      const clientManualRecords = manualRecords
-        .filter((record: any) => {
-          if (!record.clientPhone) return false;
-          const normalizedRecordPhone = normalizePhone(record.clientPhone);
-          console.log(`Comparing: ${normalizedClientPhone} === ${normalizedRecordPhone}`, normalizedClientPhone === normalizedRecordPhone);
-          return normalizedRecordPhone === normalizedClientPhone;
-        })
-        .map((record: any) => ({
-          ...record,
-          psychologistName: record.psychologistName || 'Анна Смирнова'
-        }));
+      const clientManualRecords = manualRecords.filter((record: any) => 
+        record.clientPhone && record.clientPhone.replace(/\D/g, '') === clientPhone
+      );
       
       const clientBookings = bookings
-        .filter((booking: any) => {
-          if (!booking.clientPhone) return false;
-          const normalizedBookingPhone = normalizePhone(booking.clientPhone);
-          return normalizedBookingPhone === normalizedClientPhone;
-        })
+        .filter((booking: any) => booking.clientPhone && booking.clientPhone.replace(/\D/g, '') === clientPhone)
         .map((booking: any) => ({
           id: booking.id,
           sessionType: 'Консультация',
@@ -75,13 +50,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
           notes: booking.notes
         }));
 
-      console.log('Found manual records:', clientManualRecords);
-      console.log('Found bookings:', clientBookings);
-
       const allRecords = [...clientManualRecords, ...clientBookings]
         .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime());
       
-      console.log('All records:', allRecords);
       setRecords(allRecords);
     };
 
@@ -128,68 +99,23 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
             </p>
           </div>
           <Button 
-            onClick={() => window.location.href = '/'}
+            onClick={onLogout}
             variant="outline"
             className="border-warm-300 text-warm-600 hover:bg-warm-50"
           >
-            <Icon name="Home" size={20} className="mr-2" />
-            На главную
+            <Icon name="LogOut" size={20} className="mr-2" />
+            Выйти
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Боковая панель с кнопками связи */}
-          {records.length > 0 && (
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-warm-800 flex items-center text-sm">
-                    <Icon name="MessageCircle" size={20} className="mr-2" />
-                    Связь с психологом
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button
-                    size="lg"
-                    onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-3"
-                  >
-                    <Icon name="Video" size={20} className="mr-2" />
-                    Видеозвонок
-                  </Button>
-                  
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      const message = prompt('Напишите сообщение психологу:');
-                      if (message && message.trim()) {
-                        alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
-                      }
-                    }}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-3"
-                  >
-                    <Icon name="Mail" size={20} className="mr-2" />
-                    Сообщение
-                  </Button>
-                  
-                  <div className="mt-3 p-2 bg-warm-50 rounded text-xs text-warm-600">
-                    <Icon name="Info" size={12} className="inline mr-1" />
-                    Кнопки для связи с вашим психологом
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {/* Записи */}
-          <div className={records.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-warm-800 flex items-center">
-                  <Icon name="Calendar" size={24} className="mr-2" />
-                  Мои записи к психологу
-                </CardTitle>
-              </CardHeader>
+        {/* Записи */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-warm-800 flex items-center">
+              <Icon name="Calendar" size={24} className="mr-2" />
+              Мои записи к психологу
+            </CardTitle>
+          </CardHeader>
           <CardContent>
             {records.length === 0 ? (
               <div className="text-center py-8">
@@ -219,7 +145,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                           {new Date(record.sessionDate).toLocaleDateString('ru-RU')} в {record.sessionTime}
                         </p>
                         <p className="text-sm text-warm-600 mt-1">
-                          <strong>Ваш психолог:</strong> {record.psychologistName}
+                          <strong>Психолог:</strong> {record.psychologistName}
                         </p>
                       </div>
                       <div className="flex items-center space-x-3">
@@ -229,19 +155,94 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                       </div>
                     </div>
 
-                    <div className="text-sm text-warm-600 space-y-1">
+                    <div className="text-sm text-warm-600 space-y-1 mb-4">
                       <p><strong>Стоимость:</strong> {record.price.toLocaleString()} ₽</p>
                       <p><strong>Создано:</strong> {record.createdAt}</p>
                       {record.notes && <p><strong>Заметки:</strong> {record.notes}</p>}
                     </div>
+
+                    {/* Кнопки связи с психологом */}
+                    {record.status === 'scheduled' && (
+                      <div className="mt-4 pt-3 border-t border-warm-200">
+                        <p className="text-sm font-medium text-warm-700 mb-3">Связь с психологом:</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                          >
+                            <Icon name="Video" size={14} className="mr-1" />
+                            Видео
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              const message = prompt('Напишите сообщение психологу:');
+                              if (message && message.trim()) {
+                                alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
+                              }
+                            }}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+                          >
+                            <Icon name="Mail" size={14} className="mr-1" />
+                            Сообщение
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              // В реальном приложении здесь будет номер телефона психолога
+                              const psychologistPhone = '79001234567'; // Заглушка
+                              window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
+                            }}
+                            className="bg-green-500 hover:bg-green-600 text-white text-xs"
+                          >
+                            <Icon name="MessageCircle" size={14} className="mr-1" />
+                            WhatsApp
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              // В реальном приложении здесь будет Telegram ID психолога
+                              const psychologistTelegram = 'psychologist_username'; // Заглушка
+                              window.open(`https://t.me/${psychologistTelegram}`, '_blank');
+                            }}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                          >
+                            <Icon name="Send" size={14} className="mr-1" />
+                            Telegram
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              // В реальном приложении здесь будет номер телефона психолога
+                              const psychologistPhone = '79001234567'; // Заглушка
+                              window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
+                            }}
+                            className="bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                          >
+                            <Icon name="MessageSquare" size={14} className="mr-1" />
+                            SMS
+                          </Button>
+                        </div>
+                        
+                        <div className="mt-3 text-xs text-warm-500">
+                          <p>
+                            <Icon name="Info" size={12} className="inline mr-1" />
+                            Кнопки связи активны только для запланированных сессий
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
