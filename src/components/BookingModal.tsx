@@ -127,7 +127,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     if (date < todayStart) return;
     
-    setSelectedDate(date.toISOString().split('T')[0]);
+    // Формируем дату в формате YYYY-MM-DD без влияния часового пояса
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    setSelectedDate(`${year}-${month}-${day}`);
     setSelectedTime('');
   };
 
@@ -314,7 +318,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     ${day.isCurrentMonth ? 'text-secondary' : 'text-warm-300'}
                     ${day.isToday ? 'bg-primary text-white font-bold' : ''}
                     ${day.isAvailable && !day.isToday ? 'hover:bg-warm-100' : ''}
-                    ${selectedDate === day.date.toISOString().split('T')[0] ? 'bg-primary text-white' : ''}
+                    ${selectedDate === `${day.date.getFullYear()}-${(day.date.getMonth() + 1).toString().padStart(2, '0')}-${day.date.getDate().toString().padStart(2, '0')}` ? 'bg-primary text-white' : ''}
                     ${!day.isAvailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                     ${day.isWeekend && day.isCurrentMonth ? 'bg-blue-50 border border-blue-200' : ''}
                   `}
