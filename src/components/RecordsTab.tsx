@@ -274,25 +274,34 @@ const RecordsTab = () => {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        variant={record.status === 'scheduled' ? 'default' : 'outline'}
                         onClick={() => updateRecordStatus(record.id, 'scheduled')}
-                        className="text-xs"
+                        className={`text-xs ${
+                          record.status === 'scheduled' 
+                            ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                            : 'bg-blue-100 hover:bg-blue-200 text-blue-700 border-blue-300'
+                        }`}
                       >
                         Запланирована
                       </Button>
                       <Button
                         size="sm"
-                        variant={record.status === 'completed' ? 'default' : 'outline'}
                         onClick={() => updateRecordStatus(record.id, 'completed')}
-                        className="text-xs"
+                        className={`text-xs ${
+                          record.status === 'completed' 
+                            ? 'bg-green-500 hover:bg-green-600 text-white' 
+                            : 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300'
+                        }`}
                       >
                         Завершена
                       </Button>
                       <Button
                         size="sm"
-                        variant={record.status === 'cancelled' ? 'destructive' : 'outline'}
                         onClick={() => updateRecordStatus(record.id, 'cancelled')}
-                        className="text-xs"
+                        className={`text-xs ${
+                          record.status === 'cancelled' 
+                            ? 'bg-red-500 hover:bg-red-600 text-white' 
+                            : 'bg-red-100 hover:bg-red-200 text-red-700 border-red-300'
+                        }`}
                       >
                         Отменена
                       </Button>
