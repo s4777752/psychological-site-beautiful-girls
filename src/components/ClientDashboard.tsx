@@ -172,42 +172,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                     Сообщение
                   </Button>
                   
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      const psychologistPhone = '79001234567';
-                      window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
-                    }}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white text-sm py-3"
-                  >
-                    <Icon name="MessageCircle" size={20} className="mr-2" />
-                    WhatsApp
-                  </Button>
-                  
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      const psychologistTelegram = 'psychologist_username';
-                      window.open(`https://t.me/${psychologistTelegram}`, '_blank');
-                    }}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm py-3"
-                  >
-                    <Icon name="Send" size={20} className="mr-2" />
-                    Telegram
-                  </Button>
-                  
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      const psychologistPhone = '79001234567';
-                      window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
-                    }}
-                    className="w-full bg-purple-500 hover:bg-purple-600 text-white text-sm py-3"
-                  >
-                    <Icon name="MessageSquare" size={20} className="mr-2" />
-                    SMS
-                  </Button>
-                  
                   <div className="mt-3 p-2 bg-warm-50 rounded text-xs text-warm-600">
                     <Icon name="Info" size={12} className="inline mr-1" />
                     Кнопки для связи с вашим психологом
