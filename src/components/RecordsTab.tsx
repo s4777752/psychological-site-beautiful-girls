@@ -356,11 +356,15 @@ const RecordsTab = () => {
                       <div className="flex flex-wrap gap-2">
                         <Button
                           size="sm"
-                          onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
-                          className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                          onClick={() => {
+                            const roomName = `${psychologist?.name.replace(/\s+/g, '-').toLowerCase()}-${record.sessionDate.replace(/-/g, '')}${record.sessionTime.replace(':', '')}`;
+                            const doxyUrl = `https://doxy.me/${roomName}`;
+                            window.open(doxyUrl, '_blank');
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs"
                         >
                           <Icon name="Video" size={14} className="mr-1" />
-                          Видео
+                          Doxy.me
                         </Button>
                         
                         <Button
