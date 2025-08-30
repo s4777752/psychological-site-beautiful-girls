@@ -44,12 +44,17 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
       console.log('Normalized client phone:', normalizedClientPhone);
       
       // Фильтруем записи по номеру телефона клиента
-      const clientManualRecords = manualRecords.filter((record: any) => {
-        if (!record.clientPhone) return false;
-        const normalizedRecordPhone = normalizePhone(record.clientPhone);
-        console.log(`Comparing: ${normalizedClientPhone} === ${normalizedRecordPhone}`, normalizedClientPhone === normalizedRecordPhone);
-        return normalizedRecordPhone === normalizedClientPhone;
-      });
+      const clientManualRecords = manualRecords
+        .filter((record: any) => {
+          if (!record.clientPhone) return false;
+          const normalizedRecordPhone = normalizePhone(record.clientPhone);
+          console.log(`Comparing: ${normalizedClientPhone} === ${normalizedRecordPhone}`, normalizedClientPhone === normalizedRecordPhone);
+          return normalizedRecordPhone === normalizedClientPhone;
+        })
+        .map((record: any) => ({
+          ...record,
+          psychologistName: record.psychologistName || 'Анна Смирнова'
+        }));
       
       const clientBookings = bookings
         .filter((booking: any) => {
