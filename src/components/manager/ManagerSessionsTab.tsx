@@ -265,10 +265,12 @@ const ManagerSessionsTab = () => {
             { id: "4", name: "Дарья Петрова" }
           ];
           
+          const psychologistName = psychologists.find(p => p.id === appointmentData.psychologistId)?.name || "Неизвестный психолог";
+          
           const newSession: Session = {
             id: sessions.length + 1,
             clientName: appointmentData.clientName,
-            psychologistName: psychologists.find(p => p.id === appointmentData.psychologistId)?.name || "Неизвестный психолог",
+            psychologistName,
             date: appointmentData.date,
             time: appointmentData.time,
             status: "upcoming",
@@ -276,7 +278,46 @@ const ManagerSessionsTab = () => {
             duration: "50 мин",
             price: 2500
           };
+          
+          // Обновляем локальные записи
           setSessions([...sessions, newSession]);
+          
+          // Синхронизируем с записями психолога в localStorage
+          const manualRecord = {
+            id: Date.now().toString(),
+            clientName: appointmentData.clientName,
+            clientEmail: appointmentData.clientEmail,
+            clientPhone: appointmentData.clientPhone,
+            sessionType: appointmentData.type,
+            sessionDate: appointmentData.date,
+            sessionTime: appointmentData.time,
+            price: 2500,
+            notes: appointmentData.notes,
+            status: 'scheduled',
+            createdAt: new Date().toLocaleString('ru-RU')
+          };
+          
+          // Добавляем в общий список записей для психолога
+          const existingRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+          const updatedRecords = [manualRecord, ...existingRecords];
+          localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
+          
+          // Блокируем слот в расписании психолога
+          const psychologistScheduleKey = `psychologistSchedule_${psychologistName.replace(/\s+/g, '_')}`;
+          const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
+          
+          if (!scheduleData[appointmentData.date]) {
+            scheduleData[appointmentData.date] = [];
+          }
+          
+          scheduleData[appointmentData.date].push({
+            time: appointmentData.time,
+            available: false,
+            booked: true,
+            clientName: appointmentData.clientName
+          });
+          
+          localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
         }}
       />
     </div>
