@@ -142,6 +142,9 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                     <Icon name="MessageCircle" size={20} className="mr-2" />
                     Связь с психологом
                   </CardTitle>
+                  <p className="text-sm text-warm-600 mt-2">
+                    {records.length > 0 ? records[0].psychologistName : 'Анна Петрова'}
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button
