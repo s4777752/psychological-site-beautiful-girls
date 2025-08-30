@@ -212,45 +212,6 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                             <Icon name="Mail" size={14} className="mr-1" />
                             Сообщение
                           </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет номер телефона психолога
-                              const psychologistPhone = '79001234567'; // Заглушка
-                              window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
-                            }}
-                            className="bg-green-500 hover:bg-green-600 text-white text-xs"
-                          >
-                            <Icon name="MessageCircle" size={14} className="mr-1" />
-                            WhatsApp
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет Telegram ID психолога
-                              const psychologistTelegram = 'psychologist_username'; // Заглушка
-                              window.open(`https://t.me/${psychologistTelegram}`, '_blank');
-                            }}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
-                          >
-                            <Icon name="Send" size={14} className="mr-1" />
-                            Telegram
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет номер телефона психолога
-                              const psychologistPhone = '79001234567'; // Заглушка
-                              window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
-                            }}
-                            className="bg-purple-500 hover:bg-purple-600 text-white text-xs"
-                          >
-                            <Icon name="MessageSquare" size={14} className="mr-1" />
-                            SMS
-                          </Button>
                         </div>
                         
                         <div className="mt-3 text-xs text-warm-500">
