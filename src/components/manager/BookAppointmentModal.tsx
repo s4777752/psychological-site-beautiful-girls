@@ -64,9 +64,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onBookAppointment }: BookAppoin
     if (!formData.clientName.trim()) {
       newErrors.clientName = "Имя клиента обязательно";
     }
-    if (!formData.clientEmail.trim()) {
-      newErrors.clientEmail = "Email обязателен";
-    } else if (!/\S+@\S+\.\S+/.test(formData.clientEmail)) {
+    if (formData.clientEmail.trim() && !/\S+@\S+\.\S+/.test(formData.clientEmail)) {
       newErrors.clientEmail = "Некорректный email";
     }
     if (!formData.clientPhone.trim()) {
@@ -168,7 +166,7 @@ const BookAppointmentModal = ({ isOpen, onClose, onBookAppointment }: BookAppoin
 
             <div>
               <Label htmlFor="clientEmail" className="text-warm-700">
-                Email *
+                Email
               </Label>
               <Input
                 id="clientEmail"
