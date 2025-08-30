@@ -290,7 +290,7 @@ const RecordsTab = () => {
                         {new Date(record.sessionDate).toLocaleDateString('ru-RU')} в {record.sessionTime}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
                       <Button
                         size="sm"
                         onClick={() => updateRecordStatus(record.id, 'scheduled')}
@@ -324,18 +324,20 @@ const RecordsTab = () => {
                       >
                         Отменена
                       </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          if (window.confirm('Вы уверены, что хотите удалить эту запись? Это действие нельзя отменить.')) {
-                            deleteRecord(record.id);
-                          }
-                        }}
-                        className="bg-red-600 hover:bg-red-700 text-white p-2"
-                        title="Удалить запись"
-                      >
-                        <Icon name="Trash2" size={14} />
-                      </Button>
+                      <div className="ml-4">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            if (window.confirm('Вы уверены, что хотите удалить эту запись? Это действие нельзя отменить.')) {
+                              deleteRecord(record.id);
+                            }
+                          }}
+                          className="bg-red-600 hover:bg-red-700 text-white p-2"
+                          title="Удалить запись"
+                        >
+                          <Icon name="Trash2" size={14} />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   <div className="text-sm text-warm-600 space-y-1">
