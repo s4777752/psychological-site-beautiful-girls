@@ -102,27 +102,35 @@ const RecordsTab = () => {
 
   const updateRecordStatus = (id: string, status: 'scheduled' | 'completed' | 'cancelled') => {
     const recordToUpdate = manualRecords.find(record => record.id === id);
-    const updatedRecords = manualRecords.map(record => 
-      record.id === id ? { ...record, status } : record
-    );
-    setManualRecords(updatedRecords);
-    // Сохраняем обновления в localStorage
-    localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     
-    // Если запись отменена, освобождаем слот в расписании
-    if (status === 'cancelled' && recordToUpdate && psychologist?.name) {
-      const psychologistScheduleKey = `psychologistSchedule_${psychologist.name.replace(/\s+/g, '_')}`;
-      const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
+    // Если запись отменяется, удаляем её полностью
+    if (status === 'cancelled') {
+      const updatedRecords = manualRecords.filter(record => record.id !== id);
+      setManualRecords(updatedRecords);
+      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
       
-      if (scheduleData[recordToUpdate.sessionDate]) {
-        scheduleData[recordToUpdate.sessionDate] = scheduleData[recordToUpdate.sessionDate].map((slot: any) => {
-          if (slot.time === recordToUpdate.sessionTime) {
-            return { ...slot, booked: false };
-          }
-          return slot;
-        });
-        localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
+      // Освобождаем слот в расписании
+      if (recordToUpdate && psychologist?.name) {
+        const psychologistScheduleKey = `psychologistSchedule_${psychologist.name.replace(/\s+/g, '_')}`;
+        const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
+        
+        if (scheduleData[recordToUpdate.sessionDate]) {
+          scheduleData[recordToUpdate.sessionDate] = scheduleData[recordToUpdate.sessionDate].map((slot: any) => {
+            if (slot.time === recordToUpdate.sessionTime) {
+              return { ...slot, booked: false };
+            }
+            return slot;
+          });
+          localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
+        }
       }
+    } else {
+      // Для других статусов просто обновляем
+      const updatedRecords = manualRecords.map(record => 
+        record.id === id ? { ...record, status } : record
+      );
+      setManualRecords(updatedRecords);
+      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     }
   };
 
