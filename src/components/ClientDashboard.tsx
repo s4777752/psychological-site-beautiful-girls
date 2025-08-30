@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import DoxyMeeting from '@/components/DoxyIntegration';
 
 interface ClientRecord {
   id: string;
@@ -130,7 +131,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
               <p className="text-sm font-semibold text-blue-800">
                 {records.filter(r => r.status === 'scheduled').length} предстоящих видеосессий
               </p>
-              <p className="text-xs text-blue-600">Подключение через Zoom</p>
+              <p className="text-xs text-blue-600">Через Doxy.me платформу</p>
             </div>
           )}
           <Button 
@@ -196,60 +197,15 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                       {record.notes && <p><strong>Заметки:</strong> {record.notes}</p>}
                     </div>
 
-                    {/* Zoom видеосвязь для запланированных сессий */}
-                    {record.status === 'scheduled' && (
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Icon name="Video" size={20} className="text-blue-600 mr-2" />
-                            <div>
-                              <p className="font-semibold text-blue-800">Видеоконсультация</p>
-                              <p className="text-sm text-blue-600">Подключитесь к сессии через Zoom</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                const meetingId = `${record.id.slice(-9)}`;
-                                const zoomUrl = `https://zoom.us/j/${meetingId}`;
-                                window.open(zoomUrl, '_blank');
-                              }}
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
-                            >
-                              <Icon name="Video" size={16} className="mr-1" />
-                              Подключиться
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                const meetingId = `${record.id.slice(-9)}`;
-                                navigator.clipboard.writeText(`ID встречи: ${meetingId}`);
-                                alert('ID встречи скопирован в буфер обмена');
-                              }}
-                              className="border-blue-300 text-blue-700 hover:bg-blue-50"
-                            >
-                              <Icon name="Copy" size={16} className="mr-1" />
-                              ID
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-3 pt-3 border-t border-blue-200">
-                          <div className="flex items-center justify-between text-xs text-blue-600">
-                            <div className="flex items-center">
-                              <Icon name="Clock" size={12} className="mr-1" />
-                              <span>За 10 минут до сессии</span>
-                            </div>
-                            <div className="flex items-center">
-                              <Icon name="Shield" size={12} className="mr-1" />
-                              <span>Защищенное соединение</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    {/* Doxy.me видеосвязь для запланированных сессий */}
+                    <DoxyMeeting
+                      sessionId={record.id}
+                      sessionDate={new Date(record.sessionDate).toLocaleDateString('ru-RU')}
+                      sessionTime={record.sessionTime}
+                      psychologistName={record.psychologistName || 'Анна Смирнова'}
+                      psychologistId="anna-smirnova"
+                      isScheduled={record.status === 'scheduled'}
+                    />
 
 
                   </div>

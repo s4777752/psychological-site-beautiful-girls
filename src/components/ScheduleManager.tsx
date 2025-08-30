@@ -361,9 +361,23 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
                     <span className="font-medium text-secondary">{formatTime(slot.time)}</span>
                     <div className="flex items-center space-x-2">
                       {slot.booked && (
-                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
-                          Забронировано
-                        </span>
+                        <>
+                          <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
+                            Забронировано
+                          </span>
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              const roomName = `anna-smirnova-${selectedDate.replace(/-/g, '')}${slot.time.replace(':', '')}`;
+                              const doxyUrl = `https://doxy.me/${roomName}`;
+                              window.open(doxyUrl, '_blank');
+                            }}
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs ml-2"
+                          >
+                            <Icon name="Video" size={12} className="mr-1" />
+                            Doxy.me
+                          </Button>
+                        </>
                       )}
                       {slot.available && !slot.booked && (
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
