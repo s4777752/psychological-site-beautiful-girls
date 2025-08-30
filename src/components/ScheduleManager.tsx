@@ -64,15 +64,56 @@ const ScheduleManager: React.FC<ScheduleManagerProps> = ({ psychologistName }) =
 
   // Получение слотов для конкретной даты
   const getTimeSlotsForDate = (date: string): TimeSlot[] => {
+    // Получаем существующие записи
+    const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+    const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    // Фильтруем записи для данного психолога и даты
+    const psychologistManualRecords = manualRecords.filter((record: any) => 
+      record.sessionDate === date && 
+      record.status !== 'cancelled'
+    );
+    
+    const psychologistBookings = existingBookings.filter((booking: any) => 
+      booking.psychologistName === psychologistName && 
+      booking.date === date && 
+      booking.status !== 'cancelled'
+    );
+
     if (!scheduleData[date]) {
-      // Инициализация с выключенными слотами
-      return baseTimeSlots.map(time => ({
-        time,
-        available: false,
-        booked: false
-      }));
+      // Инициализация с выключенными слотами, но с учетом существующих записей
+      return baseTimeSlots.map(time => {
+        const isManuallyBooked = psychologistManualRecords.some((record: any) => 
+          record.sessionTime === time
+        );
+        
+        const isAlreadyBooked = psychologistBookings.some((booking: any) => 
+          booking.time === time
+        );
+        
+        return {
+          time,
+          available: false,
+          booked: isManuallyBooked || isAlreadyBooked
+        };
+      });
     }
-    return scheduleData[date];
+
+    // Обновляем существующие слоты с учетом записей
+    return scheduleData[date].map(slot => {
+      const isManuallyBooked = psychologistManualRecords.some((record: any) => 
+        record.sessionTime === slot.time
+      );
+      
+      const isAlreadyBooked = psychologistBookings.some((booking: any) => 
+        booking.time === slot.time
+      );
+
+      return {
+        ...slot,
+        booked: isManuallyBooked || isAlreadyBooked
+      };
+    });
   };
 
   // Переключение доступности слота
