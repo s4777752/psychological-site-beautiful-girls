@@ -123,12 +123,12 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
             </p>
           </div>
           <Button 
-            onClick={onLogout}
+            onClick={() => window.location.href = '/'}
             variant="outline"
             className="border-warm-300 text-warm-600 hover:bg-warm-50"
           >
-            <Icon name="LogOut" size={20} className="mr-2" />
-            Выйти
+            <Icon name="Home" size={20} className="mr-2" />
+            На главную
           </Button>
         </div>
 
