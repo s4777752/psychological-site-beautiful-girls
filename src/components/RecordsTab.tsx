@@ -366,23 +366,15 @@ const RecordsTab = () => {
                         <Button
                           size="sm"
                           onClick={() => {
-                            const fileInput = document.createElement('input');
-                            fileInput.type = 'file';
-                            fileInput.multiple = true;
-                            fileInput.accept = '*/*';
-                            fileInput.onchange = (e) => {
-                              const files = (e.target as HTMLInputElement).files;
-                              if (files && files.length > 0) {
-                                const fileList = Array.from(files).map(f => f.name).join(', ');
-                                alert(`Выбраны файлы для отправки: ${fileList}\n\nДля отправки файлов клиенту используйте предпочитаемый мессенджер.`);
-                              }
-                            };
-                            fileInput.click();
+                            const message = prompt(`Напишите сообщение для ${record.clientName}:`);
+                            if (message && message.trim()) {
+                              alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
+                            }
                           }}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
                         >
-                          <Icon name="FileText" size={14} className="mr-1" />
-                          Документы
+                          <Icon name="Mail" size={14} className="mr-1" />
+                          Сообщение
                         </Button>
                         
                         <Button
