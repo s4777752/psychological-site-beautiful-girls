@@ -31,6 +31,25 @@ const ClientLogin: React.FC<ClientLoginProps> = ({ onLogin }) => {
 
     setLoading(true);
     
+    // Проверяем, есть ли записи с таким номером телефона
+    const cleanPhone = phone.replace(/\D/g, '');
+    const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    
+    const hasManualRecords = manualRecords.some((record: any) => 
+      record.clientPhone && record.clientPhone.replace(/\D/g, '') === cleanPhone
+    );
+    
+    const hasBookings = bookings.some((booking: any) => 
+      booking.clientPhone && booking.clientPhone.replace(/\D/g, '') === cleanPhone
+    );
+    
+    if (!hasManualRecords && !hasBookings) {
+      setLoading(false);
+      alert('Номер телефона не найден в записях на сессии. Пожалуйста, обратитесь к администратору или запишитесь на консультацию.');
+      return;
+    }
+    
     // Имитация отправки SMS
     setTimeout(() => {
       const mockCode = Math.floor(1000 + Math.random() * 9000).toString();
