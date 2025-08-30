@@ -194,10 +194,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     
-    const monthName = monthNames[date.getMonth()];
-    const dayName = weekDays[date.getDay()];
-    
-    return `${day} ${monthName.toLowerCase()} ${year} г. (${dayName})`;
+    return `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`;
   };
 
   if (!isOpen) return null;
@@ -336,7 +333,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg font-semibold text-secondary">
-                  Доступное время на {new Date(selectedDate).toLocaleDateString('ru-RU')}
+                  Доступное время на {formatSelectedDate(selectedDate)}
                 </h4>
                 {(() => {
                   const selectedDateObj = new Date(selectedDate);
