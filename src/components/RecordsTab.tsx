@@ -35,7 +35,11 @@ const RecordsTab = () => {
     return auth ? JSON.parse(auth) : null;
   });
 
-  const [manualRecords, setManualRecords] = useState<ManualRecord[]>([]);
+  // Загружаем и сохраняем ручные записи в localStorage
+  const [manualRecords, setManualRecords] = useState<ManualRecord[]>(() => {
+    const saved = localStorage.getItem('manualRecords');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newRecord, setNewRecord] = useState({
     clientName: "",
@@ -63,7 +67,10 @@ const RecordsTab = () => {
       createdAt: new Date().toLocaleString('ru-RU')
     };
     
-    setManualRecords([record, ...manualRecords]);
+    const updatedRecords = [record, ...manualRecords];
+    setManualRecords(updatedRecords);
+    // Сохраняем в localStorage
+    localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     setNewRecord({
       clientName: "",
       clientEmail: "",
@@ -78,11 +85,12 @@ const RecordsTab = () => {
   };
 
   const updateRecordStatus = (id: string, status: 'scheduled' | 'completed' | 'cancelled') => {
-    setManualRecords(records => 
-      records.map(record => 
-        record.id === id ? { ...record, status } : record
-      )
+    const updatedRecords = manualRecords.map(record => 
+      record.id === id ? { ...record, status } : record
     );
+    setManualRecords(updatedRecords);
+    // Сохраняем обновления в localStorage
+    localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
   };
 
   return (
