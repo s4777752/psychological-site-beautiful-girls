@@ -53,6 +53,9 @@ const ClientLogin: React.FC<ClientLoginProps> = ({ onLogin }) => {
       // Учитываем разные форматы номеров (с +7 и с 8)
       const normalizedRecordPhone = recordPhone.startsWith('8') ? '7' + recordPhone.slice(1) : recordPhone;
       const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      
+      console.log(`Сравниваем: ${normalizedCleanPhone} === ${normalizedRecordPhone}`, normalizedCleanPhone === normalizedRecordPhone);
+      
       return normalizedRecordPhone === normalizedCleanPhone;
     });
     
@@ -62,8 +65,13 @@ const ClientLogin: React.FC<ClientLoginProps> = ({ onLogin }) => {
       // Учитываем разные форматы номеров (с +7 и с 8)
       const normalizedBookingPhone = bookingPhone.startsWith('8') ? '7' + bookingPhone.slice(1) : bookingPhone;
       const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
+      
+      console.log(`Сравниваем booking: ${normalizedCleanPhone} === ${normalizedBookingPhone}`, normalizedCleanPhone === normalizedBookingPhone);
+      
       return normalizedBookingPhone === normalizedCleanPhone;
     });
+    
+    console.log('hasManualRecords:', hasManualRecords, 'hasBookings:', hasBookings);
     
     if (!hasManualRecords && !hasBookings) {
       setLoading(false);
