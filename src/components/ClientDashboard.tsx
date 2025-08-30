@@ -132,14 +132,95 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
           </Button>
         </div>
 
-        {/* Записи */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-warm-800 flex items-center">
-              <Icon name="Calendar" size={24} className="mr-2" />
-              Мои записи к психологу
-            </CardTitle>
-          </CardHeader>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Боковая панель с кнопками связи */}
+          {records.length > 0 && (
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-warm-800 flex items-center text-sm">
+                    <Icon name="MessageCircle" size={20} className="mr-2" />
+                    Связь с психологом
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button
+                    size="sm"
+                    onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                  >
+                    <Icon name="Video" size={16} className="mr-2" />
+                    Видеозвонок
+                  </Button>
+                  
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const message = prompt('Напишите сообщение психологу:');
+                      if (message && message.trim()) {
+                        alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
+                      }
+                    }}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+                  >
+                    <Icon name="Mail" size={16} className="mr-2" />
+                    Сообщение
+                  </Button>
+                  
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const psychologistPhone = '79001234567';
+                      window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
+                    }}
+                    className="w-full bg-green-500 hover:bg-green-600 text-white text-xs"
+                  >
+                    <Icon name="MessageCircle" size={16} className="mr-2" />
+                    WhatsApp
+                  </Button>
+                  
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const psychologistTelegram = 'psychologist_username';
+                      window.open(`https://t.me/${psychologistTelegram}`, '_blank');
+                    }}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                  >
+                    <Icon name="Send" size={16} className="mr-2" />
+                    Telegram
+                  </Button>
+                  
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const psychologistPhone = '79001234567';
+                      window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
+                    }}
+                    className="w-full bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                  >
+                    <Icon name="MessageSquare" size={16} className="mr-2" />
+                    SMS
+                  </Button>
+                  
+                  <div className="mt-3 p-2 bg-warm-50 rounded text-xs text-warm-600">
+                    <Icon name="Info" size={12} className="inline mr-1" />
+                    Кнопки для связи с вашим психологом
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Записи */}
+          <div className={records.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-warm-800 flex items-center">
+                  <Icon name="Calendar" size={24} className="mr-2" />
+                  Мои записи к психологу
+                </CardTitle>
+              </CardHeader>
           <CardContent>
             {records.length === 0 ? (
               <div className="text-center py-8">
@@ -179,94 +260,19 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                       </div>
                     </div>
 
-                    <div className="text-sm text-warm-600 space-y-1 mb-4">
+                    <div className="text-sm text-warm-600 space-y-1">
                       <p><strong>Стоимость:</strong> {record.price.toLocaleString()} ₽</p>
                       <p><strong>Создано:</strong> {record.createdAt}</p>
                       {record.notes && <p><strong>Заметки:</strong> {record.notes}</p>}
                     </div>
-
-                    {/* Кнопки связи с психологом */}
-                    {record.status === 'scheduled' && (
-                      <div className="mt-4 pt-3 border-t border-warm-200">
-                        <p className="text-sm font-medium text-warm-700 mb-3">Связь с психологом:</p>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
-                          >
-                            <Icon name="Video" size={14} className="mr-1" />
-                            Видео
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              const message = prompt('Напишите сообщение психологу:');
-                              if (message && message.trim()) {
-                                alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
-                              }
-                            }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
-                          >
-                            <Icon name="Mail" size={14} className="mr-1" />
-                            Сообщение
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет номер телефона психолога
-                              const psychologistPhone = '79001234567'; // Заглушка
-                              window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
-                            }}
-                            className="bg-green-500 hover:bg-green-600 text-white text-xs"
-                          >
-                            <Icon name="MessageCircle" size={14} className="mr-1" />
-                            WhatsApp
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет Telegram ID психолога
-                              const psychologistTelegram = 'psychologist_username'; // Заглушка
-                              window.open(`https://t.me/${psychologistTelegram}`, '_blank');
-                            }}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
-                          >
-                            <Icon name="Send" size={14} className="mr-1" />
-                            Telegram
-                          </Button>
-                          
-                          <Button
-                            size="sm"
-                            onClick={() => {
-                              // В реальном приложении здесь будет номер телефона психолога
-                              const psychologistPhone = '79001234567'; // Заглушка
-                              window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации ${new Date(record.sessionDate).toLocaleDateString('ru-RU')} в ${record.sessionTime}`, '_blank');
-                            }}
-                            className="bg-purple-500 hover:bg-purple-600 text-white text-xs"
-                          >
-                            <Icon name="MessageSquare" size={14} className="mr-1" />
-                            SMS
-                          </Button>
-                        </div>
-                        
-                        <div className="mt-3 text-xs text-warm-500">
-                          <p>
-                            <Icon name="Info" size={12} className="inline mr-1" />
-                            Кнопки связи активны только для запланированных сессий
-                          </p>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
