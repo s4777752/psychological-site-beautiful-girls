@@ -307,14 +307,29 @@ const ManagerSessionsTab = () => {
           const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
           
           if (!scheduleData[appointmentData.date]) {
-            scheduleData[appointmentData.date] = [];
+            // Инициализируем базовые слоты если даты нет
+            scheduleData[appointmentData.date] = [
+              '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', 
+              '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', 
+              '21:00', '22:00', '23:00'
+            ].map(time => ({
+              time,
+              available: false,
+              booked: false
+            }));
           }
           
-          scheduleData[appointmentData.date].push({
-            time: appointmentData.time,
-            available: false,
-            booked: true,
-            clientName: appointmentData.clientName
+          // Обновляем конкретный слот вместо добавления нового
+          scheduleData[appointmentData.date] = scheduleData[appointmentData.date].map((slot: any) => {
+            if (slot.time === appointmentData.time) {
+              return {
+                ...slot,
+                available: false,
+                booked: true,
+                clientName: appointmentData.clientName
+              };
+            }
+            return slot;
           });
           
           localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
