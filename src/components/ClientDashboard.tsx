@@ -145,61 +145,61 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={() => window.open('https://zoom.us/start/videomeeting', '_blank')}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm py-3"
                   >
-                    <Icon name="Video" size={16} className="mr-2" />
+                    <Icon name="Video" size={20} className="mr-2" />
                     Видеозвонок
                   </Button>
                   
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={() => {
                       const message = prompt('Напишите сообщение психологу:');
                       if (message && message.trim()) {
                         alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
                       }
                     }}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-3"
                   >
-                    <Icon name="Mail" size={16} className="mr-2" />
+                    <Icon name="Mail" size={20} className="mr-2" />
                     Сообщение
                   </Button>
                   
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={() => {
                       const psychologistPhone = '79001234567';
                       window.open(`https://wa.me/${psychologistPhone}?text=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
                     }}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white text-xs"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white text-sm py-3"
                   >
-                    <Icon name="MessageCircle" size={16} className="mr-2" />
+                    <Icon name="MessageCircle" size={20} className="mr-2" />
                     WhatsApp
                   </Button>
                   
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={() => {
                       const psychologistTelegram = 'psychologist_username';
                       window.open(`https://t.me/${psychologistTelegram}`, '_blank');
                     }}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm py-3"
                   >
-                    <Icon name="Send" size={16} className="mr-2" />
+                    <Icon name="Send" size={20} className="mr-2" />
                     Telegram
                   </Button>
                   
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={() => {
                       const psychologistPhone = '79001234567';
                       window.open(`sms:${psychologistPhone}?body=Здравствуйте! Это ваш клиент. У меня вопрос по консультации.`, '_blank');
                     }}
-                    className="w-full bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                    className="w-full bg-purple-500 hover:bg-purple-600 text-white text-sm py-3"
                   >
-                    <Icon name="MessageSquare" size={16} className="mr-2" />
+                    <Icon name="MessageSquare" size={20} className="mr-2" />
                     SMS
                   </Button>
                   
