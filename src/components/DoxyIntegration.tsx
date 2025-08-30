@@ -19,8 +19,16 @@ export const DoxyMeeting: React.FC<DoxyMeetingProps> = ({
   psychologistId = 'psychologist',
   isScheduled = false
 }) => {
+  // Унифицированная функция генерации имени комнаты для синхронизации между клиентом и психологом
+  const generateUnifiedRoomName = (psychName: string, date: string, time: string): string => {
+    const cleanPsychName = psychName.replace(/\s+/g, '-').toLowerCase();
+    const cleanDate = date.replace(/-/g, '');
+    const cleanTime = time.replace(':', '');
+    return `${cleanPsychName}-${cleanDate}${cleanTime}`;
+  };
+
   const generateRoomName = (psychId: string, sessionId: string): string => {
-    const cleanPsychId = psychId.replace(/\s+/g, '').toLowerCase();
+    const cleanPsychId = psychId.replace(/\s+/g, '-').toLowerCase();
     const shortSessionId = sessionId.slice(-6);
     return `${cleanPsychId}-${shortSessionId}`;
   };
@@ -52,7 +60,8 @@ export const DoxyMeeting: React.FC<DoxyMeetingProps> = ({
     return null;
   }
 
-  const roomName = generateRoomName(psychologistId, sessionId);
+  // Используем унифицированную генерацию комнаты для синхронизации
+  const roomName = generateUnifiedRoomName(psychologistName, sessionDate, sessionTime);
   const roomUrl = generateDoxyUrl(roomName);
 
   return (
