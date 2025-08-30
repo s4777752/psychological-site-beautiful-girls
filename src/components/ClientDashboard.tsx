@@ -30,13 +30,33 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
       const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
       const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       
+      console.log('Client phone:', clientPhone);
+      console.log('Manual records:', manualRecords);
+      console.log('Bookings:', bookings);
+      
+      // Нормализуем номер клиента
+      const normalizePhone = (phone: string) => {
+        const cleaned = phone.replace(/\D/g, '');
+        return cleaned.startsWith('8') ? '7' + cleaned.slice(1) : cleaned;
+      };
+      
+      const normalizedClientPhone = normalizePhone(clientPhone);
+      console.log('Normalized client phone:', normalizedClientPhone);
+      
       // Фильтруем записи по номеру телефона клиента
-      const clientManualRecords = manualRecords.filter((record: any) => 
-        record.clientPhone && record.clientPhone.replace(/\D/g, '') === clientPhone
-      );
+      const clientManualRecords = manualRecords.filter((record: any) => {
+        if (!record.clientPhone) return false;
+        const normalizedRecordPhone = normalizePhone(record.clientPhone);
+        console.log(`Comparing: ${normalizedClientPhone} === ${normalizedRecordPhone}`, normalizedClientPhone === normalizedRecordPhone);
+        return normalizedRecordPhone === normalizedClientPhone;
+      });
       
       const clientBookings = bookings
-        .filter((booking: any) => booking.clientPhone && booking.clientPhone.replace(/\D/g, '') === clientPhone)
+        .filter((booking: any) => {
+          if (!booking.clientPhone) return false;
+          const normalizedBookingPhone = normalizePhone(booking.clientPhone);
+          return normalizedBookingPhone === normalizedClientPhone;
+        })
         .map((booking: any) => ({
           id: booking.id,
           sessionType: 'Консультация',
@@ -50,9 +70,13 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
           notes: booking.notes
         }));
 
+      console.log('Found manual records:', clientManualRecords);
+      console.log('Found bookings:', clientBookings);
+
       const allRecords = [...clientManualRecords, ...clientBookings]
         .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime());
       
+      console.log('All records:', allRecords);
       setRecords(allRecords);
     };
 
