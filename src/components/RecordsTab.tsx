@@ -101,15 +101,16 @@ const RecordsTab = () => {
   };
 
   const updateRecordStatus = (id: string, status: 'scheduled' | 'completed' | 'cancelled') => {
-    const recordToUpdate = manualRecords.find(record => record.id === id);
+    // Обновляем статус записи для всех случаев, включая отмену
+    const updatedRecords = manualRecords.map(record => 
+      record.id === id ? { ...record, status } : record
+    );
+    setManualRecords(updatedRecords);
+    localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     
-    // Если запись отменяется, удаляем её полностью
+    // При отмене освобождаем слот в расписании
     if (status === 'cancelled') {
-      const updatedRecords = manualRecords.filter(record => record.id !== id);
-      setManualRecords(updatedRecords);
-      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
-      
-      // Освобождаем слот в расписании
+      const recordToUpdate = manualRecords.find(record => record.id === id);
       if (recordToUpdate && psychologist?.name) {
         const psychologistScheduleKey = `psychologistSchedule_${psychologist.name.replace(/\s+/g, '_')}`;
         const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
@@ -124,13 +125,6 @@ const RecordsTab = () => {
           localStorage.setItem(psychologistScheduleKey, JSON.stringify(scheduleData));
         }
       }
-    } else {
-      // Для других статусов просто обновляем
-      const updatedRecords = manualRecords.map(record => 
-        record.id === id ? { ...record, status } : record
-      );
-      setManualRecords(updatedRecords);
-      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     }
   };
 
