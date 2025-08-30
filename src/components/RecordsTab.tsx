@@ -40,54 +40,6 @@ const RecordsTab = () => {
     const saved = localStorage.getItem('manualRecords');
     return saved ? JSON.parse(saved) : [];
   });
-
-  // Получаем записи с главной страницы (bookings)
-  const [bookings] = useState(() => {
-    const saved = localStorage.getItem('bookings');
-    const allBookings = saved ? JSON.parse(saved) : [];
-    // Фильтруем только записи этого психолога
-    return allBookings.filter((booking: any) => 
-      booking.psychologistName === psychologist?.name
-    );
-  });
-
-  // Объединяем все записи для отображения
-  const getAllRecords = () => {
-    const allRecords = [];
-    
-    // Добавляем ручные записи
-    manualRecords.forEach(record => {
-      allRecords.push({
-        ...record,
-        source: 'manual'
-      });
-    });
-    
-    // Добавляем записи с главной страницы
-    bookings.forEach((booking: any) => {
-      allRecords.push({
-        id: booking.id,
-        clientName: booking.clientName,
-        clientEmail: booking.clientEmail,
-        clientPhone: booking.clientPhone,
-        sessionType: 'Онлайн-запись',
-        sessionDate: booking.date,
-        sessionTime: booking.time,
-        price: booking.amount || 2500,
-        notes: '',
-        status: booking.status === 'paid' ? 'scheduled' : booking.status,
-        createdAt: booking.createdAt,
-        source: 'online'
-      });
-    });
-    
-    // Сортируем по дате и времени
-    return allRecords.sort((a, b) => {
-      const dateA = new Date(a.sessionDate + ' ' + a.sessionTime);
-      const dateB = new Date(b.sessionDate + ' ' + b.sessionTime);
-      return dateA.getTime() - dateB.getTime();
-    });
-  };
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newRecord, setNewRecord] = useState({
     clientName: "",
@@ -149,43 +101,22 @@ const RecordsTab = () => {
   };
 
   const updateRecordStatus = (id: string, status: 'scheduled' | 'completed' | 'cancelled') => {
-    // Ищем запись в ручных записях
-    const manualRecord = manualRecords.find(record => record.id === id);
-    
-    // Ищем запись в онлайн-записях
-    let onlineRecord = null;
-    const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    const onlineRecordIndex = allBookings.findIndex((booking: any) => booking.id === id);
-    if (onlineRecordIndex !== -1) {
-      onlineRecord = allBookings[onlineRecordIndex];
-    }
-    
-    const recordToUpdate = manualRecord || onlineRecord;
+    const recordToUpdate = manualRecords.find(record => record.id === id);
     
     // Если запись отменяется, удаляем её полностью
     if (status === 'cancelled') {
-      if (manualRecord) {
-        // Удаляем из ручных записей
-        const updatedRecords = manualRecords.filter(record => record.id !== id);
-        setManualRecords(updatedRecords);
-        localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
-      } else if (onlineRecord) {
-        // Обновляем статус онлайн-записи
-        allBookings[onlineRecordIndex].status = 'cancelled';
-        localStorage.setItem('bookings', JSON.stringify(allBookings));
-      }
+      const updatedRecords = manualRecords.filter(record => record.id !== id);
+      setManualRecords(updatedRecords);
+      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
       
       // Освобождаем слот в расписании
       if (recordToUpdate && psychologist?.name) {
         const psychologistScheduleKey = `psychologistSchedule_${psychologist.name.replace(/\s+/g, '_')}`;
         const scheduleData = JSON.parse(localStorage.getItem(psychologistScheduleKey) || '{}');
         
-        const dateKey = manualRecord ? recordToUpdate.sessionDate : recordToUpdate.date;
-        const timeKey = manualRecord ? recordToUpdate.sessionTime : recordToUpdate.time;
-        
-        if (scheduleData[dateKey]) {
-          scheduleData[dateKey] = scheduleData[dateKey].map((slot: any) => {
-            if (slot.time === timeKey) {
+        if (scheduleData[recordToUpdate.sessionDate]) {
+          scheduleData[recordToUpdate.sessionDate] = scheduleData[recordToUpdate.sessionDate].map((slot: any) => {
+            if (slot.time === recordToUpdate.sessionTime) {
               return { ...slot, booked: false };
             }
             return slot;
@@ -195,20 +126,12 @@ const RecordsTab = () => {
       }
     } else {
       // Для других статусов просто обновляем
-      if (manualRecord) {
-        const updatedRecords = manualRecords.map(record => 
-          record.id === id ? { ...record, status } : record
-        );
-        setManualRecords(updatedRecords);
-        localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
-      } else if (onlineRecord) {
-        allBookings[onlineRecordIndex].status = status;
-        localStorage.setItem('bookings', JSON.stringify(allBookings));
-      }
+      const updatedRecords = manualRecords.map(record => 
+        record.id === id ? { ...record, status } : record
+      );
+      setManualRecords(updatedRecords);
+      localStorage.setItem('manualRecords', JSON.stringify(updatedRecords));
     }
-    
-    // Принудительно обновляем компонент
-    window.location.reload();
   };
 
   return (
@@ -332,27 +255,18 @@ const RecordsTab = () => {
       </div>
 
       <div className="space-y-6">
-        {/* Все записи */}
-        {getAllRecords().length > 0 ? (
+        {/* Ручные записи */}
+        {manualRecords.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-warm-800">Все записи ({getAllRecords().length})</CardTitle>
+              <CardTitle className="text-warm-800">Ручные записи</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {getAllRecords().map((record) => (
+              {manualRecords.map((record) => (
                 <div key={record.id} className="border border-warm-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-warm-800">{record.sessionType}</h3>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          record.source === 'manual' 
-                            ? 'bg-blue-100 text-blue-700' 
-                            : 'bg-green-100 text-green-700'
-                        }`}>
-                          {record.source === 'manual' ? 'Ручная' : 'Онлайн'}
-                        </span>
-                      </div>
+                      <h3 className="font-semibold text-warm-800">{record.sessionType}</h3>
                       <p className="text-sm text-warm-600">
                         {new Date(record.sessionDate).toLocaleDateString('ru-RU')} в {record.sessionTime}
                       </p>
@@ -394,12 +308,6 @@ const RecordsTab = () => {
                   </div>
                 </div>
               ))}
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="p-6 text-center">
-              <p className="text-warm-600">Нет записей для отображения</p>
             </CardContent>
           </Card>
         )}
