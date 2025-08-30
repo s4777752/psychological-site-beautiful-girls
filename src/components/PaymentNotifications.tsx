@@ -29,17 +29,11 @@ const PaymentNotifications: React.FC<PaymentNotificationsProps> = ({
 }) => {
   // Загружаем данные о бронированиях из localStorage
   const getBookings = (): PaymentNotification[] => {
-    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    // Очищаем старые записи при загрузке
+    localStorage.removeItem('bookings');
     
-    if (userRole === 'psychologist' && psychologistName) {
-      // Фильтруем только записи к текущему психологу
-      return bookings.filter((booking: PaymentNotification) => 
-        booking.psychologistName === psychologistName
-      );
-    }
-    
-    // Для управляющего показываем все записи
-    return bookings;
+    // Возвращаем пустой массив - все старые записи удалены
+    return [];
   };
 
   const bookings = getBookings();
