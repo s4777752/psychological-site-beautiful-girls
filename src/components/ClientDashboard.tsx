@@ -134,7 +134,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
             </div>
           )}
           <Button 
-            onClick={onLogout}
+            onClick={() => window.location.href = '/'}
             variant="outline"
             className="border-warm-300 text-warm-600 hover:bg-warm-50"
           >
