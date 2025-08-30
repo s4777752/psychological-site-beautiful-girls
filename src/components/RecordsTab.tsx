@@ -372,12 +372,29 @@ const RecordsTab = () => {
                           onClick={() => {
                             const message = prompt(`Напишите сообщение для ${record.clientName}:`);
                             if (message && message.trim()) {
-                              alert(`Сообщение готово к отправке:\n\n"${message}"\n\nДля отправки используйте любой из мессенджеров ниже.`);
+                              // Создаем уникальный ID чата на основе психолога и клиента
+                              const chatId = `${psychologist?.id}-${record.clientName.replace(/\s+/g, '').toLowerCase()}`;
+                              
+                              // Сохраняем сообщение в localStorage для синхронизации между кабинетами
+                              const existingMessages = JSON.parse(localStorage.getItem(`chat_${chatId}`) || '[]');
+                              const newMessage = {
+                                id: Date.now().toString(),
+                                sender: 'psychologist',
+                                senderName: psychologist?.name || 'Психолог',
+                                text: message.trim(),
+                                timestamp: new Date().toISOString(),
+                                clientName: record.clientName
+                              };
+                              
+                              existingMessages.push(newMessage);
+                              localStorage.setItem(`chat_${chatId}`, JSON.stringify(existingMessages));
+                              
+                              alert(`✅ Сообщение отправлено ${record.clientName}!\n\nСообщение будет доступно в личном кабинете клиента.`);
                             }
                           }}
                           className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
                         >
-                          <Icon name="Mail" size={14} className="mr-1" />
+                          <Icon name="MessageSquare" size={14} className="mr-1" />
                           Сообщение
                         </Button>
                         
