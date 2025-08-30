@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ClientLogin from './ClientLogin';
+import ClientAuth from './ClientAuth';
 import ClientDashboard from './ClientDashboard';
 
 const ClientPortal: React.FC = () => {
@@ -47,7 +47,7 @@ const ClientPortal: React.FC = () => {
     );
   }
 
-  return <ClientLogin onLogin={handleLogin} />;
+  return <ClientAuth onLogin={handleLogin} />;
 };
 
 export default ClientPortal;
