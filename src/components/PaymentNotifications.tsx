@@ -167,7 +167,7 @@ const PaymentNotifications: React.FC<PaymentNotificationsProps> = ({
                     Создано: {new Date(booking.createdAt).toLocaleString('ru-RU')}
                   </p>
                   
-                  {booking.paymentStatus === 'paid' && (
+                  {(booking.paymentStatus === 'paid' || booking.paymentStatus === 'completed' || booking.status === 'completed') && (
                     <div className="flex gap-2">
                       <Button
                         size="sm"
