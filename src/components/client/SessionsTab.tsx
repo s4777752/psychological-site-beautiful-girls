@@ -342,7 +342,7 @@ const SessionsTab = ({ sessions }: SessionsTabProps) => {
                           </>
                         ) : (
                           <>
-                            <Icon name="RefreshCw" className="mr-1 size={14} />
+                            <Icon name="RefreshCw" className="mr-1" size={14} />
                             Повторить оплату
                           </>
                         )}
