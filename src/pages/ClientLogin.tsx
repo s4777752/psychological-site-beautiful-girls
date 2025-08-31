@@ -66,26 +66,15 @@ const ClientLogin = () => {
   };
 
   const sendSMSCode = async (phone: string, code: string) => {
-    try {
-      // Импортируем SMS сервис
-      const { smsService } = await import('@/api/sms');
-      
-      const result = await smsService.sendSMS({
-        phone: `+${phone}`,
-        message: `Ваш код подтверждения: ${code}. Действителен 5 минут.`
-      });
-
-      if (!result.success) {
-        throw new Error(result.error || 'SMS sending failed');
-      }
-
-      return result;
-    } catch (error) {
-      console.error('SMS sending failed:', error);
-      // В качестве fallback показываем код в консоли для разработки
-      console.log(`📱 SMS CODE for +${phone}: ${code}`);
-      throw error;
-    }
+    // Показываем код в консоли для разработки
+    console.log(`📱 SMS CODE for +${phone}: ${code}`);
+    
+    // Имитируем отправку SMS
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ success: true, messageId: Date.now().toString() });
+      }, 1000);
+    });
   };
 
   const handlePhoneSubmit = async () => {
@@ -128,7 +117,7 @@ const ClientLogin = () => {
         setStep('code');
         toast({
           title: "Код отправлен",
-          description: `SMS с кодом отправлен на ${credentials.phone}`
+          description: `SMS с кодом отправлен на ${credentials.phone}. Проверьте консоль браузера (F12) для просмотра кода в демо-режиме.`
         });
       } else {
         toast({
@@ -138,6 +127,7 @@ const ClientLogin = () => {
         });
       }
     } catch (error) {
+      console.error('Error in handlePhoneSubmit:', error);
       toast({
         title: "Ошибка отправки SMS",
         description: "Не удалось отправить код подтверждения. Попробуйте позже.",
@@ -271,6 +261,11 @@ const ClientLogin = () => {
                     className="border-warm-300 focus:border-warm-500 text-center text-xl tracking-wider"
                     maxLength={4}
                   />
+                  {codeExpiry > 0 && (
+                    <p className="text-xs text-center text-warm-500">
+                      Код действителен до: {new Date(codeExpiry).toLocaleTimeString('ru-RU')}
+                    </p>
+                  )}
                 </div>
                 
                 <Button 
