@@ -168,62 +168,76 @@ const PaymentNotifications: React.FC<PaymentNotificationsProps> = ({
                     Создано: {new Date(booking.createdAt).toLocaleString('ru-RU')}
                   </p>
                   
-                  {(booking.paymentStatus === 'paid' || booking.paymentStatus === 'completed' || booking.status === 'completed') && (
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          const roomName = `${booking.psychologistName}_${booking.clientName}_${booking.date}`;
-                          const roomUrl = `https://doxy.me/${roomName.replace(/[^a-zA-Z0-9]/g, '')}`;
-                          window.open(roomUrl, '_blank');
-                        }}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Icon name="Video" size={14} className="mr-1" />
-                        Doxy.me
-                      </Button>
-                      
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const message = prompt(`Сообщение клиенту ${booking.clientName}:`);
-                          if (message && message.trim()) {
-                            const chatId = `${booking.psychologistName.replace(/\s+/g, '').toLowerCase()}-${booking.clientName.replace(/\s+/g, '').toLowerCase()}`;
-                            const existingMessages = JSON.parse(localStorage.getItem(`chat_${chatId}`) || '[]');
-                            const newMessage = {
-                              id: Date.now().toString(),
-                              sender: 'psychologist',
-                              senderName: booking.psychologistName,
-                              text: message.trim(),
-                              timestamp: new Date().toISOString(),
-                              clientName: booking.clientName
-                            };
-                            existingMessages.push(newMessage);
-                            localStorage.setItem(`chat_${chatId}`, JSON.stringify(existingMessages));
-                            alert(`✅ Сообщение отправлено клиенту ${booking.clientName}!`);
-                          }
-                        }}
-                        className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-                      >
-                        <Icon name="MessageSquare" size={14} className="mr-1" />
-                        Сообщение
-                      </Button>
-                      
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          const roomName = `${booking.psychologistName}_${booking.clientName}_${booking.date}`;
-                          const roomUrl = `https://doxy.me/${roomName.replace(/[^a-zA-Z0-9]/g, '')}`;
-                          navigator.clipboard.writeText(roomUrl);
-                          alert('Ссылка скопирована в буфер обмена!');
-                        }}
-                        className="border-green-300 text-green-700 hover:bg-green-50"
-                      >
-                        <Icon name="Link" size={14} className="mr-1" />
-                        Ссылка
-                      </Button>
+                  {(booking.paymentStatus === 'paid' || booking.paymentStatus === 'completed' || booking.status === 'completed') && booking.clientPhone && (
+                    <div className="mt-2 pt-3 border-t border-warm-200">
+                      <p className="text-sm font-medium text-warm-700 mb-3">Связь с клиентом:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            const roomName = `${booking.psychologistName.replace(/\s+/g, '-').toLowerCase()}-${booking.date.replace(/-/g, '')}${booking.time.replace(':', '')}`;
+                            const doxyUrl = `https://doxy.me/${roomName}`;
+                            window.open(doxyUrl, '_blank');
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                        >
+                          <Icon name="Video" size={14} className="mr-1" />
+                          Doxy.me
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            const message = prompt(`Напишите сообщение для ${booking.clientName}:`);
+                            if (message && message.trim()) {
+                              const chatId = `${booking.psychologistName.replace(/\s+/g, '').toLowerCase()}-${booking.clientName.replace(/\s+/g, '').toLowerCase()}`;
+                              const existingMessages = JSON.parse(localStorage.getItem(`chat_${chatId}`) || '[]');
+                              const newMessage = {
+                                id: Date.now().toString(),
+                                sender: 'psychologist',
+                                senderName: booking.psychologistName,
+                                text: message.trim(),
+                                timestamp: new Date().toISOString(),
+                                clientName: booking.clientName
+                              };
+                              existingMessages.push(newMessage);
+                              localStorage.setItem(`chat_${chatId}`, JSON.stringify(existingMessages));
+                              alert(`✅ Сообщение отправлено ${booking.clientName}!\n\nСообщение будет доступно в личном кабинете клиента.`);
+                            }
+                          }}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+                        >
+                          <Icon name="MessageSquare" size={14} className="mr-1" />
+                          Сообщение
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`https://wa.me/${booking.clientPhone.replace(/[^0-9]/g, '')}?text=Здравствуйте! Это ваш психолог. Напоминаю о сеансе ${new Date(booking.date).toLocaleDateString('ru-RU')} в ${booking.time}`, '_blank')}
+                          className="bg-green-500 hover:bg-green-600 text-white text-xs"
+                        >
+                          <Icon name="MessageCircle" size={14} className="mr-1" />
+                          WhatsApp
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`https://t.me/${booking.clientPhone.replace(/[^0-9]/g, '')}`, '_blank')}
+                          className="bg-blue-500 hover:bg-blue-600 text-white text-xs"
+                        >
+                          <Icon name="Send" size={14} className="mr-1" />
+                          Telegram
+                        </Button>
+                        
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(`sms:${booking.clientPhone}?body=Здравствуйте! Это ваш психолог. Напоминаю о сеансе ${new Date(booking.date).toLocaleDateString('ru-RU')} в ${booking.time}`, '_blank')}
+                          className="bg-purple-500 hover:bg-purple-600 text-white text-xs"
+                        >
+                          <Icon name="MessageSquare" size={14} className="mr-1" />
+                          SMS
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
