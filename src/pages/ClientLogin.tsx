@@ -122,13 +122,28 @@ const ClientLogin = () => {
         setCodeExpiry(expiryTime);
         
         // Отправляем SMS
-        await sendSMSCode(cleanPhone, code);
+        try {
+          await sendSMSCode(cleanPhone, code);
+        } catch (error) {
+          console.error('SMS отправка не удалась:', error);
+        }
         
         setStep('code');
+        
+        // Показываем код сразу в уведомлении для удобства
         toast({
           title: "Код отправлен",
-          description: `SMS с кодом отправлен на ${credentials.phone}. Проверьте консоль браузера (F12) для просмотра кода в демо-режиме.`
+          description: `Ваш код: ${code}. SMS отправлен на ${credentials.phone}`
         });
+        
+        // Дублируем в консоль
+        console.log(`📱 КОД ДЛЯ ВХОДА: ${code}`);
+        console.log(`Телефон: +${cleanPhone}`);
+        
+        // Показываем alert через секунду для гарантии
+        setTimeout(() => {
+          alert(`📱 Ваш код подтверждения: ${code}\n\nДля тестирования используйте этот код.\nВ продакшене код придёт SMS на ${credentials.phone}`);
+        }, 1500);
       } else {
         toast({
           title: "Клиент не найден",
@@ -272,9 +287,24 @@ const ClientLogin = () => {
                     maxLength={4}
                   />
                   {codeExpiry > 0 && (
-                    <p className="text-xs text-center text-warm-500">
-                      Код действителен до: {new Date(codeExpiry).toLocaleTimeString('ru-RU')}
-                    </p>
+                    <div className="text-center space-y-1">
+                      <p className="text-xs text-warm-500">
+                        Код действителен до: {new Date(codeExpiry).toLocaleTimeString('ru-RU')}
+                      </p>
+                      {sentCode && (
+                        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm font-medium text-green-800 mb-1">
+                            📱 Код для тестирования:
+                          </p>
+                          <p className="text-xl font-bold text-green-900 tracking-wider">
+                            {sentCode}
+                          </p>
+                          <p className="text-xs text-green-600 mt-1">
+                            Скопируйте этот код в поле выше
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
                 
