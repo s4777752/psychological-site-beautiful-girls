@@ -66,15 +66,76 @@ const ClientLogin = () => {
   };
 
   const sendSMSCode = async (phone: string, code: string) => {
-    // Показываем код в консоли для разработки
-    console.log(`📱 SMS CODE for +${phone}: ${code}`);
+    const SMS_RU_API_KEY = import.meta.env.VITE_SMS_RU_API_KEY;
+    const SMSC_LOGIN = import.meta.env.VITE_SMSC_LOGIN;
+    const SMSC_PASSWORD = import.meta.env.VITE_SMSC_PASSWORD;
     
-    // Имитируем отправку SMS
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true, messageId: Date.now().toString() });
-      }, 1000);
-    });
+    // Если есть API ключ для SMS.ru
+    if (SMS_RU_API_KEY) {
+      try {
+        const response = await fetch('https://sms.ru/sms/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            api_id: SMS_RU_API_KEY,
+            to: phone,
+            msg: `Код подтверждения для входа в кабинет психолога: ${code}. Действителен 5 минут.`,
+            json: 1
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.status === 'OK') {
+          console.log(`✅ SMS успешно отправлена через SMS.ru на +${phone}`);
+          return { success: true, messageId: result.sms?.message_id };
+        } else {
+          throw new Error(result.status_text || 'SMS.ru отправка не удалась');
+        }
+      } catch (error) {
+        console.error('Ошибка отправки через SMS.ru:', error);
+      }
+    }
+    
+    // Если есть логин/пароль для SMSC.ru
+    if (SMSC_LOGIN && SMSC_PASSWORD) {
+      try {
+        const response = await fetch('https://smsc.ru/sys/send.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            login: SMSC_LOGIN,
+            psw: SMSC_PASSWORD,
+            phones: phone,
+            mes: `Код подтверждения: ${code}. Действителен 5 минут.`,
+            fmt: '3'
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.error_code === undefined) {
+          console.log(`✅ SMS отправлена через SMSC.ru на +${phone}`);
+          return { success: true, messageId: result.id?.toString() };
+        } else {
+          throw new Error(result.error || 'SMSC.ru отправка не удалась');
+        }
+      } catch (error) {
+        console.error('Ошибка отправки через SMSC.ru:', error);
+      }
+    }
+    
+    // Демо режим - код в консоли
+    console.log(`📱 ДЕМО РЕЖИМ - SMS CODE для +${phone}: ${code}`);
+    console.log(`⚙️ Для реальной отправки SMS настройте переменные окружения в .env:`);
+    console.log(`   VITE_SMS_RU_API_KEY=your_api_key (получить на https://sms.ru/api/keys)`);
+    console.log(`   или VITE_SMSC_LOGIN + VITE_SMSC_PASSWORD (получить на https://smsc.ru/)`);
+    
+    return { success: true, messageId: 'demo' };
   };
 
   const handlePhoneSubmit = async () => {
