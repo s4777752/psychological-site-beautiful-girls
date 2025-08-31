@@ -9,6 +9,7 @@ import ManagerFinancialTab from "@/components/manager/ManagerFinancialTab";
 import ManagerArchiveTab from "@/components/manager/ManagerArchiveTab";
 import ManagerContentTab from "@/components/manager/ManagerContentTab";
 import ManagerPsychologistsTab from "@/components/manager/ManagerPsychologistsTab";
+import ManagerClientsTab from "@/components/manager/ManagerClientsTab";
 import ManagerSettingsTab from "@/components/manager/ManagerSettingsTab";
 
 const ManagerDashboard = () => {
@@ -37,6 +38,8 @@ const ManagerDashboard = () => {
         return <ManagerOverviewTab />;
       case "sessions":
         return <ManagerSessionsTab />;
+      case "clients":
+        return <ManagerClientsTab />;
       case "payments":
         return <ManagerPaymentsTab />;
       case "financial":

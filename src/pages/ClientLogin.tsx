@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,38 +6,21 @@ import { Label } from "@/components/ui/label";
 import Icon from "@/components/ui/icon";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { authenticateClient, initializeDemoClients } from "@/utils/clientStorage";
 
 const ClientLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [credentials, setCredentials] = useState({
     phone: "",
-    code: ""
+    password: ""
   });
-  const [step, setStep] = useState<'phone' | 'code'>('phone');
   const [isLoading, setIsLoading] = useState(false);
-  const [sentCode, setSentCode] = useState<string>("");
-  const [codeExpiry, setCodeExpiry] = useState<number>(0);
 
-  // Демо-данные клиентов
-  const demoClients = [
-    {
-      id: "1",
-      name: "Анна Петрова",
-      phone: "+7 (999) 123-45-67",
-      code: "1234",
-      psychologist: "Елена Козлова",
-      nextSession: "2025-08-16 10:00"
-    },
-    {
-      id: "2", 
-      name: "Михаил Сидоров",
-      phone: "+7 (999) 987-65-43",
-      code: "5678",
-      psychologist: "Дмитрий Петров",
-      nextSession: "2025-08-16 14:00"
-    }
-  ];
+  // Инициализируем демо-клиентов при загрузке компонента
+  useEffect(() => {
+    initializeDemoClients();
+  }, []);
 
   const formatPhone = (value: string) => {
     let digits = value.replace(/\D/g, '');
@@ -61,98 +44,40 @@ const ClientLogin = () => {
     return `+${digits.slice(0, 1)} (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9, 11)}`;
   };
 
-  const generateSMSCode = () => {
-    return Math.floor(1000 + Math.random() * 9000).toString();
-  };
-
-  const sendSMSCode = async (phone: string, code: string) => {
-    const SMS_RU_API_KEY = import.meta.env.VITE_SMS_RU_API_KEY;
-    
-    if (!SMS_RU_API_KEY) {
-      throw new Error('SMS API ключ не настроен. Добавьте VITE_SMS_RU_API_KEY в файл .env');
-    }
-
-    try {
-      // Отправляем реальную SMS через SMS.ru API
-      const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(
-        `https://sms.ru/sms/send?api_id=${SMS_RU_API_KEY}&to=${phone}&msg=${encodeURIComponent(`Код подтверждения для входа в кабинет: ${code}. Действителен 5 минут.`)}&json=1`
-      ));
-      
-      const result = await response.json();
-      
-      if (result.status === 'OK') {
-        return { success: true, messageId: result.sms?.message_id };
-      } else {
-        throw new Error(result.status_text || 'SMS отправка не удалась');
-      }
-    } catch (error) {
-      throw new Error(`Ошибка отправки SMS: ${error.message}`);
-    }
-  };
-
-  const handlePhoneSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Проверяем, есть ли записи с таким номером телефона
-      const cleanPhone = credentials.phone.replace(/\D/g, '');
-      const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
-      const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      const result = authenticateClient(credentials.phone, credentials.password);
       
-      const hasManualRecords = manualRecords.some((record: any) => {
-        if (!record.clientPhone) return false;
-        const recordPhone = record.clientPhone.replace(/\D/g, '');
-        const normalizedRecordPhone = recordPhone.startsWith('8') ? '7' + recordPhone.slice(1) : recordPhone;
-        const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
-        return normalizedRecordPhone === normalizedCleanPhone;
-      });
-      
-      const hasBookings = bookings.some((booking: any) => {
-        if (!booking.clientPhone) return false;
-        const bookingPhone = booking.clientPhone.replace(/\D/g, '');
-        const normalizedBookingPhone = bookingPhone.startsWith('8') ? '7' + bookingPhone.slice(1) : bookingPhone;
-        const normalizedCleanPhone = cleanPhone.startsWith('8') ? '7' + cleanPhone.slice(1) : cleanPhone;
-        return normalizedBookingPhone === normalizedCleanPhone;
-      });
-      
-      if (hasManualRecords || hasBookings) {
-        // Генерируем новый код
-        const code = generateSMSCode();
-        const expiryTime = Date.now() + 5 * 60 * 1000; // 5 минут
+      if (result.success && result.client) {
+        // Сохраняем сессию клиента
+        localStorage.setItem('clientSession', JSON.stringify({
+          id: result.client.id,
+          phone: result.client.phone,
+          name: result.client.name,
+          timestamp: Date.now()
+        }));
         
-        // Сохраняем код и время истечения
-        setSentCode(code);
-        setCodeExpiry(expiryTime);
+        toast({
+          title: "Добро пожаловать!",
+          description: `Вы успешно вошли в систему, ${result.client.name}`
+        });
         
-        // Отправляем SMS
-        try {
-          await sendSMSCode(cleanPhone, code);
-          
-          setStep('code');
-          toast({
-            title: "SMS отправлена",
-            description: `Код подтверждения отправлен на ${credentials.phone}`
-          });
-        } catch (error) {
-          console.error('SMS отправка не удалась:', error);
-          toast({
-            title: "Ошибка отправки SMS",
-            description: "Не удалось отправить код. Проверьте настройки API или попробуйте позже.",
-            variant: "destructive"
-          });
-        }
+        navigate("/client");
       } else {
         toast({
-          title: "Клиент не найден",
-          description: "Данный номер телефона не найден в записях на сессии. Обратитесь к администратору или запишитесь на консультацию.",
+          title: "Ошибка авторизации",
+          description: result.error || "Неверные данные для входа",
           variant: "destructive"
         });
       }
     } catch (error) {
-      console.error('Error in handlePhoneSubmit:', error);
+      console.error('Ошибка авторизации:', error);
       toast({
-        title: "Ошибка отправки SMS",
-        description: "Не удалось отправить код подтверждения. Попробуйте позже.",
+        title: "Ошибка",
+        description: "Произошла ошибка при авторизации. Попробуйте позже.",
         variant: "destructive"
       });
     } finally {
@@ -160,58 +85,12 @@ const ClientLogin = () => {
     }
   };
 
-  const handleCodeSubmit = () => {
-    setIsLoading(true);
-    
-    // Проверяем код и время истечения
-    const isCodeValid = credentials.code === sentCode;
-    const isCodeExpired = Date.now() > codeExpiry;
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (isCodeExpired) {
-        toast({
-          title: "Код истёк",
-          description: "Код подтверждения истёк. Запросите новый код.",
-          variant: "destructive"
-        });
-        setStep('phone');
-        setSentCode("");
-        setCodeExpiry(0);
-      } else if (isCodeValid) {
-        const cleanPhone = credentials.phone.replace(/\D/g, '');
-        
-        // Сохраняем сессию клиента
-        localStorage.setItem('clientSession', JSON.stringify({
-          phone: cleanPhone,
-          timestamp: Date.now()
-        }));
-        
-        // Очищаем код после успешного входа
-        setSentCode("");
-        setCodeExpiry(0);
-        
-        toast({
-          title: "Добро пожаловать!",
-          description: "Вы успешно авторизованы"
-        });
-        
-        navigate("/client");
-      } else {
-        toast({
-          title: "Неверный код",
-          description: "Введён неправильный код подтверждения. Проверьте SMS.",
-          variant: "destructive"
-        });
-      }
-    }, 1000);
-  };
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setCredentials({ ...credentials, phone: formatted });
   };
+
+  const isFormValid = credentials.phone.replace(/\D/g, '').length >= 11 && credentials.password.length >= 1;
 
   return (
     <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4">
@@ -223,108 +102,84 @@ const ClientLogin = () => {
           </div>
           <h1 className="text-2xl font-bold text-warm-800 mb-2">Вход для клиентов</h1>
           <p className="text-warm-600">
-            {step === 'phone' 
-              ? 'Введите номер телефона для входа в личный кабинет'
-              : 'Введите код из SMS для подтверждения'
-            }
+            Введите ваш номер телефона и пароль для входа в личный кабинет
           </p>
         </div>
 
         <Card className="border-warm-200">
           <CardHeader>
             <CardTitle className="text-center text-warm-800">
-              {step === 'phone' ? 'Номер телефона' : 'Код подтверждения'}
+              Авторизация
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {step === 'phone' ? (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Номер телефона</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={credentials.phone}
-                    onChange={handlePhoneChange}
-                    placeholder="+7 (999) 123-45-67"
-                    className="border-warm-300 focus:border-warm-500"
-                    maxLength={18}
-                  />
-                </div>
-                
-                <Button 
-                  onClick={handlePhoneSubmit}
-                  disabled={credentials.phone.replace(/\D/g, '').length < 11 || isLoading}
-                  className="w-full bg-warm-600 hover:bg-warm-700"
-                >
-                  {isLoading ? (
-                    <>
-                      <Icon name="Loader2" className="mr-2 animate-spin" size={16} />
-                      Отправляем код...
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="MessageSquare" className="mr-2" size={16} />
-                      Получить код
-                    </>
-                  )}
-                </Button>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Номер телефона</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={credentials.phone}
+                  onChange={handlePhoneChange}
+                  placeholder="+7 (999) 123-45-67"
+                  className="border-warm-300 focus:border-warm-500"
+                  maxLength={18}
+                  required
+                />
               </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="code">Код из SMS</Label>
-                  <Input
-                    id="code"
-                    type="text"
-                    value={credentials.code}
-                    onChange={(e) => setCredentials({ ...credentials, code: e.target.value })}
-                    placeholder="0000"
-                    className="border-warm-300 focus:border-warm-500 text-center text-xl tracking-wider"
-                    maxLength={4}
-                  />
-                  {codeExpiry > 0 && (
-                    <div className="text-center space-y-1">
-                      <p className="text-xs text-warm-500">
-                        Код действителен до: {new Date(codeExpiry).toLocaleTimeString('ru-RU')}
-                      </p>
 
-                    </div>
-                  )}
-                </div>
-                
-                <Button 
-                  onClick={handleCodeSubmit}
-                  disabled={credentials.code.length < 4 || isLoading}
-                  className="w-full bg-warm-600 hover:bg-warm-700"
-                >
-                  {isLoading ? (
-                    <>
-                      <Icon name="Loader2" className="mr-2 animate-spin" size={16} />
-                      Проверяем...
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="LogIn" className="mr-2" size={16} />
-                      Войти
-                    </>
-                  )}
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  onClick={() => setStep('phone')}
-                  className="w-full text-warm-600 border-warm-300"
-                >
-                  <Icon name="ArrowLeft" className="mr-2" size={16} />
-                  Изменить номер
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="password">Пароль</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={credentials.password}
+                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                  placeholder="Введите пароль"
+                  className="border-warm-300 focus:border-warm-500"
+                  required
+                />
               </div>
-            )}
+              
+              <Button 
+                type="submit"
+                disabled={!isFormValid || isLoading}
+                className="w-full bg-warm-600 hover:bg-warm-700"
+              >
+                {isLoading ? (
+                  <>
+                    <Icon name="Loader2" className="mr-2 animate-spin" size={16} />
+                    Проверяем данные...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="LogIn" className="mr-2" size={16} />
+                    Войти
+                  </>
+                )}
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
-
+        {/* Demo accounts info */}
+        <Card className="mt-6 border-warm-200">
+          <CardContent className="pt-6">
+            <h3 className="font-semibold text-warm-800 mb-3 text-center">Демо-аккаунты для тестирования:</h3>
+            <div className="space-y-3 text-sm">
+              <div className="bg-warm-50 p-3 rounded border">
+                <p className="font-medium text-warm-700">Анна Петрова</p>
+                <p className="text-warm-600">Телефон: +7 (999) 123-45-67</p>
+                <p className="text-warm-600">Пароль: anna123</p>
+              </div>
+              <div className="bg-warm-50 p-3 rounded border">
+                <p className="font-medium text-warm-700">Михаил Сидоров</p>
+                <p className="text-warm-600">Телефон: +7 (999) 987-65-43</p>
+                <p className="text-warm-600">Пароль: mikhail456</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Back to main */}
         <div className="mt-6 text-center">

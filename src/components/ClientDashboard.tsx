@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import DoxyMeeting from '@/components/DoxyIntegration';
+import { ClientRecord } from '@/utils/clientStorage';
 
-interface ClientRecord {
+interface SessionRecord {
   id: string;
   sessionType: string;
   sessionDate: string;
@@ -18,12 +19,12 @@ interface ClientRecord {
 }
 
 interface ClientDashboardProps {
-  clientPhone: string;
+  clientData: ClientRecord;
   onLogout: () => void;
 }
 
-const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout }) => {
-  const [records, setRecords] = useState<ClientRecord[]>([]);
+const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientData, onLogout }) => {
+  const [records, setRecords] = useState<SessionRecord[]>([]);
 
   useEffect(() => {
     // Получаем записи клиента из localStorage
@@ -31,7 +32,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
       const manualRecords = JSON.parse(localStorage.getItem('manualRecords') || '[]');
       const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       
-      console.log('Client phone:', clientPhone);
+      console.log('Client data:', clientData);
       console.log('Manual records:', manualRecords);
       console.log('Bookings:', bookings);
       
@@ -41,7 +42,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
         return cleaned.startsWith('8') ? '7' + cleaned.slice(1) : cleaned;
       };
       
-      const normalizedClientPhone = normalizePhone(clientPhone);
+      const normalizedClientPhone = normalizePhone(clientData.phone);
       console.log('Normalized client phone:', normalizedClientPhone);
       
       // Фильтруем записи по номеру телефона клиента
@@ -82,7 +83,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
     };
 
     loadClientRecords();
-  }, [clientPhone]);
+  }, [clientData.phone]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -120,7 +121,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
               Личный кабинет
             </h1>
             <p className="text-warm-600 mt-1">
-              {formatPhone(clientPhone)}
+              {clientData.name} • {formatPhone(clientData.phone)}
             </p>
           </div>
 
@@ -135,7 +136,7 @@ const ClientDashboard: React.FC<ClientDashboardProps> = ({ clientPhone, onLogout
             </div>
           )}
           <Button 
-            onClick={() => window.location.href = '/'}
+            onClick={onLogout}
             variant="outline"
             className="border-warm-300 text-warm-600 hover:bg-warm-50"
           >

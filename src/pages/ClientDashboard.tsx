@@ -46,17 +46,31 @@ const ClientDashboard = () => {
   const [currentRoomId, setCurrentRoomId] = useState("");
 
   useEffect(() => {
-    const auth = localStorage.getItem("clientAuth");
-    if (!auth) {
+    // Проверяем новую систему авторизации
+    const session = localStorage.getItem("clientSession");
+    if (!session) {
       navigate("/client/login");
     } else {
-      setClient(JSON.parse(auth));
+      const { id, phone, name, timestamp } = JSON.parse(session);
+      // Проверяем, что сессия не старше 24 часов
+      if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+        setClient({
+          id,
+          name,
+          phone,
+          psychologist: "Анна Смирнова", // Временно задаем по умолчанию
+          nextSession: "2025-08-16 10:00"
+        });
+      } else {
+        localStorage.removeItem('clientSession');
+        navigate("/client/login");
+      }
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("clientAuth");
-    navigate("/");
+    localStorage.removeItem("clientSession");
+    navigate("/client/login");
   };
 
   const handleAcceptCall = () => {

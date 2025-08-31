@@ -15,6 +15,7 @@ const ManagerTabs = ({ activeTab, onTabChange }: ManagerTabsProps) => {
   const tabs: Tab[] = [
     { id: "overview", name: "Обзор", icon: "BarChart3" },
     { id: "sessions", name: "Записи", icon: "Calendar" },
+    { id: "clients", name: "Клиенты", icon: "UserCheck" },
     { id: "payments", name: "Уведомления", icon: "Bell" },
     { id: "financial", name: "Финансы", icon: "DollarSign" },
     { id: "archive", name: "Архив", icon: "Archive" },

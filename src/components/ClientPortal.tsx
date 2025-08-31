@@ -1,53 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import ClientAuth from './ClientAuth';
 import ClientDashboard from './ClientDashboard';
+import { findClientByPhone, ClientRecord } from '@/utils/clientStorage';
 
 const ClientPortal: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [clientPhone, setClientPhone] = useState('');
+  const [clientData, setClientData] = useState<ClientRecord | null>(null);
 
   useEffect(() => {
     // Проверяем, есть ли сохраненная сессия клиента
     const savedClient = localStorage.getItem('clientSession');
     if (savedClient) {
-      const { phone, timestamp } = JSON.parse(savedClient);
+      const { id, phone, name, timestamp } = JSON.parse(savedClient);
       // Проверяем, что сессия не старше 24 часов
       if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
-        setClientPhone(phone);
-        setIsLoggedIn(true);
+        // Дополнительно проверяем, что клиент все еще существует в базе
+        const client = findClientByPhone(phone);
+        if (client && client.isActive) {
+          setClientData(client);
+          setIsLoggedIn(true);
+        } else {
+          localStorage.removeItem('clientSession');
+        }
       } else {
         localStorage.removeItem('clientSession');
       }
     }
   }, []);
 
-  const handleLogin = (phone: string) => {
-    setClientPhone(phone);
+  const handleLogin = (client: ClientRecord) => {
+    setClientData(client);
     setIsLoggedIn(true);
     
     // Сохраняем сессию клиента
     localStorage.setItem('clientSession', JSON.stringify({
-      phone,
+      id: client.id,
+      phone: client.phone,
+      name: client.name,
       timestamp: Date.now()
     }));
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setClientPhone('');
+    setClientData(null);
     localStorage.removeItem('clientSession');
   };
 
-  if (isLoggedIn) {
+  if (isLoggedIn && clientData) {
     return (
       <ClientDashboard 
-        clientPhone={clientPhone} 
+        clientData={clientData} 
         onLogout={handleLogout}
       />
     );
   }
 
-  return <ClientAuth onLogin={handleLogin} />;
+  // Перенаправляем на страницу авторизации если не авторизован
+  window.location.href = '/client/login';
+  return null;
 };
 
 export default ClientPortal;
