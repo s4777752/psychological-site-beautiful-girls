@@ -38,13 +38,25 @@ const ClientLogin = () => {
   ];
 
   const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, '');
+    let digits = value.replace(/\D/g, '');
+    
+    // Если начинается с 8, заменяем на 7
+    if (digits.startsWith('8')) {
+      digits = '7' + digits.slice(1);
+    }
+    
+    // Если начинается с 7, добавляем как есть
+    // Если начинается с другой цифры (9), добавляем 7 в начало
+    if (!digits.startsWith('7') && digits.length > 0) {
+      digits = '7' + digits;
+    }
+    
     if (digits.length === 0) return '';
-    if (digits.length <= 1) return `+7 (${digits}`;
-    if (digits.length <= 4) return `+7 (${digits.slice(1, 4)}`;
-    if (digits.length <= 7) return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}`;
-    if (digits.length <= 9) return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}`;
-    return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9, 11)}`;
+    if (digits.length <= 1) return `+${digits}`;
+    if (digits.length <= 4) return `+${digits.slice(0, 1)} (${digits.slice(1)}`;
+    if (digits.length <= 7) return `+${digits.slice(0, 1)} (${digits.slice(1, 4)}) ${digits.slice(4)}`;
+    if (digits.length <= 9) return `+${digits.slice(0, 1)} (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+    return `+${digits.slice(0, 1)} (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9, 11)}`;
   };
 
   const handlePhoneSubmit = () => {
@@ -168,7 +180,7 @@ const ClientLogin = () => {
                 
                 <Button 
                   onClick={handlePhoneSubmit}
-                  disabled={credentials.phone.length < 18 || isLoading}
+                  disabled={credentials.phone.replace(/\D/g, '').length < 11 || isLoading}
                   className="w-full bg-warm-600 hover:bg-warm-700"
                 >
                   {isLoading ? (
