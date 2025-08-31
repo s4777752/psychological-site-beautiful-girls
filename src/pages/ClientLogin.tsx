@@ -20,7 +20,24 @@ const ClientLogin = () => {
   // Инициализируем демо-клиентов при загрузке компонента
   useEffect(() => {
     initializeDemoClients();
-  }, []);
+    
+    // Проверяем, не авторизован ли уже пользователь
+    const session = localStorage.getItem("clientSession");
+    if (session) {
+      try {
+        const { timestamp } = JSON.parse(session);
+        // Если сессия не старше 24 часов, перенаправляем в дашборд
+        if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+          navigate("/client/dashboard");
+          return;
+        } else {
+          localStorage.removeItem('clientSession');
+        }
+      } catch (error) {
+        localStorage.removeItem('clientSession');
+      }
+    }
+  }, [navigate]);
 
   const formatPhone = (value: string) => {
     let digits = value.replace(/\D/g, '');
@@ -49,24 +66,31 @@ const ClientLogin = () => {
     setIsLoading(true);
     
     try {
+      console.log('Попытка авторизации:', credentials);
       const result = authenticateClient(credentials.phone, credentials.password);
+      console.log('Результат авторизации:', result);
       
       if (result.success && result.client) {
         // Сохраняем сессию клиента
-        localStorage.setItem('clientSession', JSON.stringify({
+        const sessionData = {
           id: result.client.id,
           phone: result.client.phone,
           name: result.client.name,
           timestamp: Date.now()
-        }));
+        };
+        
+        console.log('Сохраняем сессию:', sessionData);
+        localStorage.setItem('clientSession', JSON.stringify(sessionData));
         
         toast({
           title: "Добро пожаловать!",
           description: `Вы успешно вошли в систему, ${result.client.name}`
         });
         
-        navigate("/client");
+        console.log('Перенаправляем на dashboard');
+        navigate("/client/dashboard");
       } else {
+        console.log('Ошибка авторизации:', result.error);
         toast({
           title: "Ошибка авторизации",
           description: result.error || "Неверные данные для входа",

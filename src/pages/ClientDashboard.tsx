@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { initializeDemoClients } from "@/utils/clientStorage";
 import IncomingCallNotification from "@/components/IncomingCallNotification";
 import VideoCall from "@/components/VideoCall";
 import ChatInterface from "@/components/ChatInterface";
@@ -46,22 +47,31 @@ const ClientDashboard = () => {
   const [currentRoomId, setCurrentRoomId] = useState("");
 
   useEffect(() => {
+    // Инициализируем демо-клиентов
+    initializeDemoClients();
+    
     // Проверяем новую систему авторизации
     const session = localStorage.getItem("clientSession");
     if (!session) {
       navigate("/client/login");
     } else {
-      const { id, phone, name, timestamp } = JSON.parse(session);
-      // Проверяем, что сессия не старше 24 часов
-      if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
-        setClient({
-          id,
-          name,
-          phone,
-          psychologist: "Анна Смирнова", // Временно задаем по умолчанию
-          nextSession: "2025-08-16 10:00"
-        });
-      } else {
+      try {
+        const { id, phone, name, timestamp } = JSON.parse(session);
+        // Проверяем, что сессия не старше 24 часов
+        if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+          setClient({
+            id,
+            name,
+            phone,
+            psychologist: "Анна Смирнова", // Временно задаем по умолчанию
+            nextSession: "2025-08-16 10:00"
+          });
+        } else {
+          localStorage.removeItem('clientSession');
+          navigate("/client/login");
+        }
+      } catch (error) {
+        console.error('Ошибка парсинга сессии:', error);
         localStorage.removeItem('clientSession');
         navigate("/client/login");
       }
