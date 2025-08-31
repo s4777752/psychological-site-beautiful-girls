@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface Session {
   id: string;
@@ -20,6 +22,72 @@ interface SessionsTabProps {
 }
 
 const SessionsTab = ({ sessions }: SessionsTabProps) => {
+  const { toast } = useToast();
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+  // Функция подключения к видеосессии
+  const handleConnectToSession = (sessionId: string, sessionDate: string, sessionTime: string) => {
+    setLoadingStates(prev => ({ ...prev, [sessionId]: true }));
+    
+    // Проверяем, что сессия скоро начнется (за 10 минут до начала)
+    const sessionDateTime = new Date(`${sessionDate}T${sessionTime}`);
+    const now = new Date();
+    const timeDiff = sessionDateTime.getTime() - now.getTime();
+    const minutesUntilSession = Math.floor(timeDiff / (1000 * 60));
+    
+    if (minutesUntilSession > 10) {
+      toast({
+        title: "Рано подключаться",
+        description: `Подключение будет доступно за 10 минут до начала. Осталось: ${minutesUntilSession} мин.`,
+        variant: "destructive"
+      });
+      setLoadingStates(prev => ({ ...prev, [sessionId]: false }));
+      return;
+    }
+    
+    // Симулируем подключение к Doxy.me
+    setTimeout(() => {
+      const doxyUrl = `https://doxy.me/therapist-room-${sessionId}`;
+      window.open(doxyUrl, '_blank');
+      
+      toast({
+        title: "Подключение к сессии",
+        description: "Вы подключились к видеосессии"
+      });
+      
+      setLoadingStates(prev => ({ ...prev, [sessionId]: false }));
+    }, 1500);
+  };
+
+  // Функция оплаты сессии
+  const handlePaySession = (sessionId: string, amount: number) => {
+    setLoadingStates(prev => ({ ...prev, [`pay-${sessionId}`]: true }));
+    
+    // Симулируем процесс оплаты
+    setTimeout(() => {
+      // В реальном приложении здесь будет интеграция с платежной системой
+      const isPaymentSuccessful = Math.random() > 0.1; // 90% успешных платежей
+      
+      if (isPaymentSuccessful) {
+        toast({
+          title: "Оплата успешна",
+          description: `Сессия оплачена: ₽${amount.toLocaleString()}`
+        });
+        
+        // Здесь нужно обновить статус оплаты в родительском компоненте
+        // Пока просто показываем уведомление
+      } else {
+        toast({
+          title: "Ошибка оплаты",
+          description: "Не удалось произвести оплату. Попробуйте позже.",
+          variant: "destructive"
+        });
+      }
+      
+      setLoadingStates(prev => ({ ...prev, [`pay-${sessionId}`]: false }));
+    }, 2000);
+  };
+
   const getStatusBadge = (status: Session['status']) => {
     const statusConfig = {
       upcoming: { label: 'Предстоящий', variant: 'default' as const },
@@ -112,15 +180,44 @@ const SessionsTab = ({ sessions }: SessionsTabProps) => {
                   <div className="mb-2">{getStatusBadge(session.status)}</div>
                   {session.status === 'upcoming' && (
                     <div className="space-y-2">
-                      <Button size="sm" className="bg-warm-600 hover:bg-warm-700">
-                        <Icon name="Video" className="mr-1" size={14} />
-                        Подключиться
+                      <Button 
+                        size="sm" 
+                        className="bg-warm-600 hover:bg-warm-700"
+                        onClick={() => handleConnectToSession(session.id, session.date, session.time)}
+                        disabled={loadingStates[session.id]}
+                      >
+                        {loadingStates[session.id] ? (
+                          <>
+                            <Icon name="Loader2" className="mr-1 animate-spin" size={14} />
+                            Подключаем...
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="Video" className="mr-1" size={14} />
+                            Подключиться
+                          </>
+                        )}
                       </Button>
                       {session.paymentStatus === 'pending' && (
                         <div>
-                          <Button size="sm" variant="outline" className="border-orange-300 text-orange-600 hover:bg-orange-50">
-                            <Icon name="CreditCard" className="mr-1" size={14} />
-                            Оплатить
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                            onClick={() => handlePaySession(session.id, session.amount)}
+                            disabled={loadingStates[`pay-${session.id}`]}
+                          >
+                            {loadingStates[`pay-${session.id}`] ? (
+                              <>
+                                <Icon name="Loader2" className="mr-1 animate-spin" size={14} />
+                                Оплачиваем...
+                              </>
+                            ) : (
+                              <>
+                                <Icon name="CreditCard" className="mr-1" size={14} />
+                                Оплатить
+                              </>
+                            )}
                           </Button>
                         </div>
                       )}
@@ -128,9 +225,24 @@ const SessionsTab = ({ sessions }: SessionsTabProps) => {
                   )}
                   {session.paymentStatus === 'failed' && (
                     <div className="mt-2">
-                      <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50">
-                        <Icon name="RefreshCw" className="mr-1" size={14} />
-                        Повторить оплату
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="border-red-300 text-red-600 hover:bg-red-50"
+                        onClick={() => handlePaySession(session.id, session.amount)}
+                        disabled={loadingStates[`pay-${session.id}`]}
+                      >
+                        {loadingStates[`pay-${session.id}`] ? (
+                          <>
+                            <Icon name="Loader2" className="mr-1 animate-spin" size={14} />
+                            Оплачиваем...
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="RefreshCw" className="mr-1" size={14} />
+                            Повторить оплату
+                          </>
+                        )}
                       </Button>
                     </div>
                   )}
