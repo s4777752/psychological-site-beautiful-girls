@@ -123,38 +123,141 @@ const SessionsTab = ({ sessions }: SessionsTabProps) => {
   const pendingPayments = sessions.filter(s => s.paymentStatus === 'pending').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-warm-800">Мои сеансы</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-warm-800">Мои сеансы</h2>
       </div>
 
       {/* Статистика оплат */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         <Card className="border-warm-200">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-green-600">₽{totalPaid.toLocaleString()}</div>
-            <p className="text-sm text-warm-600">Всего оплачено</p>
+          <CardContent className="p-3 md:p-4">
+            <div className="text-lg md:text-2xl font-bold text-green-600">₽{totalPaid.toLocaleString()}</div>
+            <p className="text-xs md:text-sm text-warm-600">Всего оплачено</p>
           </CardContent>
         </Card>
         <Card className="border-warm-200">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-warm-800">{sessions.filter(s => s.paymentStatus === 'paid').length}</div>
-            <p className="text-sm text-warm-600">Оплаченных сессий</p>
+          <CardContent className="p-3 md:p-4">
+            <div className="text-lg md:text-2xl font-bold text-warm-800">{sessions.filter(s => s.paymentStatus === 'paid').length}</div>
+            <p className="text-xs md:text-sm text-warm-600">Оплаченных сессий</p>
           </CardContent>
         </Card>
-        <Card className="border-warm-200">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-orange-600">{pendingPayments}</div>
-            <p className="text-sm text-warm-600">Ожидают оплаты</p>
+        <Card className="border-warm-200 sm:col-span-2 md:col-span-1">
+          <CardContent className="p-3 md:p-4">
+            <div className="text-lg md:text-2xl font-bold text-orange-600">{pendingPayments}</div>
+            <p className="text-xs md:text-sm text-warm-600">Ожидают оплаты</p>
           </CardContent>
         </Card>
       </div>
       
-      <div className="grid gap-4">
+      <div className="grid gap-3 md:gap-4">
         {sessions.map((session) => (
           <Card key={session.id} className="border-warm-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-4 md:p-6">
+              {/* Мобильная версия - вертикальная компоновка */}
+              <div className="block md:hidden">
+                {/* Заголовок и статус */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-warm-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Icon name="Calendar" className="text-warm-600" size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-warm-800 text-sm leading-tight">
+                        {new Date(session.date).toLocaleDateString('ru-RU')}
+                      </h3>
+                      <p className="text-warm-600 text-sm">в {session.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">{getStatusBadge(session.status)}</div>
+                </div>
+                
+                {/* Информация о сессии */}
+                <div className="space-y-2 mb-3">
+                  <p className="text-sm text-warm-600">
+                    <span className="font-medium">Психолог:</span> {session.psychologist}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-warm-800">₽{session.amount.toLocaleString()}</p>
+                    <div className="text-xs">{getPaymentBadge(session.paymentStatus)}</div>
+                  </div>
+                  {session.paymentId && (
+                    <p className="text-xs text-warm-500">ID: {session.paymentId}</p>
+                  )}
+                  {session.notes && (
+                    <p className="text-xs text-warm-500 bg-warm-50 p-2 rounded">{session.notes}</p>
+                  )}
+                </div>
+                
+                {/* Кнопки действий */}
+                {session.status === 'upcoming' && (
+                  <div className="space-y-2">
+                    <Button 
+                      size="sm" 
+                      className="bg-warm-600 hover:bg-warm-700 w-full"
+                      onClick={() => handleConnectToSession(session.id, session.date, session.time)}
+                      disabled={loadingStates[session.id]}
+                    >
+                      {loadingStates[session.id] ? (
+                        <>
+                          <Icon name="Loader2" className="mr-2 animate-spin" size={14} />
+                          Подключаем...
+                        </>
+                      ) : (
+                        <>
+                          <Icon name="Video" className="mr-2" size={14} />
+                          Подключиться к сессии
+                        </>
+                      )}
+                    </Button>
+                    {session.paymentStatus === 'pending' && (
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="border-orange-300 text-orange-600 hover:bg-orange-50 w-full"
+                        onClick={() => handlePaySession(session.id, session.amount)}
+                        disabled={loadingStates[`pay-${session.id}`]}
+                      >
+                        {loadingStates[`pay-${session.id}`] ? (
+                          <>
+                            <Icon name="Loader2" className="mr-2 animate-spin" size={14} />
+                            Оплачиваем...
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="CreditCard" className="mr-2" size={14} />
+                            Оплатить ₽{session.amount.toLocaleString()}
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                )}
+                {session.paymentStatus === 'failed' && (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="border-red-300 text-red-600 hover:bg-red-50 w-full"
+                    onClick={() => handlePaySession(session.id, session.amount)}
+                    disabled={loadingStates[`pay-${session.id}`]}
+                  >
+                    {loadingStates[`pay-${session.id}`] ? (
+                      <>
+                        <Icon name="Loader2" className="mr-2 animate-spin" size={14} />
+                        Оплачиваем...
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="RefreshCw" className="mr-2" size={14} />
+                        Повторить оплату
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+
+              {/* Десктопная версия - оригинальная компоновка */}
+              <div className="hidden md:flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-warm-100 rounded-full flex items-center justify-center">
                     <Icon name="Calendar" className="text-warm-600" size={20} />
@@ -239,7 +342,7 @@ const SessionsTab = ({ sessions }: SessionsTabProps) => {
                           </>
                         ) : (
                           <>
-                            <Icon name="RefreshCw" className="mr-1" size={14} />
+                            <Icon name="RefreshCw" className="mr-1 size={14} />
                             Повторить оплату
                           </>
                         )}
