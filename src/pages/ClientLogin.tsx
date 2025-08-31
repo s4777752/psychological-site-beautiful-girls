@@ -66,24 +66,27 @@ const ClientLogin = () => {
   };
 
   const sendSMSCode = async (phone: string, code: string) => {
+    const SMS_RU_API_KEY = import.meta.env.VITE_SMS_RU_API_KEY;
+    
+    if (!SMS_RU_API_KEY) {
+      throw new Error('SMS API ключ не настроен. Добавьте VITE_SMS_RU_API_KEY в файл .env');
+    }
+
     try {
-      const { smsService } = await import('@/utils/smsService');
-      const result = await smsService.sendSMS(phone, code);
-      return result;
+      // Отправляем реальную SMS через SMS.ru API
+      const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(
+        `https://sms.ru/sms/send?api_id=${SMS_RU_API_KEY}&to=${phone}&msg=${encodeURIComponent(`Код подтверждения для входа в кабинет: ${code}. Действителен 5 минут.`)}&json=1`
+      ));
+      
+      const result = await response.json();
+      
+      if (result.status === 'OK') {
+        return { success: true, messageId: result.sms?.message_id };
+      } else {
+        throw new Error(result.status_text || 'SMS отправка не удалась');
+      }
     } catch (error) {
-      console.error('Ошибка SMS сервиса:', error);
-      
-      // Fallback: простое уведомление
-      console.log(`📱 SMS CODE для +${phone}: ${code}`);
-      
-      // Показываем код в удобном формате для тестирования
-      const showCodeAlert = () => {
-        alert(`📱 Код подтверждения: ${code}\n\nТелефон: +${phone}\nВремя: ${new Date().toLocaleTimeString()}\n\n(В продакшене код придёт SMS)`);
-      };
-      
-      setTimeout(showCodeAlert, 500);
-      
-      return { success: true, messageId: 'fallback' };
+      throw new Error(`Ошибка отправки SMS: ${error.message}`);
     }
   };
 
@@ -124,26 +127,20 @@ const ClientLogin = () => {
         // Отправляем SMS
         try {
           await sendSMSCode(cleanPhone, code);
+          
+          setStep('code');
+          toast({
+            title: "SMS отправлена",
+            description: `Код подтверждения отправлен на ${credentials.phone}`
+          });
         } catch (error) {
           console.error('SMS отправка не удалась:', error);
+          toast({
+            title: "Ошибка отправки SMS",
+            description: "Не удалось отправить код. Проверьте настройки API или попробуйте позже.",
+            variant: "destructive"
+          });
         }
-        
-        setStep('code');
-        
-        // Показываем код сразу в уведомлении для удобства
-        toast({
-          title: "Код отправлен",
-          description: `Ваш код: ${code}. SMS отправлен на ${credentials.phone}`
-        });
-        
-        // Дублируем в консоль
-        console.log(`📱 КОД ДЛЯ ВХОДА: ${code}`);
-        console.log(`Телефон: +${cleanPhone}`);
-        
-        // Показываем alert через секунду для гарантии
-        setTimeout(() => {
-          alert(`📱 Ваш код подтверждения: ${code}\n\nДля тестирования используйте этот код.\nВ продакшене код придёт SMS на ${credentials.phone}`);
-        }, 1500);
       } else {
         toast({
           title: "Клиент не найден",
@@ -291,19 +288,7 @@ const ClientLogin = () => {
                       <p className="text-xs text-warm-500">
                         Код действителен до: {new Date(codeExpiry).toLocaleTimeString('ru-RU')}
                       </p>
-                      {sentCode && (
-                        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm font-medium text-green-800 mb-1">
-                            📱 Код для тестирования:
-                          </p>
-                          <p className="text-xl font-bold text-green-900 tracking-wider">
-                            {sentCode}
-                          </p>
-                          <p className="text-xs text-green-600 mt-1">
-                            Скопируйте этот код в поле выше
-                          </p>
-                        </div>
-                      )}
+
                     </div>
                   )}
                 </div>
