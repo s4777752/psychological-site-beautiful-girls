@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  /* Prevent zoom on iOS when focusing inputs */
+  @supports (-webkit-touch-callout: none) {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    textarea {
+      font-size: 16px;
+    }
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;

@@ -117,8 +117,8 @@ const ClientLogin = () => {
   const isFormValid = credentials.phone.replace(/\D/g, '').length >= 11 && credentials.password.length >= 1;
 
   return (
-    <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-warm-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -146,8 +146,10 @@ const ClientLogin = () => {
                   value={credentials.phone}
                   onChange={handlePhoneChange}
                   placeholder="+7 (999) 123-45-67"
-                  className="border-warm-300 focus:border-warm-500"
+                  className="border-warm-300 focus:border-warm-500 text-base sm:text-sm h-12 sm:h-10"
                   maxLength={18}
+                  inputMode="tel"
+                  autoComplete="tel"
                   required
                 />
               </div>
@@ -160,7 +162,8 @@ const ClientLogin = () => {
                   value={credentials.password}
                   onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                   placeholder="Введите пароль"
-                  className="border-warm-300 focus:border-warm-500"
+                  className="border-warm-300 focus:border-warm-500 text-base sm:text-sm h-12 sm:h-10"
+                  autoComplete="current-password"
                   required
                 />
               </div>
@@ -168,7 +171,7 @@ const ClientLogin = () => {
               <Button 
                 type="submit"
                 disabled={!isFormValid || isLoading}
-                className="w-full bg-warm-600 hover:bg-warm-700"
+                className="w-full bg-warm-600 hover:bg-warm-700 h-12 sm:h-10 text-base sm:text-sm touch-manipulation"
               >
                 {isLoading ? (
                   <>

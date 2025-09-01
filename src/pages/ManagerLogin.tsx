@@ -30,8 +30,8 @@ const ManagerLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-warm-200">
+    <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4 sm:p-6">
+      <Card className="w-full max-w-md mx-auto border-warm-200">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-warm-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="UserCog" size={32} className="text-warm-600" />
@@ -49,8 +49,10 @@ const ManagerLogin = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="s4777752@ya.ru"
+                className="border-warm-300 focus:border-warm-500 text-base sm:text-sm h-12 sm:h-10"
+                inputMode="email"
+                autoComplete="email"
                 required
-                className="border-warm-300 focus:border-warm-500"
               />
             </div>
             <div className="space-y-2">
@@ -61,8 +63,9 @@ const ManagerLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Введите пароль"
+                className="border-warm-300 focus:border-warm-500 text-base sm:text-sm h-12 sm:h-10"
+                autoComplete="current-password"
                 required
-                className="border-warm-300 focus:border-warm-500"
               />
             </div>
             {error && (
@@ -72,7 +75,7 @@ const ManagerLogin = () => {
             )}
             <Button 
               type="submit" 
-              className="w-full bg-warm-600 hover:bg-warm-700"
+              className="w-full bg-warm-600 hover:bg-warm-700 h-12 sm:h-10 text-base sm:text-sm touch-manipulation"
               disabled={loading}
             >
               {loading ? (
